@@ -1,0 +1,153 @@
+input.not_input {
+  border: 1px solid #E9E1D2;
+  background: #E1D7C3;
+}
+
+div.menu {
+  text-align: right;
+}
+
+div.top_banner {
+  border: 1px solid #F0EBE1;
+  background: #BEB091;
+  margin: 2px;
+  margin-bottom: 10px;
+  padding: 5px;
+  /*text-align: center;*/
+  color: white;
+}
+
+#rightBanner {
+  width: auto;
+  height: auto;
+}
+
+div.menu a {
+  /*font-weight: bold;*/
+  font-size: 10pt;
+  color: white;
+  /*color: #F0EBE1;*/
+}
+
+div.menu a:hover {
+  font-size: 10pt;
+  color: #F0EBE1;
+  /*color: #747C53;*/
+}
+
+div.obj_list_item {
+  border: 1px solid #BEB091;
+  background: #E9E1D2;
+  margin: 2px;
+  padding: 5px;
+}
+
+table.form_table, table.objinfo{
+  width: 100%;
+  border: 1px dashed #BEB091;
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+
+table.form_table tr td.info {
+  font-size: 10pt;
+  color: #747C53;
+  background: #F0EBE1;
+}
+
+table.form_table tr td, table.objinfo tr td{
+  padding: 5px;
+}
+
+table.form_table tr td.question, table.objinfo tr td.property{
+  background: #E9E1D2;
+}
+
+table.form_table tr td.answer, table.objinfo tr td{
+  background: #E1D7C3;
+}
+
+table.form_table tr td.submit {
+  text-align: right;
+  background: #E1D7C3;
+}
+
+table.form_table tr td.heading {
+  text-align: center;
+  background: #747C53;
+  color: white;
+  font-size: 12pt;
+}
+
+table.form_table tr td.infoheading {
+  text-align: center;
+  background: #747C53;
+  color: white;
+  font-size: 12pt;
+  color: white;
+  background-color: #A2A88C;
+}
+
+table.form_table tr td.question{
+  width: 50%;
+}
+
+table.payment_list, table.general_list{
+	text-align: center;
+  width: 100%;
+}
+
+table.payment_list tr, table.general_list tr{
+  background: #E1D7C3;
+}
+
+table.payment_list tr td, table.payment_list tr th, table.general_list tr td, table.general_list tr th{
+  border: 1px solid #BEB091;
+  padding: 1px;
+  margin: 0px;
+}
+
+span.req {
+  font-size: 8pt;
+  color: #961400;
+  font-weight: bold;
+}
+
+.Err {
+ color: #961400;
+ font-weight: bold;
+}
+
+.info{
+	font-size: 8pt;
+}
+
+.small_link {
+	font-size: 8pt;
+}
+
+.delete_this, .delete_this:hover{
+	color: red;
+}
+
+.property {
+  font-weight: bold;
+}
+
+.multiline_property_data {
+  padding-left: 9px;
+}
+
+.float_form_elem {
+  margin: 9px;
+  float: left;
+}
+
+label {
+  font-weight: bold;
+}
+
+.longlist {
+  max-height: 500px;
+  overflow: auto;
+}
