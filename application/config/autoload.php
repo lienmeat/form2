@@ -52,7 +52,8 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('auth','database');
+//note by Eric: ORDER IS VERY IMPORTANT!  Authentication MUST happen BEFORE Authorization!
+$autoload['libraries'] = array('database','Authentication','Authorization');
 
 
 /*

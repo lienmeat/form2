@@ -2,7 +2,11 @@
 class MY_Controller extends CI_Controller{
 
   function __construct(){
-    parent::__construct();    
+    parent::__construct();
+    if($_GET['action'] == 'logout') $this->logout();
+    if(ENVIRONMENT == 'development'){
+      $this->output->enable_profiler(true);
+    }    
   }
 
   /**
@@ -27,7 +31,7 @@ class MY_Controller extends CI_Controller{
   * @param string $category A category (recordtype) to associate with this message
   * @param string $category_id Id of record in category to associate with this log
   */
-  protected function log($message, $data=null, $category=null, $category_id=null){
+  private function _log($message, $data=null, $category=null, $category_id=null){
     if($data){
       if(is_object($data)) $data = (array) $data;
       if(!is_array($data)) $data = null;
@@ -36,24 +40,14 @@ class MY_Controller extends CI_Controller{
       }
     }    
     $this->load->model('log');
-    $this->log_model->insert(array('message'=>$message, 'category'=>$category, 'category_id'=>$category_id));
+    $this->log->insert(array('message'=>$message, 'category'=>$category, 'category_id'=>$category_id));
   }
 
-  /**
-  * Sets up validation lib with our preferences todo: move to external validation lib
-  * @param array|null $config Form validation config array (see CI documentation)
-  */
-  protected function initValidation(Array $config=null){
-    $this->load->library('form_validation');
-    $this->form_validation->set_error_delimiters('<div class="Err">', '</div>');
-    if($config) $this->form_validation->set_rules($config);
-  }
-  
   /**
   * Fails with a message if called
   * @param string $message Message to yell at person
   */
-  private function failAuthResp($message=null){
+  private function _failAuthResp($message=null){
       if($message) $data['message'] = $message;
       else $data['message'] = 'You are not authorized to perform this action!';
 		  $this->render('failauth', $data);
@@ -61,22 +55,33 @@ class MY_Controller extends CI_Controller{
   }
 
   /**
-  * Render content to either ajax (json), or regular browser based on get string
+  * Render content replacing any hook variables with data
   * @param string $view View to load
-  * @param array|object $data Data to send to view
-  * @param array|object $send_data Data to jsonify and send with response
+  * @param array|object $data Data to send to view  
+  * @param bool $echo Whether to echo data or return it
   */
-  function render($view, $data=null, $send_data=null){
-    $html = $this->load->view($view, $data, true);
-    if($_GET['wifi_info']){      
-      $tosend = array('html'=>$html);
-      if($send_data) $tosend['data'] = $send_data;
-      echo json_encode($tosend);
-    }else{
-      if($send_data){
-        $html.="<pre>".print_r($send_data, true)."</pre>";
-      }
-      echo $html;
+  private function _render($view, $data=null, $echo=true){
+    $output = $this->load->view($view, $data, true);
+    //todo: write lib for hooking data into random HTML and use it on content here
+    
+  }
+
+  private function _redirect($url){
+    header('location: '.$url);
+    exit;
+    echo "Location should be: ".$url;
+  }
+
+  /**
+  * This function forces a logout when a person clicks Sign Out in the menu!
+  */
+  private function _logout(){
+    //ok, so this person is actually logged in
+    if($this->authorization->isLoggedIn()){
+      $this->authorization->logout();
+    }else{ //not really logged in, don't log out!
+      $url = str_replace("action=logout",'',current_url());
+      $this->_redirect($url);  
     }
   }
 }

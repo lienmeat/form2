@@ -17,7 +17,7 @@ require_once('templates.php');
 //header config
 $aSiteHeader = array(
 'sTitle'=>$title,
-'secure'=>'true', //we MIGHT need to make this variable somehow! (cause formit does this)
+'secure'=>'true', //we MIGHT need to make this dynamic somehow! (cause formit does this)
 'bannerText'=>'FormIt2',
 'bannerRight'=>$this->load->view('menu', array(),true),
 );

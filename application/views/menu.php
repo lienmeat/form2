@@ -9,9 +9,9 @@
   if(uri_string() != "/payment/donation" and uri_string() != "/payment/donation/")
     $links[]=anchor("/payment/donation", "Give a Gift");
 */    
-  if($this->auth->username()) $links[]="<br /><a href='".current_url()."?action=logout'>Sign Out</a>";
+  if($this->authorization->username()) $links[]="<br /><span>".$this->authorization->fullname()."</span>&nbsp;<a href='".current_url()."?action=logout'>Sign Out</a>";
 ?>
 
 <div class="menu" style="text-align: right;"><?php echo implode("<br />", $links); ?></div>
 
-<?php if(FORMIT2_DEV_VERSION) echo "<h3 style='color: red;'>FORMIT2_DEV_VERSION</h3>"; ?>
+<?php if(ENVIRONMENT == 'development') echo "<h3 style='color: red;'>FORMIT2_DEV_VERSION</h3>"; ?>

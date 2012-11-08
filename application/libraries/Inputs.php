@@ -12,7 +12,7 @@ interface iInput{
 	//sets the tag of the element (makes selects and textareas easier)
 	function setTag($tag);
 	function getTag();
-	//sets the type of element (needed, because some types need to append [])
+	//sets the name of element (needed, because some types need to append [])
 	function setName($name);
 	function getName();
 	//sets the type of element (text, radio, checkbox, select, textarea...)
@@ -24,7 +24,7 @@ interface iInput{
 	//sets an attribute of the html (id, style, anything really)
 	function setAttribute($name, $value);
 	//set all attributes via assoc array
-	function setAttributes(Array $attributes);
+	function setAttributes($attributes);
 	//gets the value of an attribute if set, else false
 	function getAttribute($name);
 	//get all attributes
@@ -36,8 +36,28 @@ interface iInput{
 	//make the POST var not override the value
 	function ignorePost($ignore=true);
 	//make input read only
-	function setReadonly($flag=true);
+	function setReadonly($readonly=true);
 	function getReadonly();
+}
+
+//todo: Write a "selectable" or "multichoice" interface for selects, radios, checks
+// so there is a similar way of setting selected/checked options, and also for giving
+// them data to render from.
+
+
+/**
+* Checkboxes, radios, and selects are considered "selectable"
+*/
+interface iSelectable{
+	//sets the element/option with value or label $value to be selected/checked
+	function setSelected($value);
+	//gets values/labels that are selected
+	function getSelected();
+
+	//set multiple elements/options to be selected
+	function setSelections(Array $selections);
+	//find out if a value is selected
+	function isSelected($value);
 }
 
 /**
@@ -161,7 +181,7 @@ class Base_Input implements iInput{
 	*/
 	function setValue($value){
 		$this->value = $value;
-		$this->setAttribute('name', $name);
+		$this->setAttribute('value', $value);
 	}
 
 	/**
@@ -169,7 +189,7 @@ class Base_Input implements iInput{
 	* @return string
 	*/
 	function getValue(){
-		return $this->getAttribute('name');
+		return $this->getAttribute('value');
 	}
 	
 	/**
@@ -236,13 +256,23 @@ class Base_Input implements iInput{
 	}
 	
 	function __toString(){
-		return "<".$this->getTag()." ".$this->attributesToString().">".."</".$this->getTag().">";
+		return "<".$this->getTag()." ".$this->attributesToString().">".$this->getValue()."</".$this->getTag().">";
 	}
 	
 	function ignorePost($ignore=true){
 		if($ignore===false) $this->ignore_post = false;
 		else $this->ignore_post = true;
-	}	
+	}
+
+	function setReadonly($readonly=true){
+		if($readonly !== true or $readonly !== false) $readonly = true;
+		$this->readonly = $readonly;
+	}
+
+	function getReadonly(){
+		return $this->readonly;
+	}
+
 }
 
 class Input_Input extends Base_Input{
@@ -297,19 +327,47 @@ class Radio_Input extends Input_Input{
 	function __construct($config=null){
 		parent::__construct($config);
 		$this->setType('radio');
+		if($config['selected']){
+			$this->setSelections($config['selected']);
+		}
 	}
 	
 	function __toString(){
 		$post = $this->getPost();
-		if($post == $this->getAttribute('value') && !$this->ignore_post) $this->setAttribute('checked', 'checked');
+		if($this->getValue() == $post && !$this->ignore_post) $this->setSelected($this->getValue());
+		if($this->isSelected($this->getValue())){
+			$this->setAttribute('checked', 'checked');
+		}
 		return "<input ".$this->attributesToString().">";
+	}
+
+	function setSelected($selected){
+		if($selected) $this->selected[] = $selected;
+		else $this->selected = array();
+	}
+
+	function getSelected(){
+		return $this->selected;
+	}
+
+	function setSelections(Array $selections){
+		$this->selected = $selections;
+	}
+
+	function isSelected($value){
+		return in_array($value, $this->selected);
 	}
 }
 
-class Checkbox_Input extends Input_Input{
+class Checkbox_Input extends Input_Input implements iSelectable{
+	private $selected = array();
+
 	function __construct($config=null){
 		parent::__construct($config);
 		$this->setType('checkbox');
+		if($config['selected']){
+			$this->setSelections($config['selected']);
+		}
 	}
 	
 	//because checkboxes are always multiselect...force them to be
@@ -320,16 +378,53 @@ class Checkbox_Input extends Input_Input{
 	
 	function __toString(){
 		$post = $this->getPost();
-		if(!is_array($post)) $post = array();
-		if(in_array($this->getAttribute('value'), $post) && !$this->ignore_post) $this->setAttribute('checked', 'checked');
+		if(!is_array($post)) $post = array($post);
+		if(in_array($this->getValue(), $post) && !$this->ignore_post) $this->setSelected($this->getValue());
+		if($this->isSelected($this->getValue())){
+			$this->setAttribute('checked', 'checked');
+		}
 		return "<input ".$this->attributesToString().">";
+	}
+
+	function setSelected($selected){
+		if($selected) $this->selected[] = $selected;
+		else $this->selected = array();
+	}
+
+	function getSelected(){
+		return $this->selected;
+	}
+
+	function setSelections(Array $selections){
+		$this->selected = $selections;
+	}
+
+	function isSelected($value){
+		return in_array($value, $this->selected);
 	}
 }
 
 class Textarea_Input extends Base_Input{
 	function __construct($config=null){
 		parent::__construct($config);
+		$this->setTag('textarea');
 		$this->setType('textarea');
+	}
+
+	function getType(){
+		return $this->type;
+	}
+
+	function setType($type){
+		$this->type = $type;
+	}
+
+	function setValue($value){
+		$this->value = $value;
+	}
+
+	function getValue(){
+		return $this->value;
 	}
 	
 	function __toString(){
@@ -339,36 +434,64 @@ class Textarea_Input extends Base_Input{
 	}
 }
 
-class Select_Input extends Base_Input{
+class Select_Input extends Base_Input implements iSelectable{
 	private $options = array();
 	private $selected = array();
 	
 	function __construct($config=null){
 		parent::__construct($config);
+		$this->setTag('select');
 		$this->setType('select');
 		if(!empty($config['options'])) $this->setOptions($config['options']);
-		if(!empty($config['selected'])) $this->setSelected($config['selected']);
+		if(!empty($config['selected'])) $this->setSelections($config['selected']);
 		$post = $this->getPost();
 		if($post !== false && !$this->ignore_post) $this->setSelected($post);
+	}
+
+	function getType(){
+		return $this->type;
+	}
+
+	function setType($type){
+		$this->type = $type;
+	}
+
+	function setValue($value){
+		$this->value = $value;
+	}
+
+	function getValue(){
+		return $this->value;
 	}
 
 	function setOption($label, $value=null){
 		$this->options[$label] = $value;
 	}
 
-	function setOptions(Array $options=null){
+	function setOptions($options=null){
 		$this->options = array();
-		if($options){
+		if($options and (is_array($options) or is_object($options))){
 			foreach($options as $l=>$v){
 				$this->setOption($l, $v);
 			}
 		}
 	}
 
-	function setSelected($selected=null){
-		if(!is_array($selected)) $selected = array($selected); 
-		if($selected) $this->selected = $selected;
+	function setSelected($selected){
+		if($selected) $this->selected[] = $selected;
 		else $this->selected = array();
+	}
+
+	function getSelected(){
+		return $this->selected;
+	}
+
+	function setSelections(Array $selections){
+		$this->selected = $selections;
+	}
+
+	function isSelected($value){
+		return in_array($value, $this->selected);
 	}
 
 	function optionsToString(){
@@ -392,55 +515,15 @@ class MultipleSelect_Input extends Select_Input{
 
 	function __construct($config=null){
 		parent::__construct($config);
+		$this->setType('multipleselect');
 		$this->setAttribute('multiple', 'multiple');
-	}
+	}	
 	
 	function setName($name){
 		if(strpos($name, '[]') === false) $name.='[]';
 		parent::setName($name);
 	}	
 }
-/*
-//move to dependencies.php file
-
-class InputDependency{
-	//input name that this dependency checks against
-	var $dependent_on;
-	//what operator it uses (=/==, !=, <, <=, >, >=)
-	var $operator;
-	//value to check for
-	var $value;
-	//what input this belongs to (by input name)
-	var $belongs_to;
-
-	function __construct($dependent_on, $operator, $value, $belongs_to){
-		$this->dependent_on = $dependent_on;
-		$this->operator = $operator;
-		$this->value = $value;
-		$this->belongs_to = $belongs_to;
-	}
-
-	function __toString(){
-		return $this->dependent_on.$this->operator.$this->value;
-	}
-}
-
-class InputValidation{
-	var $rule;
-	var $params = array();
-
-	function __construct($rule, Array $params=null){
-		$this->rule = $rule;
-		$this->params = $params;
-	}
-
-	function __toString(){
-		$out = $this->rule;
-		if(!empty($this->params)) $out.="[".implode(",", $this->params)."]";
-		return $out;
-	}
-}
-*/
 
 /**
 * This class is a convienience class to handle any input implementing iInput
@@ -457,6 +540,7 @@ class Inputs implements iInput{
 	  if(is_object($config)){
 	    $config = (array) $config;
 	  }
+	  /*
 	  if(is_array($config)){
 	    if($config['config'] && !is_array($config['config']) && !is_object($config['config'])){
 	      //we have ourselves a raw database record
@@ -469,6 +553,7 @@ class Inputs implements iInput{
 	  }else{
 	    if($config) $config = (array) json_decode($config);
 	  }
+	  */
 		$type = ucfirst($config['type'])."_Input";
 		if(isset($config['attributes']['type'])) $type = ucfirst($config['attributes']['type'])."_Input";
 		$this->input = new $type($config);
@@ -476,6 +561,14 @@ class Inputs implements iInput{
 
 	function getCopy(){
 		return $this->input;
+	}
+
+	function setTag($tag){
+		$this->input->setTag($tag);
+	}
+
+	function getTag(){
+		return $this->input->getTag();
 	}
 	
 	function setName($name){
@@ -506,7 +599,7 @@ class Inputs implements iInput{
 		$this->input->setVaue($name, $value);
 	}
 	
-	function setAttributes(Array $attributes){
+	function setAttributes($attributes){
 		$this->input->setAttributes($attributes);
 	}
 	
@@ -524,6 +617,14 @@ class Inputs implements iInput{
 	
 	function ignorePost($ignore=true){
 		$this->input->ignorePost($ignore);
+	}
+
+	function setReadonly($readonly=true){
+		$this->input->setReadonly($readonly);
+	}
+
+	function getReadOnly(){
+		$this->input->getReadonly();
 	}
 	
 	function __toString(){
