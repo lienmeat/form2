@@ -7,6 +7,7 @@
 */
 class Validation{
 	private $CI;
+	private $validation_messages = array();	
 
 	function __construct(){
 		$this->CI =& get_instance();
@@ -15,19 +16,21 @@ class Validation{
 	/**
 	* Call a specific validation function and get a result for that input
 	*/
-	function validateFunction($function, $value){
-		$this->CI->load->helper('validation');
-
+	function validateFunction($function, $value, Array $params=null){		
 		$function = $this->getFunctionName($function);
-		$params = $this->getFunctionParams($function);
-		$params[] = $value;
 
+		if(!$params){	
+			$params = $this->getFunctionParams($function);
+			array_unshift($params, $value);
+		}else{
+			array_unshift($params, $value);
+		}
 		if(function_exists($function)){
 			//check for existance of a function called $function in global scope
 			$ret = call_user_func_array($function, $params);
 		}elseif(method_exists($this, $function)){
 			//check for existance of a function in the validation lib			
-			$ret = call_user_method_array($function, $this, $params);
+			$ret = call_user_func_array(array($this, $function), $params);
 		}else{
 			throw new Exception("The validation method \"$function\" does not seem to be defined!");
 		}
@@ -40,6 +43,53 @@ class Validation{
 		//(either one, I don't care).
 	}
 
+	/** 
+	* Set a validation message for a rule
+	* @param string $rule Rule to set message for
+	* @param string $message
+	*/
+	function setValidationMessage($rule, $message){
+		$this->validation_messages[$rule] = $message;
+	}
+
+	/**
+	* Get a validation message set for a rule
+	* @param string $rule Rule to get message for
+	* @return string
+	*/
+	function getValidationMessage($rule){
+		return $this->validation_messages[$rule];
+	}
+
+	/**
+	* Get a function name from the validation rule string (ex. min_length[3])
+	* @param string $validation_string
+	*/
+	function getFunctionName($validation_string){
+		$l_brkt = strpos($validation_string, '[');
+		if($l_brkt !== false){
+			return substr($validation_string, 0, ($l_brkt - 1));
+		}else{
+			return $validation_string;
+		}
+	}
+
+	/**
+	* Get parameters from the validation rule string (ex. length_between[3,6])
+	* @param string $validation_string
+	*/
+	function getFunctionParams($validation_string){
+		$l_brkt = strpos($validation_string, '[');
+		$r_brkt = strpos($validation_string, ']');
+		if($l_brkt !== false){
+			$params = explode(",", substr($validation_string, $l_brkt, ($r_brkt - 1)));
+		}
+		if($params){
+			return $params;
+		}else{
+			return array();
+		}
+	}
 
 	#############  Below here are class-defined validation functions! ###########
 	# (if you want to add functions that should not appear in this lib, add them to validation_helper.php
@@ -47,6 +97,8 @@ class Validation{
 
 
 	// --------------------------------------------------------------------
+
+
 
 	/**
 	 * Required
@@ -59,11 +111,16 @@ class Validation{
 	{
 		if ( ! is_array($str))
 		{
-			return (trim($str) == '') ? FALSE : TRUE;
+			$ret = (trim($str) == '') ? FALSE : TRUE;
 		}
 		else
 		{
-			return ( ! empty($str));
+			$ret = ( ! empty($str));
+		}
+		if($ret) return $ret;
+		else{
+			$this->setValidationMessage('required', 'This field is required!');
+			return $ret;
 		}
 	}
 
@@ -79,12 +136,13 @@ class Validation{
 	 */
 	public function regex_match($str, $regex)
 	{
+		$ret = TRUE;
 		if ( ! preg_match($regex, $str))
 		{
-			return FALSE;
-		}
-
-		return  TRUE;
+			$ret = FALSE;
+			$this->setValidationMessage('regex_match', "This field must match the regular expression: $regex!");
+		}		
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -97,16 +155,23 @@ class Validation{
 	 * @param	field
 	 * @return	bool
 	 */
+	
 	public function matches($str, $field)
 	{
 		if ( ! isset($_POST[$field]))
-		{
+		{	
+			$this->setValidationMessage('matches', '');
 			return FALSE;
 		}
 
 		$field = $_POST[$field];
 
-		return ($str !== $field) ? FALSE : TRUE;
+		$ret = ($str !== $field) ? FALSE : TRUE;
+		if($ret) return $ret;
+		else{
+			$this->setValidationMessage('matches', "This field must match the one named $field!");
+			return $ret;
+		}
 	}
 	
 	// --------------------------------------------------------------------

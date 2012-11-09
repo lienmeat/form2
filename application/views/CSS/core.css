@@ -1,20 +1,16 @@
-input.not_input {
-  border: 1px solid #E9E1D2;
-  background: #E1D7C3;
-}
-
 div.menu {
   text-align: right;
 }
 
 div.top_banner {
-  border: 1px solid #F0EBE1;
-  background: #BEB091;
-  margin: 2px;
+  /*border: 1px solid #F0EBE1;*/
+  background: #806C46;
+  /*margin: 2px;*/
   margin-bottom: 10px;
   padding: 5px;
   /*text-align: center;*/
   color: white;
+  border-radius: 10px;
 }
 
 #rightBanner {
@@ -35,76 +31,12 @@ div.menu a:hover {
   /*color: #747C53;*/
 }
 
+/*
 div.obj_list_item {
   border: 1px solid #BEB091;
   background: #E9E1D2;
   margin: 2px;
   padding: 5px;
-}
-
-table.form_table, table.objinfo{
-  width: 100%;
-  border: 1px dashed #BEB091;
-  margin-top: 9px;
-  margin-bottom: 9px;
-}
-
-table.form_table tr td.info {
-  font-size: 10pt;
-  color: #747C53;
-  background: #F0EBE1;
-}
-
-table.form_table tr td, table.objinfo tr td{
-  padding: 5px;
-}
-
-table.form_table tr td.question, table.objinfo tr td.property{
-  background: #E9E1D2;
-}
-
-table.form_table tr td.answer, table.objinfo tr td{
-  background: #E1D7C3;
-}
-
-table.form_table tr td.submit {
-  text-align: right;
-  background: #E1D7C3;
-}
-
-table.form_table tr td.heading {
-  text-align: center;
-  background: #747C53;
-  color: white;
-  font-size: 12pt;
-}
-
-table.form_table tr td.infoheading {
-  text-align: center;
-  background: #747C53;
-  color: white;
-  font-size: 12pt;
-  color: white;
-  background-color: #A2A88C;
-}
-
-table.form_table tr td.question{
-  width: 50%;
-}
-
-table.payment_list, table.general_list{
-	text-align: center;
-  width: 100%;
-}
-
-table.payment_list tr, table.general_list tr{
-  background: #E1D7C3;
-}
-
-table.payment_list tr td, table.payment_list tr th, table.general_list tr td, table.general_list tr th{
-  border: 1px solid #BEB091;
-  padding: 1px;
-  margin: 0px;
 }
 
 span.req {
@@ -138,11 +70,6 @@ span.req {
   padding-left: 9px;
 }
 
-.float_form_elem {
-  margin: 9px;
-  float: left;
-}
-
 label {
   font-weight: bold;
 }
@@ -150,4 +77,70 @@ label {
 .longlist {
   max-height: 500px;
   overflow: auto;
+}
+*/
+
+/** This stuff below is stuff I added for this app! **/
+
+.form_contain{
+  display: table-body;
+  width: 100%;    
+}
+
+.form_row {
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;  
+  display: table-row;
+  /*border-bottom: 4px solid pink;*/  
+}
+
+.form_question {  
+  /*float: left;*/
+  padding: 5px;
+  width: 50%;
+  display: table-cell;
+  border-bottom: 2px solid #806C46;
+  border-left: 1px solid #806C46;
+  border-right: 1px dotted rgba(0,0,0,0.55);
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;    
+}
+
+.form_answer {
+  /*float: left;*/
+  padding: 5px;
+  width: 50%;    
+  display: table-cell;
+  border-bottom: 2px solid #806C46;
+  border-right: 1px solid #806C46;
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+  /*background: blue;*/
+}
+
+.form_element_contain {
+  float: right;
+}
+
+.clear {
+  clear: both;
+}
+
+.err_notif{
+  position: absolute;
+  max-width: 300px;
+  background-color: rgba(255,192,203,0.85);
+  border: 1px solid red;
+  border-radius: 0px 5px 5px 5px;
+  padding: 0px 3px 0px 3px;
+  color: red;
+}
+
+.err_notif.hide{
+  display: none;
+}
+
+.err_notif.show{
+  display: block;
 }

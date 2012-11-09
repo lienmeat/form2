@@ -10,6 +10,13 @@ var Validation = function(){
 Validation.validation_errors = [];
 
 /**
+* Is the lib trying to validate the full form currently?
+*/
+Validation.fullform = false;
+
+Validation.form_id = false;
+
+/**
 * Set up object, binding events to inputs and submit
 */
 Validation.__init__= function(){
@@ -27,11 +34,49 @@ Validation.__init__= function(){
 	//bind to submit of form todo: standardize on form id="" value
 }
 
+Validation.disableSubmitButton = function(){
+	$(Validation.submit_button).val('...WORKING...');
+	$(Validation.submit_button).attr('disabled', 'disabled');
+}
+
+Validation.enableSubmitButton = function(){
+	$(Validation.submit_button).val('Submit');
+	$(Validation.submit_button).attr('disabled', false);
+}
+
+Validation.validateForm = function(submit_button, id){
+	Validation.submit_button = submit_button;
+	Validation.disableSubmitButton();
+	Validation.fullform = true;
+	Validation.form_id = id;
+	var inputs = $('#'+id+' [validation]').get();
+	var remotevalidations = [];	
+	var validated = true;
+	for(i in inputs){
+		var ret = Validation.validateInput(inputs[i], true);
+		if(ret){
+			var remotevalidations = remotevalidations.concat(ret);			
+		}else{
+			validated = false;			
+		}
+	}
+	if(validated && remotevalidations.length == 0){
+		Validation.fullform = false;
+		Validation.enableSubmitButton();
+		return true;
+	}else if(remotevalidations.length > 0){ //we have remote validations to do
+		Validation.doRemoteValidations(remotevalidations);
+		return false;
+	}else{ //we failed a validation
+		Validation.enableSubmitButton();
+		return false;
+	}
+}
+
 /**
 *	Validates an individual input for validity
 */
-Validation.validateInput = function(input, fullform){
-
+Validation.validateInput = function(input){
 	//get validation string
 	var validation = $(input).attr('validation') || '';
 		
@@ -42,14 +87,14 @@ Validation.validateInput = function(input, fullform){
 	var remotevalidations = [];
 	
 	//loop over validation objects and validate the value
-	for(i in validations){		
+	for(i in validations){
 		var res = Validation.checkFunction(validations[i].function, validations[i].params, input);
 		if(res == 'undefined_function'){
 			//we need to hit the server with the function and hope!
 			var val = validations[i];
 			val.value = Validation.getInputValue(input);
-			val.input_name = $(input).attr('name').replace('[','').replace(']','');
-			remotevalidations.push(val);
+			val.input_id = $(input).attr('id');
+			remotevalidations.push(val);			
 		}else{
 			if(res == true){
 				//we don't care, go to next function
@@ -60,13 +105,13 @@ Validation.validateInput = function(input, fullform){
 				if(!err){
 					var err = Validation.getValidationError(validations[i].function);
 					if(err){
-						Validation.setErrorMessage(input, err);
+						Validation.showError(input, err);
 					}else{
 						var err = "Validation message not configured for "+validations[i].function+" but it failed validation!";
-						Validation.setErrorMessage(input, err);
+						Validation.showError(input, err);
 					}
 				}else{
-					Validation.setErrorMessage(input, err);
+					Validation.showError(input, err);
 				}
 				validated = false;
 				break;				
@@ -81,16 +126,14 @@ Validation.validateInput = function(input, fullform){
 		}
 	}
 
-	if(!fullform){
-		if(validated){
-			Validation.setErrorMessage(input, ''); //get rid of error message if one exists
+	if(!Validation.fullform){
+		if(validated){			
+			Validation.hideError(input); //get rid of error message if one exists
 			Validation.doRemoteValidations(remotevalidations);
-		}else{
-			remotevalidations = [];
 		}
 	}else{ //if fullform, aggregate remote validations, and lock form from submitting
 		if(validated){
-			Validation.setErrorMessage(input, '');
+			Validation.hideError(input);
 			return remotevalidations;
 		}else{
 			return false;
@@ -98,17 +141,39 @@ Validation.validateInput = function(input, fullform){
 	}
 }
 
-Validation.doRemoteValidations = function(validations){
+Validation.doRemoteValidations = function(validations){	
 	var validations = validations || [];
+
 	if(validations.length > 0){
-		doAjax('validation/validate', {validations: validations}, Validation.remoteValidationCallback, Validation.remoteValidationCallback);
+		doAjax('validate/', {validations: validations}, Validation.remoteValidationCallback, Validation.remoteValidationCallback);
 		return true;
 	}
 	return false;
 }
 
-Validation.remoteValidationCallback = function(resp){
-	alert(resp);
+Validation.remoteValidationCallback = function(validations){
+	var validated = true;
+
+	for(i in validations){
+		if(validations[i].status == "fail"){
+			var input = $('#'+validations[i].input_id).get(0);
+			Validation.showError(input, validations[i].error_message);
+			validated = false;
+		}else if(validations[i].status == "value_change"){
+			$('#'+validations[i].input_id).val(validations[i].value);
+		}
+		//other cases are status = pass || undefined_function
+		//but we really don't care to do anything about either...
+	}
+
+	if(Validation.fullform){
+		Validation.fullform = false;
+		if(validated){
+			$('#'+Validation.form_id).submit();
+		}else{
+			Validation.enableSubmitButton();	
+		}
+	}	
 }
 
 /**
@@ -195,10 +260,10 @@ Validation.getInputValue = function(input){
 /**
 * Set a validation error for a validation function
 * @param string func Function that was called
-* @param string message Error message to register with function
+* @param string err Error message to register with function
 */
-Validation.setValidationError = function(func, message){
-	Validation.validation_errors[func] = message;
+Validation.setValidationError = function(func, err){
+	Validation.validation_errors[func] = err;
 }
 
 /**
@@ -213,15 +278,61 @@ Validation.getValidationError = function(func){
 }
 
 /**
-* Set a validation error message on a question (show error to user)
-* @param HTMLELEMENT input Input element validation was called on
-* @param string message Message to set
+* Gets an element's size and position
 */
-Validation.setErrorMessage = function(input, message){
-	//figure out how schema for all form rows, and how to set an error
-	var err_element = Validation.getQuestionErrorElement(input);
-	$(err_element).html(message);
+Validation.getElementSizeAndPosition = function(elem){
+	var props = {size: {}};
+
+	props.size.width = $(elem).width();
+	props.size.height = $(elem).height();
+	props.position = $(elem).offset();
+	
+	//tl
+	props.position.topLeftX = props.position.left;
+	props.position.topLeftY = props.position.top;
+	//tr
+	props.position.topRightX = props.position.right;
+	props.position.topRightY = props.position.top;
+
+	//bl
+	props.position.bottomLeftX = props.position.left;
+	props.position.bottomLeftY = props.position.top + props.size.height;
+	//br
+	props.position.bottomRightX = props.position.right;
+	props.position.bottomRightY = props.position.top + props.size.height;
+	return props;	
 }
+
+Validation.showError = function(input, err){
+	var notif = Validation.getNotif(input);
+	$(notif).html(err);
+	$(notif).removeClass('hide');
+	$(notif).addClass('show');	
+}
+
+Validation.hideError = function(input){
+	var notif = Validation.getNotif(input);
+	$(notif).removeClass('show');
+	$(notif).addClass('hide');
+	
+}
+
+Validation.getNotif = function(input){
+	var input_id = $(input).attr('id');
+	var notif_id = input_id+'_err';
+	var notif = $('#'+notif_id).get(0);
+	if(!notif){
+		var props = Validation.getElementSizeAndPosition(input);
+		var notif = jQuery('<div />').appendTo(document.body);
+		$(notif).addClass('err_notif hide');
+		$(notif).attr('id', notif_id);		
+		$(notif).css('top', props.position.bottomLeftY+6);
+		$(notif).css('left', props.position.bottomLeftX);
+		//alert(props.position.bottomLeftY+" "+$(notif).css('top'));
+	}
+	return notif;
+}
+
 
 /**
 * Gets the class "questionName_fi2" from an input
@@ -239,18 +350,6 @@ Validation.getQuestionClassFromElem = function(elem){
 		}
 	}
 	return q_class;
-}
-
-/**
-* Attempts to retrieve the form_question_error of the current question via classes assigned
-* to an element belonging to that question.
-* @param HTMLELMENT elem Element (probably an input)
-* @return HTMLELEMENT
-*/
-Validation.getQuestionErrorElement = function(elem){
-	//form_question_err
-	var q_class = Validation.getQuestionClassFromElem(elem);
-	return $('.'+q_class+".form_question_err").get(0);
 }
 
 /*********************** Validation functions go below this line *******************/
