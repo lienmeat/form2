@@ -84,7 +84,10 @@ label {
 
 .form_contain{
   display: table-body;
-  width: 100%;    
+  width: 100%;
+  list-style: none;
+  margin-left: 0px;
+  padding-left: 0px;    
 }
 
 .form_row {
@@ -103,8 +106,10 @@ label {
   border-bottom: 2px solid #806C46;
   border-left: 1px solid #806C46;
   border-right: 1px dotted rgba(0,0,0,0.55);
+  border-top: 1px solid #806C46;
   border-bottom-left-radius: 10px;
-  border-top-left-radius: 10px;    
+  border-top-left-radius: 10px; 
+  background-color: white;   
 }
 
 .form_answer {
@@ -114,8 +119,10 @@ label {
   display: table-cell;
   border-bottom: 2px solid #806C46;
   border-right: 1px solid #806C46;
+  border-top: 1px solid #806C46;
   border-bottom-right-radius: 10px;
   border-top-right-radius: 10px;
+  background-color: white;
   /*background: blue;*/
 }
 
@@ -128,6 +135,7 @@ label {
 }
 
 .err_notif{
+  z-index: 99999999999;
   position: absolute;
   max-width: 300px;
   background-color: rgba(255,192,203,0.85);
@@ -143,4 +151,8 @@ label {
 
 .err_notif.show{
   display: block;
+}
+
+.icon {
+  cursor: pointer;
 }

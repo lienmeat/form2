@@ -1,59 +1,85 @@
-$(document).ready(function(){ Validation.__init__(); });
-
 /**
 * This object handles validating a form or form inputs
 */
-var Validation = function(){
+function Validation(form_id){
+	/**
+	* where in the window variable is this set
+	* so we can access it via events?
+	*/
+	this.handle = false;
+	this.fullform = false;
+	this.form_id = form_id;
+	this.__init__();
+	this.validation_errors = [];
+	this.ignore_validation = false;
 }
-
-
-Validation.validation_errors = [];
-
-/**
-* Is the lib trying to validate the full form currently?
-*/
-Validation.fullform = false;
-
-Validation.form_id = false;
 
 /**
 * Set up object, binding events to inputs and submit
 */
-Validation.__init__= function(){
+Validation.prototype.__init__= function(){
+	var handle = this.createHandle();
 	//match inputs with validation attribute and loop
-	$('[validation]').each(
+
+	$('#'+this.form_id+' [validation]').each(
 		function(i){
 			//bind validateInput to change event on each input that matched
-			$(this).change(
+			$(this).blur(
 				function(event){
-					Validation.validateInput(event.target);
+					window.validators[handle].validateInput(event.target);
 				}
 			);
 		}
 	);
-	//bind to submit of form todo: standardize on form id="" value
+
+
+	$('#'+this.form_id).submit(
+		function(){
+			//way to get around validating form when using the 
+			//remote validation callback after validateForm() calls it.
+			if(window.validators[handle].ignore_validation == true){
+				return true;
+			}else{
+				return window.validators[handle].validateForm();
+			}			
+		}
+	);
 }
 
-Validation.disableSubmitButton = function(){
-	$(Validation.submit_button).val('...WORKING...');
-	$(Validation.submit_button).attr('disabled', 'disabled');
+Validation.prototype.createHandle = function(){
+	if(!window.validators){
+		window.validators = [];
+	}
+	this.handle = (window.validators.push(this)-1);
+	return this.handle;
 }
 
-Validation.enableSubmitButton = function(){
-	$(Validation.submit_button).val('Submit');
-	$(Validation.submit_button).attr('disabled', false);
+Validation.prototype.getHandle = function(){
+	return this.handle;
 }
 
-Validation.validateForm = function(submit_button, id){
-	Validation.submit_button = submit_button;
-	Validation.disableSubmitButton();
-	Validation.fullform = true;
-	Validation.form_id = id;
-	var inputs = $('#'+id+' [validation]').get();
+Validation.prototype.disableSubmitButton = function(){	
+	$('#'+this.form_id+" :submit").each(function(i, input){		
+		$(input).val('...WORKING...');
+		$(input).attr('disabled', 'disabled');
+	});
+}
+
+Validation.prototype.enableSubmitButton = function(){
+	$('#'+this.form_id+" :submit").each(function(i, input){
+		$(input).val('Submit');
+		$(input).attr('disabled', false);
+	});	
+}
+
+Validation.prototype.validateForm = function(){	
+	this.disableSubmitButton();	
+	this.fullform = true;
+	var inputs = $('#'+this.form_id+' [validation]').get();	
 	var remotevalidations = [];	
 	var validated = true;
 	for(i in inputs){
-		var ret = Validation.validateInput(inputs[i], true);
+		var ret = this.validateInput(inputs[i], true);
 		if(ret){
 			var remotevalidations = remotevalidations.concat(ret);			
 		}else{
@@ -61,14 +87,14 @@ Validation.validateForm = function(submit_button, id){
 		}
 	}
 	if(validated && remotevalidations.length == 0){
-		Validation.fullform = false;
-		Validation.enableSubmitButton();
+		this.fullform = false;
+		this.enableSubmitButton();
 		return true;
 	}else if(remotevalidations.length > 0){ //we have remote validations to do
-		Validation.doRemoteValidations(remotevalidations);
+		this.doRemoteValidations(remotevalidations, true);
 		return false;
 	}else{ //we failed a validation
-		Validation.enableSubmitButton();
+		this.enableSubmitButton();
 		return false;
 	}
 }
@@ -76,23 +102,26 @@ Validation.validateForm = function(submit_button, id){
 /**
 *	Validates an individual input for validity
 */
-Validation.validateInput = function(input){
+Validation.prototype.validateInput = function(input){
+	//get this value as soon as we instantiate, because it's important
+	//that we know the state when it started, more than at the end! 
+	var fullform = this.fullform;
 	//get validation string
 	var validation = $(input).attr('validation') || '';
 		
 	//get validation objects parsed from validation string
-	var validations = Validation.parseValidationString(validation);
+	var validations = this.parseValidationString(validation);
 
 	var validated = true;
 	var remotevalidations = [];
 	
 	//loop over validation objects and validate the value
 	for(i in validations){
-		var res = Validation.checkFunction(validations[i].function, validations[i].params, input);
+		var res = this.checkFunction(validations[i].function, validations[i].params, input);
 		if(res == 'undefined_function'){
 			//we need to hit the server with the function and hope!
 			var val = validations[i];
-			val.value = Validation.getInputValue(input);
+			val.value = this.getInputValue(input);
 			val.input_id = $(input).attr('id');
 			remotevalidations.push(val);			
 		}else{
@@ -103,15 +132,15 @@ Validation.validateInput = function(input){
 				//set error msg and break out of loop
 				var err = $(input).attr('validationmessage');
 				if(!err){
-					var err = Validation.getValidationError(validations[i].function);
+					var err = this.getValidationError(validations[i].function);
 					if(err){
-						Validation.showError(input, err);
+						this.showError(input, err);
 					}else{
 						var err = "Validation message not configured for "+validations[i].function+" but it failed validation!";
-						Validation.showError(input, err);
+						this.showError(input, err);
 					}
 				}else{
-					Validation.showError(input, err);
+					this.showError(input, err);
 				}
 				validated = false;
 				break;				
@@ -126,14 +155,14 @@ Validation.validateInput = function(input){
 		}
 	}
 
-	if(!Validation.fullform){
+	if(!fullform){
 		if(validated){			
-			Validation.hideError(input); //get rid of error message if one exists
-			Validation.doRemoteValidations(remotevalidations);
+			this.hideError(input); //get rid of error message if one exists
+			this.doRemoteValidations(remotevalidations);
 		}
 	}else{ //if fullform, aggregate remote validations, and lock form from submitting
 		if(validated){
-			Validation.hideError(input);
+			this.hideError(input);
 			return remotevalidations;
 		}else{
 			return false;
@@ -141,23 +170,26 @@ Validation.validateInput = function(input){
 	}
 }
 
-Validation.doRemoteValidations = function(validations){	
+Validation.prototype.doRemoteValidations = function(validations, submit){	
+	var submit = submit || false;
 	var validations = validations || [];
+	var handle = this.getHandle();
 
 	if(validations.length > 0){
-		doAjax('validate/', {validations: validations}, Validation.remoteValidationCallback, Validation.remoteValidationCallback);
+		doAjax('validate/', {validations: validations}, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit); }, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit); });
 		return true;
 	}
 	return false;
 }
 
-Validation.remoteValidationCallback = function(validations){
+Validation.prototype.remoteValidationCallback = function(validations, submit){
+	var submit = submit || false;
 	var validated = true;
 
 	for(i in validations){
 		if(validations[i].status == "fail"){
-			var input = $('#'+validations[i].input_id).get(0);
-			Validation.showError(input, validations[i].error_message);
+			var input = $('#'+validations[i].input_id).get(0);			
+			this.showError(input, validations[i].error_message);
 			validated = false;
 		}else if(validations[i].status == "value_change"){
 			$('#'+validations[i].input_id).val(validations[i].value);
@@ -166,12 +198,16 @@ Validation.remoteValidationCallback = function(validations){
 		//but we really don't care to do anything about either...
 	}
 
-	if(Validation.fullform){
-		Validation.fullform = false;
+	if(submit){
+		//force this off so if there is an onchange that
+		//needs a remote validation, it will do it, instead of
+		//returning the validations!
+		this.fullform = false;
 		if(validated){
-			$('#'+Validation.form_id).submit();
+			this.ignore_validation = true;
+			$('#'+this.form_id).submit();
 		}else{
-			Validation.enableSubmitButton();	
+			this.enableSubmitButton();	
 		}
 	}	
 }
@@ -181,7 +217,7 @@ Validation.remoteValidationCallback = function(validations){
 * @param string validation Complete string in validation attribute of input
 * @return object Object containing function name, and params to run on it
 */
-Validation.parseValidationString = function(validation){
+Validation.prototype.parseValidationString = function(validation){
 	//set validation string
 	var validation = validation || '';
 	//split string into rules
@@ -217,24 +253,24 @@ Validation.parseValidationString = function(validation){
 * @param HTMLELEMENT input Input element in question
 * @return misc Whatever the function returns, or "undefined_function"
 */
-Validation.checkFunction = function(func, params, input){
-	var value = Validation.getInputValue(input);
+Validation.prototype.checkFunction = function(func, params, input){
+	var value = this.getInputValue(input);
 
 	//test for globalally accessible functions
 	if(typeof window[func] == 'function'){
 		var res = window[func](value, params);
 		if(res == false){
-			var err = Validation.getValidationError(func);
+			var err = this.getValidationError(func);
 			if(!err){
-				Validation.setValidationError(func, 'Validation failed!');
+				this.setValidationError(func, 'Validation failed!');
 			}
 			return false;
 		}else{
 			return res;
 		}		
-	}else if(typeof Validation[func] == 'function'){
+	}else if(typeof this[func] == 'function'){
 		//defined inside this class
-		return Validation[func](value, params);
+		return this[func](value, params);
 	}else{
 		return "undefined_function";
 	}	
@@ -244,7 +280,7 @@ Validation.checkFunction = function(func, params, input){
 * Gets the values of all the inputs similarly named (name="whatever") values as an array (because check boxes and multi select!)
 * @param HTMLinput|select|textarea Input to work with
 */
-Validation.getInputValue = function(input){
+Validation.prototype.getInputValue = function(input){
 	var tag = $(input).prop('tagName');
 	var name = $(input).attr('name');
 	
@@ -262,8 +298,8 @@ Validation.getInputValue = function(input){
 * @param string func Function that was called
 * @param string err Error message to register with function
 */
-Validation.setValidationError = function(func, err){
-	Validation.validation_errors[func] = err;
+Validation.prototype.setValidationError = function(func, err){
+	this.validation_errors[func] = err;
 }
 
 /**
@@ -271,8 +307,8 @@ Validation.setValidationError = function(func, err){
 * @param string func Function that was called
 * @return string|false
 */
-Validation.getValidationError = function(func){
-	var msg = Validation.validation_errors[func];
+Validation.prototype.getValidationError = function(func){
+	var msg = this.validation_errors[func];
 	if(msg) return msg;
 	else return false;
 }
@@ -280,12 +316,13 @@ Validation.getValidationError = function(func){
 /**
 * Gets an element's size and position
 */
-Validation.getElementSizeAndPosition = function(elem){
+Validation.prototype.getElementSizeAndPosition = function(elem){
 	var props = {size: {}};
+
 
 	props.size.width = $(elem).width();
 	props.size.height = $(elem).height();
-	props.position = $(elem).offset();
+	props.position = $(elem).offset();	
 	
 	//tl
 	props.position.topLeftX = props.position.left;
@@ -303,32 +340,31 @@ Validation.getElementSizeAndPosition = function(elem){
 	return props;	
 }
 
-Validation.showError = function(input, err){
-	var notif = Validation.getNotif(input);
+Validation.prototype.showError = function(input, err){
+	var notif = this.getNotif(input);
 	$(notif).html(err);
 	$(notif).removeClass('hide');
 	$(notif).addClass('show');	
 }
 
-Validation.hideError = function(input){
-	var notif = Validation.getNotif(input);
+Validation.prototype.hideError = function(input){
+	var notif = this.getNotif(input);
 	$(notif).removeClass('show');
 	$(notif).addClass('hide');
 	
 }
 
-Validation.getNotif = function(input){
+Validation.prototype.getNotif = function(input){
 	var input_id = $(input).attr('id');
 	var notif_id = input_id+'_err';
 	var notif = $('#'+notif_id).get(0);
 	if(!notif){
-		var props = Validation.getElementSizeAndPosition(input);
+		var props = this.getElementSizeAndPosition(input);
 		var notif = jQuery('<div />').appendTo(document.body);
 		$(notif).addClass('err_notif hide');
 		$(notif).attr('id', notif_id);		
 		$(notif).css('top', props.position.bottomLeftY+6);
-		$(notif).css('left', props.position.bottomLeftX);
-		//alert(props.position.bottomLeftY+" "+$(notif).css('top'));
+		$(notif).css('left', props.position.bottomLeftX);		
 	}
 	return notif;
 }
@@ -340,7 +376,7 @@ Validation.getNotif = function(input){
 * @param HTMLELEMENT elem Element
 * @return string|false
 */
-Validation.getQuestionClassFromElem = function(elem){
+Validation.prototype.getQuestionClassFromElem = function(elem){
 	var classes = $(elem).attr('class').split(' ');
 	var q_class = false;
 	for(i in classes){
@@ -354,9 +390,9 @@ Validation.getQuestionClassFromElem = function(elem){
 
 /*********************** Validation functions go below this line *******************/
 
-Validation.min_length = function(value, params){
+Validation.prototype.min_length = function(value, params){
 	if(value.length < params[0]){
-		Validation.setValidationError('min_length', 'Must be at least '+params[0]+' in length!');
+		this.setValidationError('min_length', 'Must be at least '+params[0]+' in length!');
 		return false;
 	}
 	return true;

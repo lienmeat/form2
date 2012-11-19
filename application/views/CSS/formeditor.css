@@ -1,0 +1,11 @@
+.sortable-question-placeholder{
+	background: pink;
+	height: 70px;
+	border: 1px dotted red;
+	border-bottom: 2px dotted red;
+	border-radius: 10px;
+}
+
+.ui-sortable-helper .form_question, .ui-sortable-helper .form_answer{
+	min-width: 463px;
+}

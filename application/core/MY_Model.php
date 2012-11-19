@@ -90,11 +90,16 @@ class MY_Model extends CI_Model {
 	*/
 	function decodeMany(Array $objs){
 	  if(!empty($objs)){
-	    foreach($objs as $o){
-	      if(!defined($o->config)) break;
-	      $o =& $this->decode($o);
+	  	$numb = count($objs);
+	    for($i=0; $i<$numb; $i++){
+	      if(!empty($objs[$i]->config)){
+	      	$objs[$i] = $this->decode($objs[$i]);
+	      }else{
+	      	break;
+	      }
 	    }
 	  }
+	  //print_r($objs);
 	  return $objs;
 	}
 	
@@ -103,9 +108,13 @@ class MY_Model extends CI_Model {
 	*/
 	function encodeMany(Array $objs){
 	  if(!empty($objs)){
-	    foreach($objs as $o){
-	      if(!defined($o->config)) break;
-	      $o =& $this->encode($o);
+	  	$numb = count($objs);
+	    for($i=0; $i<$numb; $i++){
+	      if(!empty($objs[$i]->config)){
+	      	$objs[$i] = $this->encode($objs[$i]);
+	      }else{
+	      	break;
+	      }
 	    }
 	  }
 	  return $objs;
@@ -118,7 +127,7 @@ class MY_Model extends CI_Model {
 	function decode($obj){
 	  if($obj->config and (!is_array($obj->config) and !is_object($obj->config))){
 	    $obj->config = json_decode($obj->config);
-	  }
+	  }	  
 	  return $obj;
 	}
 	

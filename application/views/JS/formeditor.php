@@ -1,4 +1,5 @@
-<script type="text/javascript" scr="<?php echo base_url(); ?>/application/views/JS/formeditor.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>application/views/JS/formeditor.js"></script>
 <script type="text/javascript">
-	Formeditor.form_id = '<?php echo $form_id; ?>';
+var form_id = '<?php echo $form_id; ?>';
 </script>
+<link rel="stylesheet" href="<?php echo base_url(); ?>application/views/CSS/formeditor.css"/> 

@@ -22,9 +22,14 @@ class Validate extends MY_Controller{
 
 		function index(){
 			$validations = $_POST['validations'];
+			$values = array();
 			$lim = count($validations);
 			for($i=0; $i<$lim; $i++){
 				$val =& $validations[$i];
+				//grab previously-modified value for this input
+				if($values[$val['input_id']]){
+					$val['value'] = $values[$val['input_id']];
+				}
 				try{
 					$ret = $this->validation->validateFunction($val['function'], $val['value'], $val['params']);
 					if($ret === true){ //this function validated properly
@@ -34,7 +39,8 @@ class Validate extends MY_Controller{
 						$val['status'] = "fail";
 					}else{ //we got a string back
 						$val['value'] = $ret;
-						$val['status'] = "value_change";
+						$values[$val['input_id']] = $ret;
+						$val['status'] = "value_change";						
 					}
 				}catch(Exception $e){
 					$val['status'] = "undefined_function";

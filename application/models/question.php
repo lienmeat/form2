@@ -36,7 +36,7 @@ class Question extends MY_Model{
 			$temp = array();
 			foreach($questions as $q){
 				$q->form_id =& $to_form;
-				$q->id = uniqid('', true);
+				$q->id = uniqid('');
 				$temp[] = (array) $q;				
 			}
 			unset($questions);
@@ -50,6 +50,19 @@ class Question extends MY_Model{
 		}
 		//$this->db->trans_complete();
 		return false;
+	}
+
+	/**
+	* Updates the order of the questions to be the same order as the ID's passed in
+	* @param array $question_ids Array of question ids that need reordering
+	*/
+	function reorder(Array $question_ids=null){
+		if(!$question_ids) return false;
+		$data = array();
+		foreach($question_ids as $k=>$id){
+			$data[] = array('id'=>$id, 'order'=>$k);
+		}
+		$this->db->update_batch($this->table, $data, 'id');
 	}
 	
 	/**
@@ -81,7 +94,7 @@ class Question extends MY_Model{
 	  if($data and (is_array($data) or is_object($data))){
 	    $data = (object) $data;
 	  }else return false;    
-	  $data->id = uniqid('', true);
+	  $data->id = uniqid('');
 	  if(parent::insert($data)){
 	    return $this->getById($data->id);
 	  }else{

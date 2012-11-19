@@ -324,11 +324,17 @@ class Submit_Input extends Input_Input{
 }
 
 class Radio_Input extends Input_Input{
+	private $selected = array();
+	private $label = '';
+
 	function __construct($config=null){
 		parent::__construct($config);
 		$this->setType('radio');
-		if($config['selected']){
-			$this->setSelections($config['selected']);
+		if($config->selected){
+			$this->setSelections($config->selected);
+		}
+		if($config->label){
+			$this->setLabel($config->label);
 		}
 	}
 	
@@ -338,7 +344,17 @@ class Radio_Input extends Input_Input{
 		if($this->isSelected($this->getValue())){
 			$this->setAttribute('checked', 'checked');
 		}
-		return "<input ".$this->attributesToString().">";
+		return "<input ".$this->attributesToString()."/>&nbsp;".$this->getLabel();
+	}
+
+	function setLabel($label){
+		if($label){
+			$this->label = $label;
+		}
+	}
+
+	function getLabel(){
+		return $this->label;
 	}
 
 	function setSelected($selected){
@@ -361,13 +377,27 @@ class Radio_Input extends Input_Input{
 
 class Checkbox_Input extends Input_Input implements iSelectable{
 	private $selected = array();
+	private $label = '';
 
 	function __construct($config=null){
 		parent::__construct($config);
 		$this->setType('checkbox');
-		if($config['selected']){
-			$this->setSelections($config['selected']);
+		if($config->selected){
+			$this->setSelections($config->selected);
 		}
+		if($config->label){
+			$this->setLabel($config->label);
+		}
+	}
+
+	function setLabel($label){
+		if($label){
+			$this->label = $label;
+		}
+	}
+
+	function getLabel(){
+		return $this->label;
 	}
 	
 	//because checkboxes are always multiselect...force them to be
@@ -383,7 +413,7 @@ class Checkbox_Input extends Input_Input implements iSelectable{
 		if($this->isSelected($this->getValue())){
 			$this->setAttribute('checked', 'checked');
 		}
-		return "<input ".$this->attributesToString().">";
+		return "<input ".$this->attributesToString()."/>&nbsp;".$this->getLabel();
 	}
 
 	function setSelected($selected){
@@ -442,8 +472,8 @@ class Select_Input extends Base_Input implements iSelectable{
 		parent::__construct($config);
 		$this->setTag('select');
 		$this->setType('select');
-		if(!empty($config['options'])) $this->setOptions($config['options']);
-		if(!empty($config['selected'])) $this->setSelections($config['selected']);
+		if(!empty($config->options)) $this->setOptions($config->options);
+		if(!empty($config->selected)) $this->setSelections($config->selected);
 		$post = $this->getPost();
 		if($post !== false && !$this->ignore_post) $this->setSelected($post);
 	}
@@ -497,7 +527,7 @@ class Select_Input extends Base_Input implements iSelectable{
 	function optionsToString(){
 		$out = '';
 		foreach($this->options as $l=>$v){
-			if(in_array($l, $this->selected) or in_array($v, $this->selected)) $sel = ' selected="selected"';
+			if($this->isSelected($l) or $this->isSelected($v)) $sel = ' selected="selected"';
 			else $sel = '';
 			if($v === null) $val = '';
 			else $val = "value=\"$v\"";
@@ -511,7 +541,7 @@ class Select_Input extends Base_Input implements iSelectable{
 	}
 }
 
-class MultipleSelect_Input extends Select_Input{
+class Multipleselect_Input extends Select_Input{
 
 	function __construct($config=null){
 		parent::__construct($config);
@@ -532,30 +562,15 @@ class Inputs implements iInput{
 	private $input;
 	var $pre_wrap = "";
 	var $post_wrap = "";
+	
 	function __construct($config=null){
 		if(!empty($config)) $this->setConfig($config);
 	}
 	
-	function setConfig($config=null){
-	  if(is_object($config)){
-	    $config = (array) $config;
-	  }
-	  /*
-	  if(is_array($config)){
-	    if($config['config'] && !is_array($config['config']) && !is_object($config['config'])){
-	      //we have ourselves a raw database record
-	      $this->pre_wrap = $config['pre_wrap'];
-	      $this->post_wrap = $config['post_wrap'];
-	      $this->id = $config['id'];
-	      $config = (array) json_decode($config['config']);
-	      
-	    }
-	  }else{
-	    if($config) $config = (array) json_decode($config);
-	  }
-	  */
-		$type = ucfirst($config['type'])."_Input";
-		if(isset($config['attributes']['type'])) $type = ucfirst($config['attributes']['type'])."_Input";
+	function setConfig($config=null){	  
+		$this->input = false; 
+		$type = ucfirst($config->type)."_Input";
+		if(isset($config->attributes->type)) $type = ucfirst($config->attributes->type)."_Input";
 		$this->input = new $type($config);
 	}
 
@@ -596,7 +611,7 @@ class Inputs implements iInput{
 	}
 	
 	function setAttribute($name, $value){
-		$this->input->setVaue($name, $value);
+		$this->input->setAttribute($name, $value);
 	}
 	
 	function setAttributes($attributes){

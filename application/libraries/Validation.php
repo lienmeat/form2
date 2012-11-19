@@ -619,6 +619,32 @@ class Validation{
 	public function encode_php_tags($str)
 	{
 		return str_replace(array('<?php', '<?PHP', '<?', '?>'),  array('&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'), $str);
+	}
+
+	/**
+	* Formats a form name and strips out any bad chars
+	*/
+	public function formnameformat($str){
+		return preg_replace('/[^a-z0-9\-]/i','',trim($str));
+	}
+
+	/**
+	* Requires input to have a unique form name
+	*/
+	public function newformname($str){
+		$this->CI->load->model('form');
+		
+		if(!empty($str)){
+			$res = $this->CI->form->nameExists($str);
+		}else{
+			$res = true;
+		}
+		if($res){
+			$this->setValidationMessage('newformname', "The form name is required but must not be in use by another form! Please use a different name!");
+			return false;
+		}else{
+			return true;
+		}
 	}	
 }
 

@@ -3,9 +3,9 @@ class MY_Controller extends CI_Controller{
 
   function __construct(){
     parent::__construct();
-    if($_GET['action'] == 'logout') $this->logout();
+    if($_GET['action'] == 'logout') $this->_logout();
     if(ENVIRONMENT == 'development'){
-      $this->output->enable_profiler(true);
+      //$this->output->enable_profiler(true);
     }    
   }
 
@@ -31,7 +31,7 @@ class MY_Controller extends CI_Controller{
   * @param string $category A category (recordtype) to associate with this message
   * @param string $category_id Id of record in category to associate with this log
   */
-  private function _log($message, $data=null, $category=null, $category_id=null){
+  protected function _log($message, $data=null, $category=null, $category_id=null){
     if($data){
       if(is_object($data)) $data = (array) $data;
       if(!is_array($data)) $data = null;
@@ -47,7 +47,7 @@ class MY_Controller extends CI_Controller{
   * Fails with a message if called
   * @param string $message Message to yell at person
   */
-  private function _failAuthResp($message=null){
+  protected function _failAuthResp($message=null){
       if($message) $data['message'] = $message;
       else $data['message'] = 'You are not authorized to perform this action!';
 		  $this->render('failauth', $data);
@@ -60,13 +60,13 @@ class MY_Controller extends CI_Controller{
   * @param array|object $data Data to send to view  
   * @param bool $echo Whether to echo data or return it
   */
-  private function _render($view, $data=null, $echo=true){
+  protected function _render($view, $data=null, $echo=true){
     $output = $this->load->view($view, $data, true);
     //todo: write lib for hooking data into random HTML and use it on content here
     
   }
 
-  private function _redirect($url){
+  protected function _redirect($url){    
     header('location: '.$url);
     exit;
     echo "Location should be: ".$url;
@@ -75,7 +75,7 @@ class MY_Controller extends CI_Controller{
   /**
   * This function forces a logout when a person clicks Sign Out in the menu!
   */
-  private function _logout(){
+  protected function _logout(){
     //ok, so this person is actually logged in
     if($this->authorization->isLoggedIn()){
       $this->authorization->logout();

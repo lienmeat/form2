@@ -17,14 +17,15 @@ class Forms extends MY_Controller{
 			$this->_failAuthResponse("You must be logged in to complete this action!");
 			return;
 		}
-		if(empty($_POST)){
+		if(empty($_POST)){ //todo: server-side validation!
 			//ask user to create the form
-			$this->load->view('add_form');
+			$this->load->view('add_form');			
 		}else{
 			$form = array_merge($_POST, array('creator'=>$this->authorization->username()));
-			$this->form->insert($form);
-			$this->redirect(site_url('forms/edit/'.$form->id));
-		}
+			$form = $this->_saveForm($form);
+			$this->_redirect(site_url('forms/edit/'.$form->id));
+			//print_r($form);
+		}		
 	}
 
 
@@ -33,10 +34,8 @@ class Forms extends MY_Controller{
 	* Edit an existing form
 	*/
 	function edit($name_or_id){
-		die('ok');
-		//$this->authorization->forceLogin();
-		$form = $this->form->getById($name_or_id);
-		die(print_r($form, true));
+		$this->authorization->forceLogin();
+		$form = $this->form->getById($name_or_id);		
 		if(!$form){
 			//get forms by name and ask which one
 			$forms = $this->form->getByName($name_or_id);
@@ -56,9 +55,10 @@ class Forms extends MY_Controller{
 		}else{
 			//get stuff needed when editing a form
 			$form->questions = $this->_getQuestions($form->id);
+			//$this->load->library('inputs');
+			$this->load->view('edit_form',array('form'=>$form));
 		}
 
-		$this->load->view('edit_form',array('form'=>$form));
 	}
 
 	/**
@@ -103,8 +103,13 @@ class Forms extends MY_Controller{
 	/**
 	* Save form data
 	*/
-	private function _saveForm($form){
-
+	private function _saveForm($form){		
+		if(is_array($form)) $form = (object) $form;
+		if($form->id){
+			return $this->form->update($form);
+		}else{
+			return $this->form->insert($form);
+		}
 	}
 
 	/**

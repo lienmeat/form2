@@ -131,7 +131,7 @@ class Form extends MY_Model{
 	    $data = (object) $data;
     }else return false;
 	  $data->created = date('Y-m-d H:i:s');
-	  $data->id = uniqid('', true);
+	  $data->id = uniqid('');
     $data =& $this->encode($data);
     //echo print_r($data, true);
     if(parent::insert($data)){
@@ -143,6 +143,21 @@ class Form extends MY_Model{
 	    return false;
 	  }
 	}	
-}
 
+
+	/**
+	* Finds if a form with given name exists
+	* @param string $form_name
+	*	@return bool
+	*/
+	function nameExists($form_name){
+		$q = "SELECT `id` FROM `".$this->table."` WHERE `name` = ? LIMIT 1";
+		$query = $this->db->query($q, $form_name);
+		if($query->num_rows() > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+}
 ?>

@@ -12,15 +12,7 @@
 //probably shouldn't have called questions questions,
 //because there is other crap in forms than questions....
 foreach($questions as $question){
-	if($question->config->type == 'info'){
-		$this->load->view('question/result_info', (array) $question);
-	}elseif($question->config->type == 'heading'){
-		$this->load->view('question/result_heading', (array) $question);
-	}elseif($question->config->type == 'workflow'){
-		$this->load->view('question/result_workflow', (array) $question);		
-	}else{
-		$this->load->view('question/result_question', (array) $question);
-	}
+	$this->load->view('question/result_question', (array) $question);	
 }
 ?>
 
