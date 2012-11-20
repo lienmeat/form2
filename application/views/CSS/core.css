@@ -83,51 +83,83 @@ label {
 /** This stuff below is stuff I added for this app! **/
 
 .form_contain{
-  display: table-body;
+  display: table;
   width: 100%;
   list-style: none;
   margin-left: 0px;
-  padding-left: 0px;    
+  padding-left: 0px;   
+  border-spacing:0px 3px;
 }
 
-.form_row {
+.form_row { 
+  
   margin-right: auto;
   margin-left: auto;
   width: 100%;  
   display: table-row;
-  /*border-bottom: 4px solid pink;*/  
+  /*border-bottom: 4px solid pink;*/ 
+  background-color: #F5EFE4;
+  
+  border: 1px solid #000;
+}
+
+.form_row:first-child div:first-child {
+  border-top-left-radius: 10px; 
+}
+.form_row:first-child div:last-child{
+  border-top-right-radius: 10px;
+}
+.form_row:last-child  div:last-child{
+  border-bottom-right-radius: 10px;
+}
+.form_row:last-child  div:first-child {
+  border-bottom-left-radius: 10px;
 }
 
 .form_question {  
-  /*float: left;*/
+  vertical-align: top;
   padding: 5px;
   width: 50%;
   display: table-cell;
-  border-bottom: 2px solid #806C46;
+  /*border-bottom: 2px solid #806C46;
   border-left: 1px solid #806C46;
-  border-right: 1px dotted rgba(0,0,0,0.55);
-  border-top: 1px solid #806C46;
-  border-bottom-left-radius: 10px;
-  border-top-left-radius: 10px; 
-  background-color: white;   
+  
+  border-top: 1px solid #806C46;*/
+  /*border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px
+  background-color: #F5EFE4; ; 
+  border-right: 1px dotted rgba(0,0,0,0.55);*/
+  margin-bottom:10px;
+  background-color:
 }
-
+.form_question_text{
+font-size:1.2em;
+}
+.form_question_alt{
+ color:#8F2F2F;
+}
 .form_answer {
   /*float: left;*/
   padding: 5px;
   width: 50%;    
   display: table-cell;
-  border-bottom: 2px solid #806C46;
+  
+ /* border-bottom: 2px solid #806C46;
   border-right: 1px solid #806C46;
-  border-top: 1px solid #806C46;
-  border-bottom-right-radius: 10px;
+  border-top: 1px solid #806C46;*/
+  /*border-bottom-right-radius: 10px;
   border-top-right-radius: 10px;
-  background-color: white;
+  background-color: #F5EFE4;*/
   /*background: blue;*/
+  vertical-align:middle;
 }
+
+
+
 
 .form_element_contain {
   float: right;
+  position:relative;
 }
 
 .clear {
