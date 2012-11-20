@@ -42,19 +42,19 @@ class Questions extends MY_Controller{
 	/**
 	* Saves a question after editing config, echos out question's edit view on success
 	*/
-	function savequestion($id){
-		die(print_r($_POST));
+	function savequestion($id){		
 		if(!empty($_POST) and $id){
 			$question = $_POST;
 			$question['id'] = $id;
-			$question = $this->question->update($data);
+			$question = $this->question->update($question);
 		}
-		//if it actually updates...
+		//if it actually updates...		
 		if(is_object($question)){
-			$html = $this->load->view('element/edit_'.$question->config->type, array('question'=>$question), true);
-			echo json_encode(array('question_id'=>$question->id, 'html'=>$html));
+			$this->load->library('inputs');
+			$html = $this->load->view('element/edit_'.$question->config->type, (array) $question, true);
+			echo json_encode(array('status'=>'success', 'question_id'=>$question->id, 'html'=>$html));
 		}else{//othwise notify of fail
-			echo json_encode(array('question_id'=>$id, 'html'=>'<h3 class="Err">This question failed to save!</h3>'));
+			echo json_encode(array('status'=>'fail', 'question_id'=>$id, 'html'=>'<h3 class="Err">This question failed to save!</h3>'));
 		}
 	}
 
