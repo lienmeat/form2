@@ -5,16 +5,6 @@
 * added after question config options!
 */
 
-$question_config =(object) array(
-	'type'=>'textarea',
-	'text'=>'Question Text: ',	
-	'name'=>'config[text]',	
-	'value'=>$question->config->text,
-	'attributes'=>array('validation'=>'required'),
-);
-
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
-
 $question_config =(object) array(			
 	'type'=>'text',
 	'name'=>'config[name]',
@@ -25,6 +15,27 @@ $question_config =(object) array(
 );
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+
+$question_config =(object) array(
+	'type'=>'textarea',
+	'text'=>'Question Text: ',	
+	'name'=>'config[text]',	
+	'value'=>$question->config->text,
+	'attributes'=>array('validation'=>'required'),
+);
+
+$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+
+$question_config =(object) array(
+	'type'=>'textarea',
+	'text'=>'Alt Text: ',
+	'alt'=>'(Text like this describing a question)',	
+	'name'=>'config[alt]',	
+	'value'=>$question->config->alt,
+);
+
+$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+
 
 $question_config =(object) array(	
 	'type'=>'textarea',
@@ -39,7 +50,7 @@ $question_config =(object) array(
 	'type'=>'textarea',
 	'text'=>'Input Attributes:',
 	'alt'=>'(any html attribute you want to assign to the actual input itself, one per line. ex. style=color: red;)',
-	'name'=>'config[attributes_unparsed]',
+	'name'=>'config[attributes]',
 	'value'=>json_encode($question->config->attributes),
 );
 
