@@ -43,6 +43,7 @@ class Questions extends MY_Controller{
 	* Saves a question after editing config, echos out question's edit view on success
 	*/
 	function savequestion($id){		
+		print_r($_POST);
 		if(!empty($_POST) and $id){
 			$question = $_POST;
 			$question['id'] = $id;

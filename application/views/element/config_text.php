@@ -46,16 +46,7 @@ $question_config =(object) array(
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
 
-$question_config =(object) array(			
-	'type'=>'textarea',
-	'text'=>'Input Attributes:',
-	'alt'=>'(any html attribute you want to assign to the actual input itself, one per line. ex. style=color: red;)',
-	'name'=>'config[attributes]',
-	'value'=>json_encode($question->config->attributes),
-);
-
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
-
+/*
 $question_config =(object) array(			
 	'text'=>'Input Validation:',
 	'alt'=>'(validation you want to assign to the actual input itself, separated by "|". ex. required|min_length[3])',
@@ -65,4 +56,16 @@ $question_config =(object) array(
 );
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+*/
+
+$question_config =(object) array(			
+	'type'=>'textarea',
+	'text'=>'Input Attributes:',
+	'alt'=>'(any html attribute you want to assign to the actual input itself, one per line. ex. style=color: red;)',
+	'name'=>'config',
+	'value'=>json_encode($question->config),
+);
+
+$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+
 ?>

@@ -81,7 +81,7 @@ class Authentication{
 	*/
 	function keepAlive(){
 		//from DA_Client.php
-		ajaxKeepAlive();
+		//ajaxKeepAlive();
 	}
 }
 ?>
