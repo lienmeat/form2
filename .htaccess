@@ -7,7 +7,7 @@ DirectoryIndex index.php
   #RewriteBase /form2/ 
   
   #development
-  RewriteBase /dev/bobtesting/form2/
+  RewriteBase /dev/form2/
 
   
   RewriteCond %{REQUEST_FILENAME} !-f
