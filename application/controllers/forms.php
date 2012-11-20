@@ -6,6 +6,25 @@ class Forms extends MY_Controller{
 		$this->load->model('form');
 	}
 
+	function view($name){
+		$form = $this->form->getPublishedWithName($name);
+		if($form){
+			$this->_view($form);
+		}
+	}
+
+	function viewid($id){
+		$form = $this->form->getById($id);
+		if($form){
+			$this->_view($form);
+		}
+	}
+
+	private function _view($form){
+		$form->questions = $this->_getQuestions($form->id);
+		$this->load->view('view_form', array('form'=>$form));
+	}
+
 	/**
 	* Make a new form
 	*/
@@ -50,15 +69,20 @@ class Forms extends MY_Controller{
 
 		//a published form CANNOT be edited directly for safty reasons(you could un-publish...)
 		if($form->published){
-			$form = $this->_duplicateForm($form->id);
 			die('what');
+			$form = $this->_duplicateForm($form->id);
+			
 		}else{
 			//get stuff needed when editing a form
 			$form->questions = $this->_getQuestions($form->id);
 			//$this->load->library('inputs');
 			$this->load->view('edit_form',array('form'=>$form));
 		}
+	}
 
+
+	function saveconfig(){
+		
 	}
 
 	/**

@@ -63,7 +63,13 @@ class Authentication{
 	function login($functions='dirlogin'){
 		$functions = strtolower($functions);
 		if(!$functions) $functions = 'dirlogin';
-		$this->setUser(DA_Client::doLogin($functions));
+		if(strpos('nonwwulogin', $functions) !== false) $userInfo = nonWWULogin();
+		if(!$userInfo && strpos('dirlogin', $functions) !== false){
+			$userInfo = dirLogin();
+		}
+		if($userInfo){
+			$this->setUser($userInfo);
+		}
 		return $this->getUser();
 	}
 

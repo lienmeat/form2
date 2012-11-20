@@ -43,10 +43,10 @@ class Form extends MY_Model{
 	* @param string $name
 	* @return object|bool
 	*/
-	function getPublishedWithName($name=null, $order_by){
+	function getPublishedWithName($name=null, $order_by='created DESC'){
 	  if(!$name) return false;
     if(!$order_by)	$order_by = 'created DESC';
-	  $query = $this->db->query("SELECT * FROM `{$this->table}` WHERE `name` = ? AND `published` IS NOT NULL AND `published` != 'NULL' ORDER BY $order_by", array($name));
+	  $query = $this->db->query("SELECT * FROM `{$this->table}` WHERE `name` = ? AND (`published` IS NOT NULL AND `published` != 'NULL') ORDER BY $order_by", array($name));
 	  $res = $query->result();
 	  if(!empty($res)){
 	    return $this->decode($res[0]);

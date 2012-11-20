@@ -5,7 +5,7 @@
 
 <div class="form_answer view_mode <?php echo $config->name; ?>_fi2" id="<?php echo $id; ?>_answer">
 	<div class="form_element_contain  view_mode <?php echo $config->name; ?>_fi2">
-		<?php
+		<?php		
 		$this->inputs->setConfig($config);
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$config->name.'_fi2');
 		//$this->inputs->setName($config->name);

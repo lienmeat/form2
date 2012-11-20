@@ -21,6 +21,8 @@ FormEditor.__init__ = function(){
 	this.form_id = form_id;
 	this.initModals();
 	this.initSortable();
+	FormEditor.form_questions_validator = new Validation('form_questions_form');
+	FormEditor.form_config_valalidator = new Validation('form_config_form');
 }
 
 /**
@@ -35,6 +37,11 @@ FormEditor.initModals = function(){
 		height: 700,
 		width: 1000,
 		modal: true,
+		buttons: {
+			"Save": function(){
+				FormEditor.form_config_validator.validateForm(FormEditor.saveFormConfig);
+			}
+		}
 	});
 
 	$("#question_config_editor").dialog(
@@ -151,6 +158,22 @@ FormEditor.openEditForm = function(){
 	//todo: when modal is open, bug them about leaving the page!
 	//process for opening up a form modal 
 	$("#form_config_editor").dialog('open');
+}
+
+FormEditor.saveFormConfig = function(do_save){
+	var do_save = do_save || false;		
+	if(do_save){
+		var ans = FormEditor.parseSerializedForm($('#form_config_form').serializeArray());
+		doAjax('form/saveconfig/'+id, ans, FormEditor.saveFormConfigCallback, FormEditor.saveFormConfigCallback);
+	}
+}
+
+FormEditor.saveFormConfigCallback = function(resp){
+	if(resp.status == 'success'){		
+		FormEditor.closeEditForm();
+		$('#form_title').html(resp.form.config.title);`
+	}
+	
 }
 
 /**

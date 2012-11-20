@@ -1,4 +1,5 @@
 .sortable-question-placeholder{
+	/*width: 99px;*/
 	background: pink;
 	height: 70px;
 	border: 1px dotted red;

@@ -15,13 +15,12 @@
 </style>
 
 <script type="text/javascript">
-$(document).ready(function(){ var form_questions_val = new Validation('form_questions_form'); });
-$(document).ready(function(){ var form_config_val = new Validation('form_config_form'); });
+
 </script>
 <a href="javascript:void();" onclick="FormEditor.openEditForm();">Edit form configuration</a>
 <div id="form_view_contain">	
-	<div class="form_title edit">
-		<h2><?php echo $form->title." ($form->name)"; ?></h2>
+	<div class="form_title_contain edit_mode">
+		<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
 	</div>
 	<form id="form_questions_form">
 	<ul class="form_contain edit_mode" id="form_questions">
