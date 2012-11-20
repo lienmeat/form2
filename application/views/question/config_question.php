@@ -21,19 +21,9 @@ $question_config =(object) array(
 	'text'=>'Type: ',
 	'name'=>'config[type]',
 	'type'=>'select',
-	'attributes'=>array('validation'=>'required', 'onchange'=>'loadElementConfig(this);'),
+	'attributes'=>array('validation'=>'required', 'onchange'=>'FormEditor.loadElementConfig(this, \'$question->id\')'),
 	'options'=>$question_type_options,
 	'selected'=>array($question->config->type),	
-);
-
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
-
-$question_config =(object) array(
-	'type'=>'text',
-	'text'=>'Question Text: ',	
-	'name'=>'config[text]',	
-	'value'=>$question->config->text,
-	'attributes'=>array('validation'=>'required'),
 );
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));

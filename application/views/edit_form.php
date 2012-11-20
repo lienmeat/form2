@@ -48,7 +48,14 @@ $(document).ready(function(){ var form_config_val = new Validation('form_config_
 	</form>
 </div>
 
-<div id="question_config_editor"></div>
+<div id="question_config_editor">
+	<form id="question_config_form">
+		<ul class="form_contain" id="question_type_contain">
+		</ul>
+		<ul class="form_contain" id="question_config_contain">
+		</ul>
+	</form>
+</div>
 
 <?php
 	//print_r($form);

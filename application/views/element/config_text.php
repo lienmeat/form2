@@ -5,6 +5,16 @@
 * added after question config options!
 */
 
+$question_config =(object) array(
+	'type'=>'textarea',
+	'text'=>'Question Text: ',	
+	'name'=>'config[text]',	
+	'value'=>$question->config->text,
+	'attributes'=>array('validation'=>'required'),
+);
+
+$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+
 $question_config =(object) array(			
 	'type'=>'text',
 	'name'=>'config[name]',
@@ -37,7 +47,7 @@ $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$qu
 
 $question_config =(object) array(			
 	'text'=>'Input Validation:',
-	'alt'=>'(validation you want to assign to the actual input itself, one per line, separated by "|". ex. required|min_length[3])',
+	'alt'=>'(validation you want to assign to the actual input itself, separated by "|". ex. required|min_length[3])',
 	'name'=>'config[attributes][validation]',
 	'type'=>'textarea',
 	'value'=>$question->config->attributes->validation,

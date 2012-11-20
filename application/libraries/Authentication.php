@@ -40,11 +40,11 @@ class Authentication{
 	* @return bool
 	*/
 	function isLoggedInWith($function=null){
-	  if($function){
-	    return in_array(strtolower($function), DA_Client::getSuccessfulAuthMethods());	    
-	  }else{
-	    return false;
-	  }
+		if($function){
+			return in_array(strtolower($function), DA_Client::getSuccessfulAuthMethods());	    
+		}else{
+			return false;
+		}
 	}
 	
 	/**
@@ -52,14 +52,14 @@ class Authentication{
 	* @return bool
 	*/
 	function isLoggedIn(){
-	  if(!empty($this->user->username)) return true;
-	  else return false; 
+		if(!empty($this->user->username)) return true;
+		else return false; 
 	}
 
-  /**
-  * Force a login to occur if not logged in
-  * @param string $functions Comma separated list of login types to allow(dirlogin, nonwwulogin...)
-  */
+	/**
+	* Force a login to occur if not logged in
+	* @param string $functions Comma separated list of login types to allow(dirlogin, nonwwulogin...)
+	*/
 	function login($functions='dirlogin'){
 		$functions = strtolower($functions);
 		if(!$functions) $functions = 'dirlogin';
@@ -67,13 +67,21 @@ class Authentication{
 		return $this->getUser();
 	}
 
-  /**
-  * Logs out current user
-  * @param string $returnPath Url to return to if a login is successful after logout
-  */
+	/**
+	* Logs out current user
+	* @param string $returnPath Url to return to if a login is successful after logout
+	*/
 	function logout($returnPath=null){
-	  if(!$returnPath) $returnPath = base_url();
-		DA_Client::logoutClient($returnPath);
+		if(!$returnPath) $returnPath = base_url();
+			DA_Client::logoutClient($returnPath);
+	}
+
+	/**
+	* Keepalive for login (outputs javascript!)
+	*/
+	function keepAlive(){
+		//from DA_Client.php
+		ajaxKeepAlive();
 	}
 }
 ?>

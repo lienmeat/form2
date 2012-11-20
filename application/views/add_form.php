@@ -14,13 +14,13 @@ echo "";
 <div id="form_config">
 	<form name="add_form" method="POST" id="new_form_form">
 
-		<div class="form_contain">
+		<ul class="form_contain">
 		
 			<?php
 				$this->load->view('config_form');
 			?>
 
-			<div class="form_row form_footer" id="form_footer">
+			<li class="form_row form_footer" id="form_footer">
 				<div class="form_question">
 					<div id="question_id_question_text" class="form_question_text questionName_fi2">
 						Go ahead! See what happens when you submit!
@@ -31,9 +31,9 @@ echo "";
 						<input type="submit" name="submit_fi2" value="Submit">
 					</div>
 				</div>
-			</div>
+			</li>
 
-		</div>
+		</ul>
 
 	<?php echo "<pre>".print_r($form, true)."</pre>"; ?>
 	</form>

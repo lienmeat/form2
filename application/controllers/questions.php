@@ -18,17 +18,9 @@ class Questions extends MY_Controller{
 			$this->_failAuthResponse("You must be logged in to complete this action!");
 			return;
 		}
-		/*
-		if(empty($_POST)){ //todo: server-side validation!
-			//ask user to create the form
-			$this->load->view('add_question');			
-		}else{
-			$form = array_merge($_POST, array('creator'=>$this->authorization->username()));
-			$form = $this->_saveForm($form);
-			$this->_redirect(site_url('forms/edit/'.$form->id));
-			//print_r($form);
-		}
-		*/		
+
+		$question = $this->question->insert(array('form_id'=>$form_id, 'order'=>'9999'));
+
 	}
 
 
@@ -39,10 +31,31 @@ class Questions extends MY_Controller{
 	function edit($id){
 		$this->authorization->forceLogin();
 		$this->load->library('inputs');
-		$question = $this->question->getById($id);		
-		$html = $this->load->view("question/config_question", array('question'=>$question));
-		$data = array('html'=>array('question_config'=>$html));
+		$question = $this->question->getById($id);
+		if(empty($question)) $question->type = 'text';
+		$type_html = $this->load->view("question/config_question", array('question'=>$question), true);
+		$elem_config_html = $this->load->view("element/config_".$question->config->type, array('question'=>$question), true);
+		$data = array('html'=>array('question_type'=>$type_html, 'question_config'=>$elem_config_html));
 		echo json_encode($data);
+	}
+
+	/**
+	* Saves a question after editing config, echos out question's edit view on success
+	*/
+	function savequestion($id){
+		die(print_r($_POST));
+		if(!empty($_POST) and $id){
+			$question = $_POST;
+			$question['id'] = $id;
+			$question = $this->question->update($data);
+		}
+		//if it actually updates...
+		if(is_object($question)){
+			$html = $this->load->view('element/edit_'.$question->config->type, array('question'=>$question), true);
+			echo json_encode(array('question_id'=>$question->id, 'html'=>$html));
+		}else{//othwise notify of fail
+			echo json_encode(array('question_id'=>$id, 'html'=>'<h3 class="Err">This question failed to save!</h3>'));
+		}
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-
-//lastly, load the wwu footer
 acadFooter();
+$this->authentication->keepAlive();
 ?>

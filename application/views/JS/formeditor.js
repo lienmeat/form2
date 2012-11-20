@@ -44,6 +44,26 @@ FormEditor.initModals = function(){
 		height: 700,
 		width: 1000,
 		modal: true,
+		buttons: {
+			"Save": function(){
+				var form_answers = $('#question_config_form').serializeArray();
+				var ans = {};
+				for(i in form_answers){
+					if(form_answers[i].name.indexOf('[]') >= 0){
+						form_answers[i].name = form_answers[i].name.replace('[]', '');
+						if(!ans[form_answers[i].name]){
+							ans[form_answers[i].name] = [];
+						}
+						ans[form_answers[i].name].push(form_answers[i].value);
+					}else{
+						ans[form_answers[i].name] = form_answers[i].value;
+					}
+				}
+				doAjax('questions/savequestion/1', ans, function(){}, function(){});
+				console.log(ans);
+
+			}
+		}
 	});
 }
 
@@ -97,9 +117,9 @@ FormEditor.editQuestion = function(question_id){
 */
 FormEditor.editQuestionCallback = function(resp, question_id){
 	//populate question config edit div	
-	$('#question_config_editor').html(resp.html.question_config);
-
-
+	$('#question_type_contain').html(resp.html.question_type);
+	$('#question_config_contain').html(resp.html.question_config);
+	FormEditor.question_config_validator = new Validation('question_config_form');
 	//show modal for question edit
 	FormEditor.openEditQuestion();
 }
@@ -112,6 +132,10 @@ FormEditor.openEditQuestion = function(){
 	//todo: when modal is open, bug them about leaving the page!
 	//process for opening up a question modal
 	$("#question_config_editor").dialog('open');
+}
+
+FormEditor.saveQuestion = function(){
+
 }
 
 /**
