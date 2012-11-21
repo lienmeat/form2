@@ -83,8 +83,19 @@ class Forms extends MY_Controller{
 
 
 	function saveconfig($id){
-
-		$this->form->update();
+		if(!empty($_POST) and $id){
+			$form = $_POST;
+			$form['id'] = $id;			
+			$form = $this->form->update($form);
+		}		
+		//if it actually updates...		
+		if(is_object($form)){
+			$this->load->library('inputs');
+			$html = $this->load->view('config_form', array('form'=>$form, 'mode'=>'edit'), true);
+			echo json_encode(array('status'=>'success', 'form'=>$form, 'html'=>array('form_config_form'=>$html)));
+		}else{//othwise notify of fail
+			echo json_encode(array('status'=>'fail'));
+		}
 	}
 
 	/**
