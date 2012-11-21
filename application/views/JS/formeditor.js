@@ -39,10 +39,11 @@ FormEditor.initModals = function(){
 		modal: true,
 		buttons: {
 			"Save": function(){
-				FormEditor.form_config_validator.validateForm(FormEditor.saveFormConfig);
+				FormEditor.form_config_valalidator.validateForm(FormEditor.saveFormConfig);
 			}
 		}
 	});
+
 
 	$("#question_config_editor").dialog(
 	{
@@ -66,7 +67,7 @@ FormEditor.initModals = function(){
 FormEditor.initSortable = function(){
 	$('#form_questions').sortable({
 		stop: function(event, ui){
-			FormEditor.updateQuestionOrder();			
+			FormEditor.updateQuestionOrder();
 		},
 		placeholder: "sortable-question-placeholder",		
 		opacity: 0.75,
@@ -160,20 +161,28 @@ FormEditor.openEditForm = function(){
 	$("#form_config_editor").dialog('open');
 }
 
+/**
+* Closes the modal dialog for editing a form config 
+*/
+FormEditor.closeEditForm = function(){
+	//todo: when modal is open, bug them about leaving the page!	
+	$("#form_config_editor").dialog('close');
+}
+
 FormEditor.saveFormConfig = function(do_save){
 	var do_save = do_save || false;		
 	if(do_save){
 		var ans = FormEditor.parseSerializedForm($('#form_config_form').serializeArray());
-		doAjax('form/saveconfig/'+FormEditor.form_id, ans, FormEditor.saveFormConfigCallback, FormEditor.saveFormConfigCallback);
+		doAjax('forms/saveconfig/'+FormEditor.form_id, ans, FormEditor.saveFormConfigCallback, FormEditor.saveFormConfigCallback);
 	}
 }
 
 FormEditor.saveFormConfigCallback = function(resp){
-	if(resp.status == 'success'){		
-		FormEditor.closeEditForm();
-		$('#form_title').html(resp.form.config.title);`
-	}
-	
+	if(resp && resp.status == 'success'){
+		$('#form_title').html(resp.form.title+"&nbsp;("+resp.form.name+")");
+		FormEditor.closeEditForm();		
+		$('#form_config_contain').html(resp.html.form_config_form);
+	}	
 }
 
 /**

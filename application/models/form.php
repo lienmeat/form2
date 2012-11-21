@@ -117,7 +117,10 @@ class Form extends MY_Model{
 	}
 	
 	//override update to return the actual db record updated
-	function update($data){	  
+	function update($data){
+		if($data and (is_array($data) or is_object($data))){
+	    $data = (object) $data;
+    }else return false;	  
 	  if(parent::update($data)){
 	    return $this->getById($data->id);
 	  }else{
