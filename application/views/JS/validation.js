@@ -12,13 +12,14 @@ function Validation(form_id){
 	this.__init__();
 	this.validation_errors = [];
 	this.ignore_validation = false;
+	this.createHandle();
 }
 
 /**
 * Set up object, binding events to inputs and submit
 */
 Validation.prototype.__init__= function(){
-	var handle = this.createHandle();
+	var handle = this.getHandle();
 	//match inputs with validation attribute and loop
 
 	$('#'+this.form_id+' [validation]').each(

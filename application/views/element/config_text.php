@@ -46,7 +46,6 @@ $question_config =(object) array(
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
 
-/*
 $question_config =(object) array(			
 	'text'=>'Input Validation:',
 	'alt'=>'(validation you want to assign to the actual input itself, separated by "|". ex. required|min_length[3])',
@@ -56,8 +55,9 @@ $question_config =(object) array(
 );
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
-*/
 
+
+/*
 $question_config =(object) array(			
 	'type'=>'textarea',
 	'text'=>'Input Attributes:',
@@ -67,5 +67,5 @@ $question_config =(object) array(
 );
 
 $this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
-
+*/
 ?>

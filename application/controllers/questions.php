@@ -19,11 +19,39 @@ class Questions extends MY_Controller{
 			return;
 		}
 
-		$question = $this->question->insert(array('form_id'=>$form_id, 'order'=>'9999'));
+		//create a new blank question
+		$question = $this->question->insert(array('form_id'=>$form_id, 'order'=>'9999', 'config'=>array('type'=>'text')));
+		
+		//array to hold order of question ids after insert
+		$orders = array();
 
+		if(!$_POST['below_question_id'] or $_POST['below_question_id'] === false){
+			//should be at the beginning...
+			$orders[] = $question->id;
+		}
+
+		//reorder the questions based on the position of new question
+		$questions = $this->_getByForm($form_id);
+		foreach($questions as $q){
+			$orders[] = $q->id;
+			//if the current question's id is just before where we inserted it
+			//insert the question in order directly after it
+			if($q->id == $_POST['below_question_id']){
+				$orders[] = $question->id;
+			}
+		}
+
+		//actually do the reorder on the db
+		$this->question->reorder($orders);
+
+		//render parts that edit needs
+		$this->load->library('inputs');
+		$edit_html = $this->load->view("question/edit_question", (array) $question, true);	
+		$type_html = $this->load->view("question/config_question", array('question'=>$question), true);
+		$elem_config_html = $this->load->view("element/config_".$question->config->type, array('question'=>$question), true);
+		$data = array('question'=>$question, 'html'=>array('question_edit'=>$edit_html,'question_type'=>$type_html, 'question_config'=>$elem_config_html));
+		echo json_encode($data);
 	}
-
-
 
 	/**
 	* Edit an existing question
@@ -45,9 +73,11 @@ class Questions extends MY_Controller{
 	function savequestion($id){				
 		if(!empty($_POST) and $id){
 			$question = $_POST;
+			//print_r($_POST);
 			$question['id'] = $id;
 			$question = $this->question->update($question);
 		}
+		//print_r($question);
 		//if it actually updates...		
 		if(is_object($question)){
 			$this->load->library('inputs');

@@ -29,7 +29,9 @@ class Welcome extends MY_Controller {
 		$forms = $this->form->getAll();
 		echo "<ul>";
 		foreach ($forms as $form) {
-			echo "<li>".$form->name.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->id).'">Results</a></li>';
+			if($form->published and $form->published != "0000-00-00 00:00:00") $published = "&nbsp;(published)";
+			else $published = "";
+			echo "<li>ID: $form->id ".$form->name.$published.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->id).'">Results</a></li>';
 		}
 		echo "<ul>";			
 	}

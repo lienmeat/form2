@@ -23,6 +23,7 @@ FormEditor.__init__ = function(){
 	this.initSortable();
 	FormEditor.form_questions_validator = new Validation('form_questions_form');
 	FormEditor.form_config_valalidator = new Validation('form_config_form');
+	FormEditor.question_config_validator = new Validation('question_config_form');
 }
 
 /**
@@ -83,21 +84,33 @@ FormEditor.updateQuestionOrder = function(){
 * Adds a question to the current form
 * @param string below_question_id Should append new question after this one in dom
 */
-FormEditor.addQuestion = function(below){
+FormEditor.addQuestion = function(below_question_id){
 	var below_question_id = below_question_id || false;
-	doAjax('questions/add', {'form_id': this.form_id}, function(resp){ FormEditor.addQuestionCallback(resp, below_question_id); }, function(){});
+	doAjax('questions/add/'+form_id, {'form_id': FormEditor.form_id, 'below_question_id': below_question_id}, function(resp){ FormEditor.addQuestionCallback(resp, below_question_id); }, function(){});
 }
 
 /**
 * Finishes adding the question, renders edit mode
 */
 FormEditor.addQuestionCallback = function(resp, below_question_id){
-	//render question into form in correct position
-	
-	//populate question config edit div
-
-	//show modal for question edit
 	FormEditor.openEditQuestion();
+	FormEditor.current_question_config = resp.question.id;
+	//alert('below_question_id: '+below_question_id);
+	//put the edit view in the right place
+
+	if(below_question_id){
+		$('#'+below_question_id).after(resp.html.question_edit);
+	}else{
+		$('#form_questions').prepend(resp.html.question_edit);
+	}
+	
+	//render question into form in correct position	
+	$('#question_type_contain').html(resp.html.question_type);
+	$('#question_config_contain').html(resp.html.question_config);
+	FormEditor.question_config_validator.__init__();
+	
+	//show modal for question edit
+	
 }
 
 FormEditor.editQuestion = function(question_id){
@@ -113,7 +126,7 @@ FormEditor.editQuestionCallback = function(resp){
 	//populate question config edit div	
 	$('#question_type_contain').html(resp.html.question_type);
 	$('#question_config_contain').html(resp.html.question_config);
-	FormEditor.question_config_validator = new Validation('question_config_form');
+	FormEditor.question_config_validator.__init__();
 	//show modal for question edit
 	FormEditor.openEditQuestion();
 }
@@ -138,7 +151,7 @@ FormEditor.saveQuestion = function(do_save){
 	var do_save = do_save || false;	
 	var id = FormEditor.current_question_config;
 	if(do_save){
-		var ans = FormEditor.parseSerializedForm($('#question_config_form').serializeArray());
+		var ans = FormEditor.parseSerializedForm($('#question_config_form').serializeArray());		
 		doAjax('questions/savequestion/'+id, ans, FormEditor.saveQuestionCallback, FormEditor.saveQuestionCallback);
 	}
 }
@@ -149,6 +162,7 @@ FormEditor.saveQuestionCallback = function(resp){
 		FormEditor.closeEditQuestion();
 	}
 	$('#'+question_id).html(resp.html);
+	FormEditor.form_questions_validator.__init__();
 }
 
 /**
