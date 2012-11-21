@@ -20,6 +20,7 @@ class Forms extends MY_Controller{
 		}
 	}
 
+
 	private function _view($form){
 		$form->questions = $this->_getQuestions($form->id);
 		$this->load->view('view_form', array('form'=>$form));
@@ -81,8 +82,9 @@ class Forms extends MY_Controller{
 	}
 
 
-	function saveconfig(){
-		
+	function saveconfig($id){
+
+		$this->form->update();
 	}
 
 	/**
