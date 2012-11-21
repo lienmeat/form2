@@ -33,9 +33,7 @@ echo "";
 				</div>
 			</li>
 
-		</ul>
-
-	<?php echo "<pre>".print_r($form, true)."</pre>"; ?>
+		</ul>	
 	</form>
 </div>
 

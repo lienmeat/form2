@@ -12,7 +12,7 @@ $question_config =(object) array(
 	'attributes'=>(object) array('validation'=>'required'),
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(			
 	'text'=>'Form name: ',
@@ -28,7 +28,7 @@ if($mode != 'edit'){
 	$question_config->attributes->disabled = 'disabled';
 }
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));		
+$this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));		
 
 $question_config =(object) array(			
 	'text'=>'Editors: (Comma separated usernames of people who can edit this form)',
@@ -38,7 +38,7 @@ $question_config =(object) array(
 	'value'=>$form->config->editors,	
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
 	'text'=>'URL of special receiving script:',
@@ -48,7 +48,7 @@ $question_config =(object) array(
 	'value'=>$form->config->processing_url
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(			
 	'text'=>'URL of script to forward the results to after the form is successfully submitted and saved.',
@@ -58,7 +58,7 @@ $question_config =(object) array(
 	'value'=>$form->config->processing_url,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
 	'text'=>'Introduction (optional)',					
@@ -67,7 +67,7 @@ $question_config =(object) array(
 	'value'=>$form->config->introduction
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(			
 	'text'=>'Conclusion and/or more information (optional)',					
@@ -76,7 +76,7 @@ $question_config =(object) array(
 	'value'=>$form->config->conclusion,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
 	'text'=>'Thank You Text',
@@ -86,7 +86,7 @@ $question_config =(object) array(
 	'value'=>$form->config->thankyou,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $inputs = array(
 	(object) array('type'=>'radio', 'value'=>'1', 'label'=>'Yes', 'selected'=>array($form->config->login_required)),
@@ -101,5 +101,5 @@ $question_config =(object) array(
 	'inputs'=>$inputs,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 ?>

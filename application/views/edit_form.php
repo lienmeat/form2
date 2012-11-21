@@ -19,16 +19,21 @@
 		<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
 	</div>
 	<form id="form_questions_form">
+	<div id="add_question_tool_contain">
+		<span class="icon">
+			<img src="<?php echo base_url(); ?>application/views/IMG/arrow-insert.gif" onclick="FormEditor.addQuestion(false);"/>
+		</span>
+	</div>
 	<ul class="form_contain edit_mode" id="form_questions">
 	<?php
 	//probably shouldn't have called questions questions,
-	//because there is other crap in forms than questions....
+	//because there is other crap in forms besides questions....
 	if(!is_array($form->questions)) $form->questions = array();
 	
 	foreach($form->questions as $question){
-		$this->load->view('question/edit_question', (array) $question);		
+		$this->load->view('question/edit_question', array('question'=>$question));		
 	}
-	
+
 	?>
 	</ul>
 	</form>
@@ -40,8 +45,7 @@
 			<?php
 				$this->load->view('config_form', array('form'=>$form, 'mode'=>'edit'));
 			?>
-		</ul>
-	<?php //echo "<pre>".print_r($form, true)."</pre>"; ?>
+		</ul>	
 	</form>
 </div>
 
@@ -55,6 +59,6 @@
 </div>
 
 <?php
-	//print_r($form);
+	
 	$this->load->view('footer');
 ?>

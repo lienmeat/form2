@@ -26,5 +26,5 @@ $question_config =(object) array(
 	'selected'=>array($question->config->type),	
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 ?>

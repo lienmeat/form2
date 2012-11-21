@@ -12,7 +12,7 @@
 //probably shouldn't have called questions questions,
 //because there is other crap in forms than questions....
 foreach($questions as $question){
-	$this->load->view('question/result_question', (array) $question);	
+	$this->load->view('question/result_question', array('question'=>$question));	
 }
 ?>
 

@@ -14,7 +14,7 @@ $question_config =(object) array(
 	'attributes'=>array('validation'=>'required|alpha_dash'),
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
 	'type'=>'textarea',
@@ -24,7 +24,7 @@ $question_config =(object) array(
 	'attributes'=>array('validation'=>'required'),
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
 	'type'=>'textarea',
@@ -34,7 +34,7 @@ $question_config =(object) array(
 	'value'=>$question->config->alt,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 
 $question_config =(object) array(	
@@ -44,7 +44,7 @@ $question_config =(object) array(
 	'value'=>$question->config->value,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(			
 	'text'=>'Input Validation:',
@@ -54,7 +54,7 @@ $question_config =(object) array(
 	'value'=>$question->config->attributes->validation,
 );
 
-$this->load->view('question/view_question',array('id'=>uniqid(''), 'config'=>$question_config));
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 
 /*

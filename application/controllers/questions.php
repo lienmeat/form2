@@ -25,7 +25,7 @@ class Questions extends MY_Controller{
 		//array to hold order of question ids after insert
 		$orders = array();
 
-		if(!$_POST['below_question_id'] or $_POST['below_question_id'] === false){
+		if(!$_POST['below_question_id'] or $_POST['below_question_id'] == "false"){
 			//should be at the beginning...
 			$orders[] = $question->id;
 		}
@@ -40,13 +40,13 @@ class Questions extends MY_Controller{
 				$orders[] = $question->id;
 			}
 		}
-
+		
 		//actually do the reorder on the db
 		$this->question->reorder($orders);
 
 		//render parts that edit needs
 		$this->load->library('inputs');
-		$edit_html = $this->load->view("question/edit_question", (array) $question, true);	
+		$edit_html = $this->load->view("question/edit_question", array('question'=>$question), true);	
 		$type_html = $this->load->view("question/config_question", array('question'=>$question), true);
 		$elem_config_html = $this->load->view("element/config_".$question->config->type, array('question'=>$question), true);
 		$data = array('question'=>$question, 'html'=>array('question_edit'=>$edit_html,'question_type'=>$type_html, 'question_config'=>$elem_config_html));
@@ -81,7 +81,7 @@ class Questions extends MY_Controller{
 		//if it actually updates...		
 		if(is_object($question)){
 			$this->load->library('inputs');
-			$html = $this->load->view('element/edit_'.$question->config->type, (array) $question, true);
+			$html = $this->load->view('element/edit_'.$question->config->type, array('question'=>$question), true);
 			echo json_encode(array('status'=>'success', 'question_id'=>$question->id, 'html'=>$html));
 		}else{//othwise notify of fail
 			echo json_encode(array('status'=>'fail', 'question_id'=>$id, 'html'=>'<h3 class="Err">This question failed to save!</h3>'));

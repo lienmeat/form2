@@ -1,6 +1,6 @@
-<li class="form_row edit_mode <?php echo $config->name; ?>_fi2" id="<?php echo $id; ?>">
+<li class="form_row edit_mode <?php echo $question->config->name; ?>_fi2" id="<?php echo $question->id; ?>">
 	<?php 
-		if($config->type)
-			$this->load->view('element/edit_'.$config->type, array('id'=>$id, 'form_id'=>$form_id, 'order'=>$order, 'config'=>$config, 'answer'=>$answer));
+		if($question->config->type)
+			$this->load->view('element/edit_'.$question->config->type, array('question'=>$question));
 	?>
 </li>
