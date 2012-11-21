@@ -164,7 +164,7 @@ FormEditor.saveFormConfig = function(do_save){
 	var do_save = do_save || false;		
 	if(do_save){
 		var ans = FormEditor.parseSerializedForm($('#form_config_form').serializeArray());
-		doAjax('form/saveconfig/'+id, ans, FormEditor.saveFormConfigCallback, FormEditor.saveFormConfigCallback);
+		doAjax('form/saveconfig/'+FormEditor.form_id, ans, FormEditor.saveFormConfigCallback, FormEditor.saveFormConfigCallback);
 	}
 }
 

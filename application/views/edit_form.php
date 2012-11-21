@@ -2,7 +2,7 @@
 	$this->load->view('header', array('title'=>$form->name, 'banner_text'=>"Edit \"$form->name\"!"));	
 	$this->load->library('inputs');	
 	$this->load->view('JS/edit_form');
-	$this->load->view('JS/formeditor.php');
+	$this->load->view('JS/formeditor.php', array('form_id'=>$form->id));
 	//$this->load->view('CSS/edit_form');
 ?>
 
