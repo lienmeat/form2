@@ -171,7 +171,7 @@ FormEditor.saveFormConfig = function(do_save){
 FormEditor.saveFormConfigCallback = function(resp){
 	if(resp.status == 'success'){		
 		FormEditor.closeEditForm();
-		$('#form_title').html(resp.form.config.title);`
+		$('#form_title').html(resp.form.config.title);
 	}
 	
 }
