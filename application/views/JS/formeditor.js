@@ -199,6 +199,15 @@ FormEditor.saveFormConfigCallback = function(resp){
 	}	
 }
 
+FormEditor.loadElementConfig = function(question_id, type){
+	doAjax('questions/loadconfigview/'+question_id+"/"+type, {}, FormEditor.loadElementConfigCallback, function(){});
+}
+
+FormEditor.loadElementConfigCallback = function(resp){	
+	$('#question_config_contain').html(resp.html.question_config);
+	FormEditor.question_config_validator.__init__();
+}
+
 /**
 * Parses jquery's serializeArray() output into a data structure
 * that we can post to php and have it interpreted as a traditional

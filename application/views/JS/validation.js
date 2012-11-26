@@ -8,11 +8,11 @@ function Validation(form_id){
 	*/
 	this.handle = false;
 	this.fullform = false;
-	this.form_id = form_id;
-	this.__init__();
+	this.form_id = form_id;	
 	this.validation_errors = [];
 	this.ignore_validation = false;
 	this.createHandle();
+	this.__init__();
 }
 
 /**
@@ -38,10 +38,10 @@ Validation.prototype.__init__= function(){
 		function(){
 			//way to get around validating form when using the 
 			//remote validation callback after validateForm() calls it.
-			if(window.validators[handle].ignore_validation == true){
+			if(window.validators[handle].ignore_validation == true){				
 				return true;
 			}else{
-				return window.validators[handle].validateForm(window.validators[handle].submitForm);
+				return window.validators[handle].validateForm();
 			}			
 		}
 	);
@@ -74,8 +74,9 @@ Validation.prototype.enableSubmitButton = function(){
 }
 
 Validation.prototype.validateForm = function(callback){
-	var callback = callback || function(){};
-	this.disableSubmitButton();	
+	var handle = this.getHandle();
+	var callback = callback || function(ret){ window.validators[handle].submitForm(ret); };
+	this.disableSubmitButton();
 	this.fullform = true;
 	var inputs = $('#'+this.form_id+' [validation]').get();	
 	var remotevalidations = [];	
@@ -191,7 +192,7 @@ Validation.prototype.doRemoteValidations = function(validations, submit, callbac
 Validation.prototype.remoteValidationCallback = function(validations, submit, callback){
 	var submit = submit || false;
 	var validated = true;
-	var callback = callback || function(){};
+	var callback = callback || function(){};	
 
 	for(i in validations){
 		if(validations[i].status == "fail"){
@@ -204,7 +205,8 @@ Validation.prototype.remoteValidationCallback = function(validations, submit, ca
 		//other cases are status = pass || undefined_function
 		//but we really don't care to do anything about either...
 	}
-
+	this.enableSubmitButton();
+	this.fullform = false;
 	if(callback){
 		if(validated){
 			callback(true);
@@ -213,15 +215,18 @@ Validation.prototype.remoteValidationCallback = function(validations, submit, ca
 		}
 	}
 
+	/*
 	if(submit){
 		//force this off so if there is an onchange that
 		//needs a remote validation, it will do it, instead of
 		//returning the validations!
 		this.fullform = false;
 		if(!validated){			
-			this.enableSubmitButton();	
+			
 		}
-	}		
+	}
+	*/
+	//this.enableSubmitButton();	
 }
 
 /**
@@ -294,10 +299,12 @@ Validation.prototype.checkFunction = function(func, params, input){
 */
 Validation.prototype.getInputValue = function(input){
 	var tag = $(input).prop('tagName');
+	var type = $(input).attr('type');
 	var name = $(input).attr('name');
-	
+		
 	//handle cases where we need to get the value in any way besides just using .val() on the input itself
-	if(tag == 'CHECKBOX' || tag == 'RADIO'){
+	if(type && (type == 'checkbox' || type == 'radio')){
+		name = name.replace('[', '\\[').replace(']', '\\]');
 		var value = $('[name='+name+']:checked').val();
 	}else{
 		var value = $(input).val();
@@ -367,8 +374,9 @@ Validation.prototype.hideError = function(input){
 }
 
 Validation.prototype.getNotif = function(input){
-	var input_id = $(input).attr('id');
-	var notif_id = input_id+'_err';
+	//var input_id = $(input).attr('id');
+	var input_name = $(input).attr('name').replace('[', '--').replace(']', '--');
+	var notif_id = input_name+'_err';
 	var notif = $('#'+notif_id).get(0);
 	if(!notif){
 		var props = this.getElementSizeAndPosition(input);
@@ -401,9 +409,10 @@ Validation.prototype.getQuestionClassFromElem = function(elem){
 }
 
 Validation.prototype.submitForm = function(submit){
-	if(submit == true){
+	if(submit == true){		
 		this.ignore_validation = true;
 		$('#'+this.form_id).submit();
+		console.log("should have submitted: "+submit+" form_id: "+this.form_id);		
 	}
 }
 

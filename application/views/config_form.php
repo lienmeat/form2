@@ -90,7 +90,7 @@ $this->load->view('question/view_question',array('question'=>(object) array('id'
 
 $inputs = array(
 	(object) array('type'=>'radio', 'value'=>'1', 'label'=>'Yes', 'selected'=>array($form->config->login_required)),
-	(object) array('type'=>'radio', 'value'=>'2', 'label'=>'No', 'selected'=>array($form->config->login_required)),
+	(object) array('type'=>'radio', 'value'=>'0', 'label'=>'No', 'selected'=>array($form->config->login_required)),
 );
 
 $question_config =(object) array(			

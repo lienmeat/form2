@@ -88,6 +88,21 @@ class Questions extends MY_Controller{
 		}
 	}
 
+	function loadconfigview($question_id, $type){
+
+		if($question_id && $type){
+			$question = $this->question->getById($question_id);
+
+		}
+		if(is_object($question)){
+			$this->load->library('inputs');
+			$html = $this->load->view('element/config_'.$type, array('question'=>$question), true);
+			echo json_encode(array('status'=>'success', 'html'=>array('question_config'=>$html)));
+		}else{
+			echo json_encode(array('status'=>'fail'));
+		}
+	}
+
 	/**
 	* Copy a question
 	*/

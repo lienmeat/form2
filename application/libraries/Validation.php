@@ -423,7 +423,13 @@ class Validation{
 	 */
 	public function decimal($str)
 	{
-		return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
+		$res = (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
+		if(!$res){
+			$this->setValidationMessage('decimal', "This field must contain a decimal number!");
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -439,9 +445,17 @@ class Validation{
 	{
 		if ( ! is_numeric($str))
 		{
-			return FALSE;
+			$res = FALSE;
+		}else{
+			$res = $str > $min;
 		}
-		return $str > $min;
+
+		if(!$res){
+			$this->setValidationMessage('greater_than', "This field must contain a value greater than $min!");
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -457,9 +471,16 @@ class Validation{
 	{
 		if ( ! is_numeric($str))
 		{
-			return FALSE;
+			$res = FALSE;
+		}else{
+			$res = $str < $max;
 		}
-		return $str < $max;
+		if(!$res){
+			$this->setValidationMessage('less_than', "This field must contain a value less than $max!");
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -473,7 +494,14 @@ class Validation{
 	 */
 	public function is_natural($str)
 	{
-		return (bool) preg_match( '/^[0-9]+$/', $str);
+		$res = (bool) preg_match( '/^[0-9]+$/', $str);
+
+		if(!$res){
+			$this->setValidationMessage('is_natural', "This field must contain a natural number (ex: 0, 1, 2...)!");
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -487,17 +515,23 @@ class Validation{
 	 */
 	public function is_natural_no_zero($str)
 	{
+		$res = TRUE;
 		if ( ! preg_match( '/^[0-9]+$/', $str))
 		{
-			return FALSE;
+			$res = FALSE;
 		}
 
 		if ($str == 0)
 		{
-			return FALSE;
+			$res = FALSE;
 		}
 
-		return TRUE;
+		if(!$res){
+			$this->setValidationMessage('is_natural_no_zero', "This field must contain a natural counting number (ex: 1, 2, 3...)!");
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -514,7 +548,14 @@ class Validation{
 	 */
 	public function valid_base64($str)
 	{
-		return (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', $str);
+		$res = (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', $str);
+		if(!$res){
+			$this->setValidationMessage('valid_base64', "This field must contain valid base64 encoded content!");
+			return false;
+		}else{
+			return true;
+		}
+
 	}
 
 	// --------------------------------------------------------------------
@@ -529,7 +570,6 @@ class Validation{
 	 * @param	string
 	 * @return	string
 	 */
-	/*
 	public function prep_for_form($data = '')
 	{
 		if (is_array($data))
@@ -548,8 +588,7 @@ class Validation{
 		}
 
 		return str_replace(array("'", '"', '<', '>'), array("&#39;", "&quot;", '&lt;', '&gt;'), stripslashes($data));
-	}
-	*/
+	}	
 
 	// --------------------------------------------------------------------
 
@@ -584,12 +623,10 @@ class Validation{
 	 * @param	string
 	 * @return	string
 	 */
-	/*
 	public function strip_image_tags($str)
 	{
 		return $this->CI->input->strip_image_tags($str);
-	}
-	*/
+	}	
 
 	// --------------------------------------------------------------------
 
@@ -600,12 +637,10 @@ class Validation{
 	 * @param	string
 	 * @return	string
 	 */
-	/*
 	public function xss_clean($str)
 	{
 		return $this->CI->security->xss_clean($str);
-	}
-	*/
+	}	
 
 	// --------------------------------------------------------------------
 

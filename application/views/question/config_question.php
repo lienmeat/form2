@@ -21,7 +21,7 @@ $question_config =(object) array(
 	'text'=>'Type: ',
 	'name'=>'config[type]',
 	'type'=>'select',
-	'attributes'=>array('validation'=>'required', 'onchange'=>'FormEditor.loadElementConfig(this, \'$question->id\')'),
+	'attributes'=>array('validation'=>'required', 'onchange'=>'FormEditor.loadElementConfig(\''.$question->id.'\', $(this).val());'),
 	'options'=>$question_type_options,
 	'selected'=>array($question->config->type),	
 );
