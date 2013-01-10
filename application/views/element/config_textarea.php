@@ -1,7 +1,7 @@
 <?php
 /**
-* config_text.php
-* Used when editing the config of a text element
+* config_textarea.php
+* Used when editing the config of a textarea element
 * added after question config options!
 */
 

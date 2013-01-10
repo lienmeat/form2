@@ -1,4 +1,4 @@
 <?php
 acadFooter();
-$this->authentication->keepAlive();
+//$this->authentication->keepAlive();
 ?>

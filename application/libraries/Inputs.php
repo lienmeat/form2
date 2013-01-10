@@ -331,7 +331,7 @@ class Radio_Input extends Input_Input{
 		parent::__construct($config);
 		$this->setType('radio');
 		if($config->selected){
-			$this->setSelections($config->selected);
+			$this->setSelections($config->selected);			
 		}
 		if($config->label){
 			$this->setLabel($config->label);
@@ -341,10 +341,10 @@ class Radio_Input extends Input_Input{
 	function __toString(){
 		$post = $this->getPost();
 		if($this->getValue() == $post && !$this->ignore_post) $this->setSelected($this->getValue());
-		if($this->isSelected($this->getValue())){
+		if($this->isSelected($this->getValue()) || $this->isSelected($this->getLabel())){
 			$this->setAttribute('checked', 'checked');
 		}
-		return "<input ".$this->attributesToString()."/>&nbsp;".$this->getLabel();
+		return "<div class=\"input_multiple\"><input ".$this->attributesToString()."/>".$this->getLabel()."</div>";
 	}
 
 	function setLabel($label){
@@ -357,8 +357,8 @@ class Radio_Input extends Input_Input{
 		return $this->label;
 	}
 
-	function setSelected($selected){
-		if($selected) $this->selected[] = $selected;
+	function setSelected($selected=null){
+		if($selected !== null) $this->selected[] = $selected;
 		else $this->selected = array();
 	}
 
@@ -371,7 +371,7 @@ class Radio_Input extends Input_Input{
 	}
 
 	function isSelected($value){
-		return in_array($value, $this->selected);
+		return in_array((string) $value, $this->selected, true);		
 	}
 }
 
@@ -410,14 +410,14 @@ class Checkbox_Input extends Input_Input implements iSelectable{
 		$post = $this->getPost();
 		if(!is_array($post)) $post = array($post);
 		if(in_array($this->getValue(), $post) && !$this->ignore_post) $this->setSelected($this->getValue());
-		if($this->isSelected($this->getValue())){
+		if($this->isSelected($this->getValue()) || $this->isSelected($this->getLabel())){
 			$this->setAttribute('checked', 'checked');
 		}
-		return "<input ".$this->attributesToString()."/>&nbsp;".$this->getLabel();
+		return "<div class=\"input_multiple\"><input ".$this->attributesToString()."/>".$this->getLabel()."</div>";
 	}
 
-	function setSelected($selected){
-		if($selected) $this->selected[] = $selected;
+	function setSelected($selected=null){
+		if($selected !== null) $this->selected[] = $selected;
 		else $this->selected = array();
 	}
 
@@ -430,7 +430,7 @@ class Checkbox_Input extends Input_Input implements iSelectable{
 	}
 
 	function isSelected($value){
-		return in_array($value, $this->selected);
+		return in_array($value, $this->selected, true);
 	}
 }
 
@@ -507,8 +507,8 @@ class Select_Input extends Base_Input implements iSelectable{
 		}
 	}
 
-	function setSelected($selected){
-		if($selected) $this->selected[] = $selected;
+	function setSelected($selected=null){
+		if($selected !== null) $this->selected[] = $selected;
 		else $this->selected = array();
 	}
 
@@ -521,7 +521,7 @@ class Select_Input extends Base_Input implements iSelectable{
 	}
 
 	function isSelected($value){
-		return in_array($value, $this->selected);
+		return in_array($value, $this->selected, true);
 	}
 
 	function optionsToString(){

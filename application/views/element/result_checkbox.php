@@ -7,7 +7,11 @@
 	<div class="form_element_contain  result_mode <?php echo $question->config->name; ?>_fi2">
 		<?php
 			$name = $question->config->name;
-			echo $formresult->post->$name;			
+			if(is_array($formresult->post->$name)){
+				echo implode(', ',$formresult->post->$name);
+			}else{
+				echo $formresult->post->$name;
+			}
 		?>
 	</div>
 </div>

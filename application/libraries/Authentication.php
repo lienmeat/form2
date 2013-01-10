@@ -11,7 +11,7 @@ class Authentication{
 
 	function __construct(){
 		require_once('wwcauth.php');
-		$this->setUser();
+		$this->setUser();		
 	}
 
 	/**

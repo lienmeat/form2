@@ -6,13 +6,29 @@ class Forms extends MY_Controller{
 		$this->load->model('form');
 	}
 
+	/**
+	* look and search for forms
+	*/
+	function index(){
+		$data['forms'] = $this->form->getPublished();
+		$this->load->view('formcatalog', $data);
+	}
+
+	/**
+	* view a form by name (must be published)
+	*/
 	function view($name){
 		$form = $this->form->getPublishedWithName($name);
 		if($form){
 			$this->_view($form);
+		}else{
+			$this->load->view('redirect', array('message'=>'There is no form with that name, or it is not currently published!', 'location'=>'forms'));
 		}
 	}
 
+	/**
+	* view a form by it's id
+	*/
 	function viewid($id){
 		$form = $this->form->getById($id);
 		if($form){
@@ -21,10 +37,38 @@ class Forms extends MY_Controller{
 	}
 
 
-	private function _view($form){
-		$form->questions = $this->_getQuestions($form->id);
-		$this->load->view('view_form', array('form'=>$form));
+	/**
+	* does the logic of rendering and saving form results
+	*/
+	private function _view($form){		
+		if(empty($_POST)){
+			//show the form...
+			$form->questions = $this->_getQuestions($form->id);
+			$this->load->view('view_form', array('form'=>$form));
+		}else{
+			$this->_saveResult($form);
+			$this->_doOnSuccess($form);
+		}
 	}
+
+	/**
+	* Saves form resutls to database
+	*/
+	private function _saveResult($form){
+		$this->load->model('result');
+		$result->post = json_encode($_POST);
+		$result->submitter = $this->authorization->username();
+		$result->timestamp = date('Y-m-d H:i:s');
+		$result->form_id = $form->id;
+		return $this->result->insert($result);		
+	}
+
+	/**
+	* Saves form resutls to database
+	*/
+	private function _doOnSuccess($form){
+
+	}	
 
 	/**
 	* Make a new form
@@ -48,36 +92,75 @@ class Forms extends MY_Controller{
 		}		
 	}
 
-
-
 	/**
 	* Edit an existing form
 	*/
 	function edit($name_or_id){
+		//todo: make sure user has permissions
 		$this->authorization->forceLogin();
 		$form = $this->form->getById($name_or_id);		
 		if(!$form){
 			//get forms by name and ask which one
-			$forms = $this->form->getByName($name_or_id);
-			//$this->load->view('which_form', array('path'=>'forms/edit/:id:'));
-			return;
+			$forms = $this->form->getByName($name_or_id, "created DESC");			
+			//if there are more than one form, we need to know which they actually want to edit!
+			if(count($forms) > 1){
+				$this->load->view('which_form', array('returnpath'=>'forms/edit/:form_id:', 'forms'=>$forms));
+				return;
+			}else{
+				$form = $forms[0];
+			}
 		}
 
 		//edit rights need to be tested here!
 		if($form->creator != $this->authorization->username()){
 			$this->_failAuthResponse('You do not have sufficient rights to edit this form!');
+			return;
 		}
 
 		//a published form CANNOT be edited directly for safty reasons(you could un-publish...)
-		if($form->published){
-			die('what');
+		if($form->published && $_GET['doDuplicate']){			
 			$form = $this->_duplicateForm($form->id);
-			
+			$this->_redirect(site_url('forms/edit/'.$form->id));
+			return;
+		}elseif($form->published && !$_GET['doDuplicate']){
+			//warn that editing this form will cause it to be duplicated
+			$forms = $this->form->getByName($form->name, "created DESC");
+			$this->load->view('warn_duplication', array('form'=>$form, 'forms'=>$forms));
+			return;
 		}else{
 			//get stuff needed when editing a form
 			$form->questions = $this->_getQuestions($form->id);
-			//$this->load->library('inputs');
+			$this->load->library('inputs');
 			$this->load->view('edit_form',array('form'=>$form));
+			return;
+		}		
+	}
+
+	function delete($id){
+		//todo: make sure user has permissions
+		$form = $this->form->getById($id);
+		if($_POST['deleteconfirm'] == 'yes'){
+			$this->form->delete($form->id);
+			$this->load->model('question');
+			$this->question->deleteByForm($form->id);
+			$this->load->view('redirect', array('location'=>'forms/', 'message'=>'Form id:'.$form->id.' deleted successfully!'));
+			return;
+		}else{
+			$this->load->view('delete_form', array('form'=>$form));
+			return;
+		}
+	}
+
+	function publish($id){
+		//todo: make sure user has permissions
+		$form = $this->form->getById($id);
+		if($_POST['publishconfirm'] == 'yes'){
+			$this->form->publish($form->id);
+			$this->load->view('redirect', array('location'=>'forms/view/'.$form->name, 'message'=>'Form id:'.$form->id.' published successfully!'));
+			return;
+		}else{
+			$this->load->view('publish_form', array('form'=>$form));
+			return;
 		}
 	}
 
@@ -109,6 +192,7 @@ class Forms extends MY_Controller{
 	* Get results for a form
 	*/
 	function results($name_or_id){
+		//todo: make sure user has permissions
 
 	}
 
@@ -135,6 +219,7 @@ class Forms extends MY_Controller{
 
 		//anything else we have to do in the future (roles, tags, folders...etc)
 		//although, thinking of it, I may decide to make those name-based...
+		return $form;
 	}
 
 	/**

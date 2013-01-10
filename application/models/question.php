@@ -22,6 +22,13 @@ class Question extends MY_Model{
 	  }
 	}
 
+	function deleteByForm($form_id){
+		$questions = $this->getByForm($form_id);
+		foreach($questions as $q){
+			$this->delete($q->id);
+		}
+	}
+
 	/**	
 	* Makes a copy of all questions on a form
 	* @param string $from_form ID of form to copy from

@@ -61,24 +61,6 @@ $question_config =(object) array(
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
-	'text'=>'Introduction (optional)',					
-	'name'=>'config[introduction]',
-	'type'=>'textarea',
-	'value'=>$form->config->introduction
-);
-
-$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
-
-$question_config =(object) array(			
-	'text'=>'Conclusion and/or more information (optional)',					
-	'name'=>'config[conclusion]',
-	'type'=>'textarea',
-	'value'=>$form->config->conclusion,
-);
-
-$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
-
-$question_config =(object) array(
 	'text'=>'Thank You Text',
 	'alt'=>'(Message given after form has been successfully completed)',
 	'type'=>'textarea',

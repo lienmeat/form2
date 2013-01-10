@@ -3,13 +3,6 @@
     $links[]=anchor(site_url(), "Dashboard", array('style'=>'font-weight: bold;'));
   else
     $links[]=anchor(site_url(), "Dashboard");
-/*
-  if(uri_string() != "/payment" and uri_string() != "/payment/")
-    $links[]=anchor("/payment", "Make a Payment");
-  if(uri_string() != "/payment/donation" and uri_string() != "/payment/donation/")
-    $links[]=anchor("/payment/donation", "Give a Gift");
-*/    
-  if($this->authorization->username()) $links[]="<br /><span>".$this->authorization->fullname()."</span>&nbsp;<a href='".current_url()."?action=logout'>Sign Out</a>";
 ?>
 
 <div class="menu" style="text-align: right;"><?php echo implode("<br />", $links); ?></div>

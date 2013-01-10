@@ -25,11 +25,19 @@ Validation.prototype.__init__= function(){
 	$('#'+this.form_id+' [validation]').each(
 		function(i){
 			//bind validateInput to change event on each input that matched
-			$(this).blur(
-				function(event){
-					window.validators[handle].validateInput(event.target);
-				}
-			);
+			if($(this).attr('type') != 'checkbox' && $(this).attr('type') != 'radio'){
+				$(this).blur(
+					function(event){
+						window.validators[handle].validateInput(event.target);
+					}
+				);
+			}else{
+				$(this).change(
+					function(event){
+						window.validators[handle].validateInput(event.target);
+					}
+				);
+			}
 		}
 	);
 
@@ -304,7 +312,7 @@ Validation.prototype.getInputValue = function(input){
 		
 	//handle cases where we need to get the value in any way besides just using .val() on the input itself
 	if(type && (type == 'checkbox' || type == 'radio')){
-		name = name.replace('[', '\\[').replace(']', '\\]');
+		name = name.replace('[', '\\[').replace(']', '\\]');		
 		var value = $('[name='+name+']:checked').val();
 	}else{
 		var value = $(input).val();

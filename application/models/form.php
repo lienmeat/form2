@@ -23,21 +23,36 @@ class Form extends MY_Model{
 	}
 	
 	/**
-  * Get all forms named $name
-  * @param string $name
-  * @return array Forms (may be empty)
-  */
+    * Get all forms named $name
+    * @param string $name
+    * @return array Forms (may be empty)
+    */
 	function getByName($name=null, $order_by=null){
 	  if($name){
       if(!$order_by)	$order_by = 'created DESC';
 	    $this->db->select()->from($this->table)->where('name', $name)->order_by($order_by);
 	    $query = $this->db->get();
-	    return $this->decodeMany($query->results());
+	    return $this->decodeMany($query->result());
 	  }else{
 	    return array();
 	  }
 	}
 	
+	/**
+	* Gets the published forms
+	* @return array
+	*/
+	function getPublished($order_by='created DESC'){
+	  if(!$order_by) $order_by = 'created DESC';
+	  $query = $this->db->query("SELECT * FROM `{$this->table}` WHERE `published` IS NOT NULL AND `published` != 'NULL' ORDER BY $order_by");
+	  $res = $query->result();	  
+	  if(!empty($res)){
+	    return $this->decodeMany($res);
+	  }else{
+	    return array();
+	  }
+	}
+
 	/**
 	* Gets the published form named $name if it exists
 	* @param string $name
@@ -45,7 +60,7 @@ class Form extends MY_Model{
 	*/
 	function getPublishedWithName($name=null, $order_by='created DESC'){
 	  if(!$name) return false;
-    if(!$order_by)	$order_by = 'created DESC';
+      if(!$order_by) $order_by = 'created DESC';
 	  $query = $this->db->query("SELECT * FROM `{$this->table}` WHERE `name` = ? AND (`published` IS NOT NULL AND `published` != 'NULL') ORDER BY $order_by", array($name));
 	  $res = $query->result();
 	  if(!empty($res)){

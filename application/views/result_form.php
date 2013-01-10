@@ -4,15 +4,15 @@
 ?>
 
 <!-- form header common to all forms -->
-<div class="form_title">
-
+<div class="form_title_contain edit_mode">
+	<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
 </div>
 
 <?php
 //probably shouldn't have called questions questions,
 //because there is other crap in forms than questions....
 foreach($questions as $question){
-	$this->load->view('question/result_question', array('question'=>$question));	
+	$this->load->view('question/result_question', array('question'=>$question, 'formresult'=>$formresult));	
 }
 ?>
 

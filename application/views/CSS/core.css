@@ -5,12 +5,69 @@ div.menu {
 div.top_banner {
   /*border: 1px solid #F0EBE1;*/
   background: #806C46;
+  
   /*margin: 2px;*/
-  margin-bottom: 10px;
-  padding: 5px;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
   /*text-align: center;*/
   color: white;
-  border-radius: 10px;
+  border-radius: 0.5em;
+}
+
+#form_config_editor {
+  display: none;
+}
+
+#question_config_editor {
+  display: none;
+}
+
+#top_banner_menu_contain {
+  float: right;
+  display: block;  
+}
+
+#menu_indicator {
+  font-weight: bold;
+  text-decoration: underline;
+  float: right;
+  display: block;
+  width: 100%;
+  text-align: right;
+  padding-right: 0.5em;
+}
+
+.banner_menu {
+  background: rgba(0,0,0,0.65);
+
+  margin: 0em;
+  padding: 0.5em; 
+  list-style: none;
+  display: none;
+  border-radius: 0.5em;
+}
+
+.banner_menu li {
+  width: 100%;
+  /*padding-left: 0.7em;
+  padding-right: 0.7em;*/
+  text-align: right;
+}
+
+.banner_menu li:hover {
+  /*background: pink;*/
+}
+
+.banner_menu a {  
+  color: white;
+}
+
+.banner_menu a:hover {
+  border-radius: 0.5em;
+  background-color: white;
+  color: black;
+  /*color: white;*/
+  /*font-style: ;*/
 }
 
 #rightBanner {
@@ -19,6 +76,7 @@ div.top_banner {
 }
 
 div.menu a {
+  width: 100%;
   /*font-weight: bold;*/
   font-size: 10pt;
   color: white;
@@ -31,6 +89,10 @@ div.menu a:hover {
   /*color: #747C53;*/
 }
 
+.input_multiple {
+  float: left;
+  margin-left: 5px;
+}
 /*
 div.obj_list_item {
   border: 1px solid #BEB091;

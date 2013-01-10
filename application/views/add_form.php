@@ -22,8 +22,7 @@ echo "";
 
 			<li class="form_row form_footer" id="form_footer">
 				<div class="form_question">
-					<div id="question_id_question_text" class="form_question_text questionName_fi2">
-						Go ahead! See what happens when you submit!
+					<div id="question_id_question_text" class="form_question_text questionName_fi2">						
 					</div>
 				</div>
 				<div class="form_answer">

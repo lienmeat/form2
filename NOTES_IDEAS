@@ -1,28 +1,54 @@
 NOTES/IDEAS:
 
-OK
+Role based access control
 
-For Element(the part of a question that holds inputs) declaration/edit/config:
+Bound to users, and then Forms.
 
-	Gui/ELEMENT editing, and how it all works together:
-		Normal form editing at top that you can add questions to which map to config[question_name][value] for question/element variables.
+For example, take this scenario:
+
+Roles:[ 
+  <department>editor {
+    permissions [
+      view,
+      edit,
+    ]
+  },
+  
+  <department>staff {
+    permissions [
+      view,
+      notify,
+    ]
+  },
+  
+  <department>admin {
+    permissions [
+      view,
+      edit,
+      admin,
+    ]
+  }
+]
+
+forms[ 
+  <department>signup {
+    roles [
+      <department>editor,
+      <department>admin,
+      <department>staff,
+    ]
+  }
+]
 
 
-		At bottom of normal form editing, you have a text area to define in HTML & JSON what the element contains as far as inputs and html.  JSON will be denoted with <json></json> tags, so we can pull it out easily and not have to parse a bunch (simple preg...).
+users[
+  eric.lien {
+    roles[
+      <department>admin,
+      exampleotherrole,
+      <department_other>editor,
+    ]
+  }
+]
 
-		Also need some sort of template system to map values from questions to actual input config. (perhaps use #variablename# as it can't be something in JSON definition, as we have to replace values INSIDE json.
-
-		Example of proposed editing of element:  
-
-			<div id="#configfieldname#"><JSON>{type: 'text', name: 'addr1', attributes: {style: 'color: red;' onclick: 'function(){ alert(\'boom!\'); }'}, disabled: 'disabled'}</JSON></div>
-
-		(name: properties of inputs will ALWAYS be prefixed with the question name when a question is saved durring form creation)
-
-		so, if I add a question to a form that and I name it "parentsaddress", the above defined text element would be named "parentsaddress_addr1" in the final form.
-
-		IDs will be similar, but I haven't decided how yet, and it will be automatic, and WILL overwrite whatever you set as an ID of an input!
-
-		The alternative, in case you want to use JS in your element definition for some crazy reason, is using the input_id attribute, which when I'm done with the core JS lib, will have a selector set up to work as if you did one over id (although of course the syntax will be different than #id).
-/Elements declairation/edit/config
-
-
+eric.lien would have admin rights on the form <department>signup, and other roles/perms on other stuff (not shown)

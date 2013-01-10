@@ -1,5 +1,5 @@
 <?php
-	$this->load->view('header', array('title'=>$form->name, 'banner_text'=>'Fill out this form or else!'));
+	$this->load->view('header', array('title'=>$form->name));
 	//$this->load->view('JS/validation.js');
 	//$this->load->view('JS/dependencies.js');
 	$this->load->library('inputs');
@@ -10,12 +10,11 @@
 		var form_val = new Validation('<?php echo $form->id; ?>');
 	});
 </script>
-
+<div class="form_title_contain edit_mode">
+	<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
+</div>
 <!-- form header common to all forms -->
 <form name="<?php echo $form->name; ?>" id="<?php echo $form->id; ?>" method="POST">
-<div class="form_title">
-
-</div>
 
 <ul class="form_contain view_mode">
 
@@ -27,12 +26,19 @@ foreach($form->questions as $question){
 }
 ?>
 
+	<li class="form_row form_footer" id="form_footer">
+		<div class="form_question">
+			<div id="question_id_question_text" class="form_question_text questionName_fi2">						
+			</div>
+		</div>
+		<div class="form_answer">
+			<div class="form_element_contain">
+				<input type="submit" name="submit_fi2" value="Submit">
+			</div>
+		</div>
+	</li>
 </ul>
 
-<!-- form footer -->
-<div class="form_footer">
-	<!-- Maybe a standard submit footer or something...idk -->
-</div>
 </form>
 <?php
 	$this->load->view('footer');

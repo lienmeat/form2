@@ -24,6 +24,7 @@ class Welcome extends MY_Controller {
 			$form = $this->form->getPublishedWithName($_GET['f']);
 
 			if($form) $this->_redirect(site_url('forms/view/'.$form->name));
+			return;
 		}
 
 		$forms = $this->form->getAll();

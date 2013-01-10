@@ -46,8 +46,11 @@ class Questions extends MY_Controller{
 
 		//render parts that edit needs
 		$this->load->library('inputs');
+		$this->load->library('Questionconfig');
+		$this->load->model('element');
+		$elem_options = $this->element->getForDropdown();
 		$edit_html = $this->load->view("question/edit_question", array('question'=>$question), true);	
-		$type_html = $this->load->view("question/config_question", array('question'=>$question), true);
+		$type_html = $this->load->view("question/config_question", array('question'=>$question, 'element_type_options'=>$elem_options), true);
 		$elem_config_html = $this->load->view("element/config_".$question->config->type, array('question'=>$question), true);
 		$data = array('question'=>$question, 'html'=>array('question_edit'=>$edit_html,'question_type'=>$type_html, 'question_config'=>$elem_config_html));
 		echo json_encode($data);
@@ -59,9 +62,12 @@ class Questions extends MY_Controller{
 	function edit($id){
 		$this->authorization->forceLogin();
 		$this->load->library('inputs');
+		$this->load->library('Questionconfig');
+		$this->load->model('element');
+		$elem_options = $this->element->getForDropdown();
 		$question = $this->question->getById($id);
 		if(empty($question)) $question->type = 'text';
-		$type_html = $this->load->view("question/config_question", array('question'=>$question), true);
+		$type_html = $this->load->view("question/config_question", array('question'=>$question, 'element_type_options'=>$elem_options), true);
 		$elem_config_html = $this->load->view("element/config_".$question->config->type, array('question'=>$question), true);
 		$data = array('html'=>array('question_type'=>$type_html, 'question_config'=>$elem_config_html));
 		echo json_encode($data);
@@ -75,6 +81,9 @@ class Questions extends MY_Controller{
 			$question = $_POST;
 			//print_r($_POST);
 			$question['id'] = $id;
+			$formatFN = "format".ucfirst($question['config']['type']);
+			$this->load->library('Questionconfig');
+			$question = $this->questionconfig->$formatFN($question);
 			$question = $this->question->update($question);
 		}
 		//print_r($question);
@@ -96,6 +105,7 @@ class Questions extends MY_Controller{
 		}
 		if(is_object($question)){
 			$this->load->library('inputs');
+			$this->load->library('Questionconfig');
 			$html = $this->load->view('element/config_'.$type, array('question'=>$question), true);
 			echo json_encode(array('status'=>'success', 'html'=>array('question_config'=>$html)));
 		}else{

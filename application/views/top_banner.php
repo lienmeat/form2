@@ -1,1 +1,12 @@
-<?php if(!empty($banner_text)) echo "<div class=\"top_banner\">$banner_text</div>"; ?>
+<?php
+	if(is_array($banner_menu)){
+		$banner_menu_html = '<div id="top_banner_menu_contain" onmouseover="$(\'.banner_menu\').show();" onmouseout="$(\'.banner_menu\').hide();">
+		<div id="menu_indicator">Actions</div>
+		<ul class="banner_menu">';
+		foreach($banner_menu as $i){
+			$banner_menu_html.="<li>$i</li>";
+		}
+		$banner_menu_html.='</ul></div>';
+	}
+	if(!empty($banner_text) or !empty($banner_menu)) echo "<div class=\"top_banner\">$banner_text$banner_menu_html</div>";
+?>
