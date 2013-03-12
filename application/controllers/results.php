@@ -1,16 +1,18 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Questions extends MY_Controller{
+class Results extends MY_Controller{
 	function __construct(){
 		parent::__construct();
 		$this->load->model('result');
 	}
 
 	function view($id){
+		$this->load->model('form');
 		$result = $this->result->getById($id);
 		$form = $this->form->getById($result->form_id);
-		$form->questions = $this->_getQuestions($form);
+		$form->questions = $this->_getQuestions($form->id);
 		$form->result = $result;
+		$form->result->post = json_decode($form->result->post);
 		$this->load->view('result_form', array('form'=>$form));
 	}
 

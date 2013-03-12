@@ -50,8 +50,8 @@ class MY_Controller extends CI_Controller{
   protected function _failAuthResp($message=null){
       if($message) $data['message'] = $message;
       else $data['message'] = 'You are not authorized to perform this action!';
-		  $this->render('failauth', $data);
-      exit;      
+		  echo $this->load->view('failauth', $data, true);
+      exit;
   }
 
   /**

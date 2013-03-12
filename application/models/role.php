@@ -3,105 +3,172 @@
 class Role extends MY_Model{
 	
 	protected $table = 'roles';
-	protected $dbfields = array('id', 'role');
+	protected $dbfields = array('id', 'role', 'description');
 
-  /**
-  * Get all roles for this user
-  * @param string $user Username
-  */
-	function getAllByUser($user=null){
-	  if($user){
-	    return $this->getBy('user', $user);
-	  }else{
-	    return array();
-	  }
-	}
-	
-	/**
-	* Get all roles assigned to an object
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	* @param number $limit number of results (default is all)
-	* @return array Rows
-	*/
-	function getOnObject($object_type, $object_id, $limit=false){
-    $this->db->select()->from($this->table)->where(array('object_type'=>$object_type, 'object_id'=>$object_id))->order_by('user');
-	  if($limit) $this->db->limit($limit);
-	  $query = $this->db->get();
-	  return $query->result();
-	}
-	
-	/**
-	* Get roles a user has on a particular object
-	* @param string $user Username
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	* @param number $limit number of results (default is all)
-	* @return array Rows
-	*/
-	function getByUserOnObject($user, $object_type, $object_id, $limit=false){
-    $this->db->select()->from($this->table)->where(array('user'=>$user, 'object_type'=>$object_type, 'object_id'=>$object_id));
-	  if($limit) $this->db->limit($limit);
-	  $query = $this->db->get();
-	  return $query->result();
-	}
-	
-	/**
-	* Tells if user has a certain role on a particular object
-	* @param string $user Username
-	* @param string $role Role
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	* @param number $limit number of results (default is all)
-	* @return array Rows
-	*/
-	function hasRoleOnObject($user, $role_id, $object_type, $object_id){
-    $this->db->select()->from($this->table)->where(array('user'=>$user, 'role_id'=>$role_id, 'object_type'=>$object_type, 'object_id'=>$object_id));	  
-	  $query = $this->db->get();
-	  $res = $query->result();
-	  if($res and !empty($res)) return true;
-	  else return false;
-  }
-	
-	/**
-	* Deletes roles that a user has (all of them!)
-	* @param string $user Username
-	*/
-	function deleteByUser($user){
-	  if($user){
-	    return $this->db->delete($this->table, array('user'=>$user));
-	  }else{
-	    return false;
-	  }	  
-	}
-	
-  /**
-	* Deletes roles that a user has on an object (all of them!)
-	* @param string $user Username
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	*/
-	function deleteByUserOnObject($user, $object_type, $object_id){
-	  if($user and $object_type and $object_id){
-	    return $this->db->delete($this->table, array('user'=>$user, 'object_type'=>$object_type, 'object_id'=>$object_id));
-	  }else{
-	    return false;
-	  }
-	}
-	
-	/**
-	* Deletes roles matching $role that a user has(all of them!)
-	* @param string $user Username
-	* @param string $role Role
-	*/
-	function deletePermissionByUser($user, $role){
-	  if($user and $role){
-	    return $this->db->delete($this->table, array('user'=>$user,  'permission'=>$permission));
-	  }else{
-	    return false;
-	  }
+	function getLike($q){
+		$this->db->select()->from($this->table)->like('role', $q);
+		$query = $this->db->get();
+		return $query->result();
 	}
 
-		
+	function getUsersOnRole($role_id){
+		$this->db->select('user')->from('roles_users')->where('role_id', $role_id);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	function getFormsOnRole($role_id){
+		$this->db->select('form')->from('forms_roles')->where('role_id', $role_id);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	/**
+	* Get roles belonging to a user
+	* @param string $username
+	*/	
+	function getOnUser($username){
+		$q = "SELECT `roles`.*, `roles_users`.`user` FROM `roles` 
+		JOIN `roles_users` ON (`roles`.`id` = `roles_users`.`role_id`) 
+		WHERE `roles_users`.`user` = ?";
+
+		$query = $this->db->query($q, $username);
+		return $query->result();
+	}
+
+	/**
+	* Gets a Role by name if a user belongs to it (usefull for global roles)
+	* @param string $username
+	* @param string $role Name of role
+	*/	
+	function getRoleOnUserByName($username, $role){
+		$q = "SELECT `roles`.*, `roles_users`.`user` FROM `roles` 
+		JOIN `roles_users` ON (`roles`.`id` = `roles_users`.`role_id`) 
+		WHERE `roles_users`.`user` = ? AND `roles`.`role` = ?";
+
+		$query = $this->db->query($q, array($username, $role));
+		$res = $query->result();
+		if(!empty($res)) return $res[0];
+		else return false;
+	}
+
+	/**
+	* Get roles belonging to a form
+	* @param string $form_name
+	*/
+	function getOnForm($form_name){
+		$q = "SELECT `roles`.*, `forms_roles`.`form` FROM `roles` 
+		JOIN `forms_roles` ON (`roles`.`id` = `forms_roles`.`role_id`) 
+		WHERE `forms_roles`.`form` = ?";
+
+		$query = $this->db->query($q, $form_name);		
+		return $query->result();
+	}
+
+	/**
+	* Get roles belonging to both a form and a user
+	* @param string $form_name
+	* @param string $username
+	*/
+	function getOnFormAndUser($form_name, $username){
+		$q = "SELECT `roles`.*, `forms_roles`.`form`, `roles_users`.`user` FROM `roles` 
+		JOIN `forms_roles` ON (`roles`.`id` = `forms_roles`.`role_id`) 
+		JOIN `roles_users` ON (`roles`.`id` = `roles_users`.`role_id`) 
+		WHERE `forms_roles`.`form` = ? AND `roles_users`.`user` = ?";
+
+		$query = $this->db->query($q, array($form_name, $username));		
+		return $query->result();
+	}
+
+	/**
+	* Adds a Role to a form
+	* @param string $id Role id
+	* @param string $form_name Name of form
+	*/
+	function addToForm($id, $form_name){
+		$this->db->select()->from('forms_roles')->where(array('role_id'=>$id, 'form'=>$form_name));
+		$res = $this->db->get();
+		$result = $res->result();
+		if(!empty($result)){
+			return false;
+		}else{
+			return $this->db->insert('forms_roles', array('role_id'=>$id, 'form'=>$form_name));
+		}
+	}
+
+	/**
+	* Deletes a Role from a form
+	* @param string $id Role id
+	* @param string $form_name Name of form
+	*/
+	function deleteFromForm($id, $form_name){
+		return $this->db->delete('forms_roles', array('role_id'=>$id, 'form'=>$form_name));
+	}
+
+	/**
+	* Adds a Role to a user
+	* @param string $id Role id
+	* @param string $username Username
+	*/
+	function addToUser($id, $username){
+		$username = str_replace(' ', '', strtolower($username));
+		$this->db->select()->from('roles_users')->where(array('role_id'=>$id, 'user'=>$username));
+		$res = $this->db->get();
+		$result = $res->result();
+		if(!empty($result)){
+			return false;
+		}else{
+			return $this->db->insert('roles_users', array('role_id'=>$id, 'user'=>$username));
+		}
+	}
+
+	/**
+	* Deletes a Role from a user
+	* @param string $id Role id
+	* @param string $username Username
+	*/
+	function deleteFromUser($id, $username){
+		return $this->db->delete('roles_users', array('role_id'=>$id, 'user'=>$username));
+	}
+
+	/**
+	* Deletes a Role and associated relations
+	* @param string $id $Role id
+	*/
+	function delete($id){
+		$tables = array('forms_roles', 'roles_users');
+		if($this->db->delete($this->table, array('id'=>$id))){
+			//codeigniter documentation says you can delete from multiple
+			//tables like this!  FUN.
+			$this->db->where('role_id', $id);
+			return $this->db->delete($tables);
+		}
+		return false;		
+	}
+
+	//override update to return the actual db record inserted
+	function update($data){
+		if($data and (is_array($data) or is_object($data))){
+	    $data = (object) $data;
+	  }
+	  if(parent::update($data)){
+	    return $this->getById($data->id);
+	  }else{
+	    return false;
+	  }
+	}
+	
+	//override insert to return the actual db record inserted
+	function insert($data){
+	  if($data and (is_array($data) or is_object($data))){
+	    $data = (object) $data;
+	  }else return false;
+	  $data->id = uniqid('');
+	  if(parent::insert($data)){
+	    return $this->getById($data->id);
+	  }else{
+	    return false;
+	  }
+	}
 }
 ?>

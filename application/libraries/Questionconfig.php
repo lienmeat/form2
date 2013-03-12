@@ -1,6 +1,8 @@
 <?php
 /**
 * This library exists to separate controler code out into a library for doing things with questions' configs (formating configs, rendering)
+* NOTICE!  EVERY SINGLE QUESTION TYPE MUST IMPLEMENT A format<Questiontype>() method in order to be saved to DB after an edit!
+* This is so we can streamline all our rendering for config and formating to database in one place, and not have tons of separate ways of doing it!
 */
 class Questionconfig{
 	//codeigniter instance
@@ -36,7 +38,8 @@ class Questionconfig{
 	function formatSelect($question){
 		$question['config']['options'] = $this->formatOptions($question['config']['options']);
 		$question['config']['selected'] = $this->formatSelected($question['config']['selected']);
-		if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';		
+		$question['config']['attributes']['validation'] = $this->formatRequiredField($question['config']['required']);
+		//if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';				
 		return $question;
 	}
 
@@ -52,7 +55,8 @@ class Questionconfig{
 				'label'=>$label,
 				'selected'=>$selected,
 			);
-			if($question['config']['required']) $input['attributes']['validation'] = 'required';
+			$input['attributes']['validation'] = $this->formatRequiredField($question['config']['required']);
+			//if($question['config']['required']) $input['attributes']['validation'] = 'required';
 			$inputs[] = $input;
 		}
 		$question['config']['inputs'] = $inputs;
@@ -72,7 +76,8 @@ class Questionconfig{
 				'label'=>$label,
 				'selected'=>$selected,
 			);
-			if($question['config']['required']) $input['attributes']['validation'] = 'required';
+			$input['attributes']['validation'] = $this->formatRequiredField($qustion['config']['required']);
+			//if($question['config']['required'] == "Y") $input['attributes']['validation'] = 'required';
 			$inputs[] = $input;
 		}		
 		$question['config']['inputs'] = $inputs;
@@ -94,8 +99,6 @@ class Questionconfig{
 		return (object) $attributes;
 	}
 
-
-
 	function formatDependencies($dependencies){
 		//not yet implemented
 	}
@@ -110,6 +113,17 @@ class Questionconfig{
 		'attributes'=>array('validation'=>'required|alpha_dash'),
 		);
 
+		$this->renderQuestion($question_config);
+	}
+
+	function renderExpDP(){
+		$question_config = (object) array(
+		'text'=>'expdp: ',
+		'name'=>'config[expdp]',
+		'type'=>'select',		
+		'options'=>(object) array('dataprovider'=>(object) array('method'=>'countryOptions')),
+		);
+				
 		$this->renderQuestion($question_config);
 	}
 
@@ -168,13 +182,19 @@ class Questionconfig{
 	function renderOptionsField($question){
 		$o_txt = '';
 		$first = true;
-		if(is_array($question->config->options) or is_object($question->config->options)){
+		//we are using a dataprovider for the options!
+		if($question->config->options->dataprovider){
+			$method = $question->config->options->dataprovider->method;			
+		}elseif(is_array($question->config->options) or is_object($question->config->options)){
 			foreach($question->config->options as $label=>$value){
 				if($first) $first = false;
 				else $o_txt.="\n";
 				$o_txt.=$label.":".$value;
 			}
+
 		}
+
+		
 		$question_config =(object) array(
 			'type'=>'textarea',
 			'text'=>'Options: ',
@@ -233,26 +253,30 @@ class Questionconfig{
 
 	function renderRequiredField($question){
 		$selected = array($question->config->required);
-		print_r($selected);
-		$question_config =(object) array(			
+		//var_dump($selected);
+		$question_config =(object) array(
 			'text'=>'Required?',
 			'alt'=>'(Is this required to contain a value/be selected?)',	
 			'type'=>'radio',
 			'name'=>'config[required]',	
-			'inputs'=>array(		
-				(object) array('type'=>'radio', 'value'=>'1', 'label'=>'Yes', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),
-				(object) array('type'=>'radio', 'value'=>'0', 'label'=>'No', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),	
+			'inputs'=>array(
+				(object) array('type'=>'radio', 'value'=>'Y', 'label'=>'Yes', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),
+				(object) array('type'=>'radio', 'value'=>'N', 'label'=>'No', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),	
 			),
 		);
 		$this->renderQuestion($question_config);
-	}	
+	}
+
+	function formatRequiredField($required){
+		if($required == 'Y') return 'required';
+		else return '';
+	}
 
 	/**
 	* Renders a question given it's config
 	* (just convienience so we dont' have to worry about inluding inputs and whatnot...)
 	*/
 	function renderQuestion($question_config){
-		$this->CI->load->library('inputs');
 		$this->CI->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 	}
 }

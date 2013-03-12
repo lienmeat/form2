@@ -4,105 +4,172 @@
 */
 class Permission extends MY_Model{
 	protected $table = 'permissions';
-	protected $dbfields = array('id', 'user', 'object_type', 'object_id', 'permission');
+	protected $dbfields = array('id', 'permission', 'description');
 
-  /**
-  * Get all permissions for this user
-  * @param string $user Username
-  */
-	function getAllByUser($user=null){
-	  if($user){
-	    return $this->getBy('user', $user);
-	  }else{
-	    return array();
-	  }
-	}
-	
-	/**
-	* Get all permissions assigned to an object
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	* @param number $limit number of results (default is all)
-	* @return array Rows
-	*/
-	function getOnObject($object_type, $object_id, $limit=false){
-    $this->db->select()->from($this->table)->where(array('object_type'=>$object_type, 'object_id'=>$object_id))->order_by('user');
-	  if($limit) $this->db->limit($limit);
-	  $query = $this->db->get();
-	  return $query->result();
-	}
-	
-	/**
-	* Get permissions a user has on a particular object
-	* @param string $user Username
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	* @param number $limit number of results (default is all)
-	* @return array Rows
-	*/
-	function getByUserOnObject($user, $object_type, $object_id, $limit=false){
-    $this->db->select()->from($this->table)->where(array('user'=>$user, 'object_type'=>$object_type, 'object_id'=>$object_id));
-	  if($limit) $this->db->limit($limit);
-	  $query = $this->db->get();
-	  return $query->result();
-	}
-	
-	/**
-	* Tells if user has a certain permission on a particular object
-	* @param string $user Username
-	* @param string $permission Permission
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	* @param number $limit number of results (default is all)
-	* @return array Rows
-	*/
-	function hasPermissionOnObject($user, $permission, $object_type, $object_id){
-    $this->db->select()->from($this->table)->where(array('user'=>$user, 'permission'=>$permission, 'object_type'=>$object_type, 'object_id'=>$object_id));	  
-	  $query = $this->db->get();
-	  $res = $query->result();
-	  if($res and !empty($res)) return true;
-	  else return false;
-  }
-	
-	/**
-	* Deletes permissions that a user has (all of them!)
-	* @param string $user Username
-	*/
-	function deleteByUser($user){
-	  if($user){
-	    return $this->db->delete($this->table, array('user'=>$user));
-	  }else{
-	    return false;
-	  }	  
-	}
-	
-  /**
-	* Deletes permissions that a user has on an object (all of them!)
-	* @param string $user Username
-	* @param string $object_type Singular form of one of the database table names (form, formresult, answer, etc...)
-	* @param string $object_id The id that corresponds to that object (form->id for instance)
-	*/
-	function deleteByUserOnObject($user, $object_type, $object_id){
-	  if($user and $object_type and $object_id){
-	    return $this->db->delete($this->table, array('user'=>$user, 'object_type'=>$object_type, 'object_id'=>$object_id));
-	  }else{
-	    return false;
-	  }
-	}
-	
-	/**
-	* Deletes permissions matching $permission that a user has(all of them!)
-	* @param string $user Username
-	* @param string $permission Permission
-	*/
-	function deletePermissionByUser($user, $permission){
-	  if($user and $permission){
-	    return $this->db->delete($this->table, array('user'=>$user,  'permission'=>$permission));
-	  }else{
-	    return false;
-	  }
+	function getLike($q){
+		$this->db->select()->from($this->table)->like('permission', $q);
+		$query = $this->db->get();
+		return $query->result();
 	}
 
+	/**
+	* Get permissions set on a user
+	* @param string $username
+	*/	
+	function getOnUser($username){
+		$q = "SELECT `permissions`.*, `permissions_users`.`user`, `permissions_users`.`form` FROM `permissions` 
+		JOIN `permissions_users` ON (`permissions`.`id` = `permissions_users`.`permission_id`) 
+		WHERE `permissions_users`.`user` = ?";
+
+		$query = $this->db->query($q, $username);
+		return $query->result();
+	}
+
+	/**
+	* Get permissions set on a form
+	* @param string $form_name
+	*/
+	function getOnForm($form_name){
+		$q = "SELECT `permissions`.*, `permissions_users`.`form`, `permissions_users`.`user` FROM `permissions` 
+		JOIN `permissions_users` ON (`permissions`.`id` = `permissions_users`.`permission_id`) 
+		WHERE `permissions_users`.`form` = ?";
+
+		$query = $this->db->query($q, $form_name);
+		return $query->result();
+	}
+
+
+	/**
+	* Get permissions set on a role
+	* @param string $role_id
+	*/
+	function getOnRole($role_id){
+		$q = "SELECT `permissions`.*, `permissions_roles`.`role_id`, `permissions_roles`.`permission_id` FROM `permissions` 
+		JOIN `permissions_roles` ON (`permissions`.`id` = `permissions_roles`.`permission_id`) 
+		WHERE `permissions_roles`.`role_id` = ?";
+
+		$query = $this->db->query($q, $role_id);
+		return $query->result();
+	}
+
+	/**
+	* Says if permission is set on both a form and a user by name
+	* @param string $permission Permission
+	* @param string $form_name
+	* @param string $username
+	*/
+	function getOnFormAndUser($form_name, $username){
+		$q = "SELECT `permissions`.*, `permissions_users`.`user`, `permissions_users`.`form` FROM `permissions` 
+		JOIN `permissions_users` ON (`permissions`.`id` = `permissions_users`.`permission_id`) 
+		WHERE `permissions_users`.`form` = ? AND `permissions_users`.`user` = ?";
+
+		$query = $this->db->query($q, array($form_name, $username));		
+		return $query->result();
+	}
+
+	/**
+	* Is a permission assigned to role
+	* @param string $permission Permission name
+	* @param string $role_id
+	*/	
+	function hasPermissionOnRole($permission, $role_id){
+		$q = "SELECT `permissions`.*, `permissions_roles`.`role_id`, `permissions_roles`.`permission_id` 
+		FROM `permissions` 
+		JOIN `permissions_roles` ON (`permissions`.`id` = `permissions_roles`.`permission_id`) 
+		WHERE `permissions_roles`.`role_id` = ? AND `permissions`.`permission` = ?";
+
+		$query = $this->db->query($q, array($role_id, $permission));
+		$res = $query->result();
+		if(empty($res)) return false;
+		else return true;
+	}
+
+	/**
+	* Get by name on role
+	* @param string $permission Permission name
+	* @param string $username
+	* @param string $form_name
+	*/	
+	function hasPermissionOnUserAndForm($permission, $username, $form_name){
+		$q = "SELECT `permissions`.*, `permissions_users`.`user`, `permissions_users`.`form` 
+		FROM `permissions` 
+		JOIN `permissions_users` ON (`permissions`.`id` = `permissions_users`.`permission_id`) 
+		WHERE `permissions_users`.`user` = ? AND `permissions_users`.`form` = ? AND `permissions`.`permission` = ?";
+
+		$query = $this->db->query($q, array($username, $form_name, $permission));
+		$res = $query->result();
+		if(empty($res)) return false;
+		else return true;
+	}
+
+	/**
+	* Adds a Permission to a user on a form
+	* @param string $id Permission id
+	* @param string $username
+	* @param string $form_name 
+	*/
+	function addToUser($id, $username, $form_name){
+		return $this->db->insert('permissions_users', array('permission_id'=>$id, 'user'=>$username, 'form'=>$form_name));
+	}
+
+	/**
+	* Deletes a Permission from a form
+	* @param string $id Permission id
+	* @param string $form_name
+	*/ 
+	function deleteFromForm($id, $form_name){
+		return $this->db->delete('permissions_users', array('permission_id'=>$id, 'form'=>$form_name));
+	}
+
+	/**
+	* Deletes a Permission from a user
+	* @param string $id Permission id
+	* @param string $username Username
+	*/ 
+	function deleteFromUser($id, $username){
+		return $this->db->delete('permissions_users', array('permission_id'=>$id, 'user'=>$username));
+	}
+
+	/**
+	* Adds a Permission to a role
+	* @param string $id Permission id
+	* @param string $role_id
+	*/
+	function addToRole($id, $role_id){
+		//see if we already have this permission on this role
+		$this->db->select()->from('permissions_roles')->where(array('role_id'=>$role_id, 'permission_id'=>$id));
+		$res = $this->db->get();
+		$result = $res->result();
+		if(!empty($result)){
+			return false;
+		}else{
+			return $this->db->insert('permissions_roles', array('role_id'=>$role_id, 'permission_id'=>$id));
+		}
+	}
+
+	/**
+	* Deletes a Permission from a role
+	* @param string $id Permission id
+	* @param string $role_id
+	*/ 
+	function deleteFromRole($id, $role_id){
+		return $this->db->delete('permissions_roles', array('permission_id'=>$id, 'role_id'=>$role_id));
+	}
+
+	/**
+	* Deletes a Role and associated relations
+	* @param string $id $Role id
+	*/
+	function delete($id){
+		$tables = array('permissions_roles', 'permissions_users');
+		if($this->db->delete($this->table, array('id'=>$id))){
+			//codeigniter documentation says you can delete from multiple
+			//tables like this!  FUN.
+			$this->db->where('permission_id', $id);
+			return $this->db->delete($tables);
+		}
+		return false;		
+	}
 }
 
 ?>

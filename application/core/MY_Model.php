@@ -5,10 +5,42 @@ class MY_Model extends CI_Model {
 	protected $pkey = 'id';
 
 	function __construct($table=0, Array $dbfields=null){
-		if(empty($this->table) && $table != 0) $this->table = $table;
-		if(empty($this->dbfields) && $dbfields != null) $this->dbfields = $dbfields;
-		//if(empty($this->table) || empty($this->dbfields)) die("MY_Model did not recieve either table or dbfields properties!"); 
+		if(empty($this->table) && $table != 0) $this->setTable($table);
+		if(empty($this->dbfields) && $dbfields != null) $this->setDBFields($dbfields);
 		parent::__construct();
+	}
+
+	/**
+	* set the name of the primary key of the default table
+	*/
+	function setPkey($pkey){
+		$this->pkey = $pkey;
+	}
+
+	function getPkey(){
+		return $this->pkey;
+	}
+
+	/**
+	* set the default table to use
+	*/
+	function setTable($table){
+		$this->table = $table;
+	}
+
+	function getTable(){
+		return $this->table;
+	}
+
+	/**
+	* set the fields inserts/updates can modify/use
+	*/
+	function setDBFields($fields){
+		$this->dbfields = $fields;
+	}
+
+	function getDBFields(){
+		return $this->dbfields;
 	}
 
 	//gets all objs from db table

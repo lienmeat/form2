@@ -16,19 +16,15 @@ class Authorization{
   /**
   * Current user
   */
-  private $user;
+  private $user;  
   
-  /**
-  * Permissions model
-  */
-  private $perms;
   
   function __construct(){
     $this->CI =& get_instance();
     //autoloaded, we can take this for granted
     $this->auth =& $this->CI->authentication;
-    $this->user = $this->auth->getUser();
-    $this->perms =& $this->CI->load->model('permission');
+    //store our user for later use (shorthand)
+    $this->user = $this->auth->getUser();    
   }
   
   /**
@@ -102,19 +98,46 @@ class Authorization{
     $this->auth->logout();
   }
   
-  
-  //todo: consider refactoring for roll-based permissions system!
   /**
-  * Tells if user has a certain permission on an object
-  * @param string $permission Permission
-  * @param string $object_type Singular 
-  * @param string $object_id
+  * Finds if current user can perform an action on a form
+  * @param string $permission Name of permission (edit, admin, view, etc...)
+  * @param string $form Name of form
   * @return bool
-  */  
-  function hasPermissionOnObject($permission, $object_type, $object_id){
-    return $this->perm->hasPermissionOnObject($this->username, $permission, $object_type, $object_id);    
+  */
+  function can($permission, $form){
+    $this->CI->load->model('permission');
+
+    //first check granular permissions on a form
+    $res = $this->CI->permission->hasPermissionOnUserAndForm($permission, $this->username(), $form);
+    if($res) return $res;
+    
+    //see if we have a role with the perm
+    $this->CI->load->model('role');
+    $roles = $this->CI->role->getOnFormAndUser($form, $this->username());
+    foreach($roles as $r){
+      if($this->CI->permission->hasPermissionOnRole($permission, $r->id)) return true;
+    }
+
+    //see if person has one of the global roles
+    $supereditor = $this->is('supereditor');
+    if($supereditor && $this->CI->permission->hasPermissionOnRole($permission, $supereditor->id)) return true;
+    else if($this->is('superadmin')){ //superadmin can do ALL
+      return true;
+    }
+    return false;
   }
   
-    
+  /**
+  * Find out if a global role (or any other really) is assigned to current user
+  * (global roles are going to be things like superadmin & supereditor)
+  * @param string $role_name
+  * @return object|false Role on success, false otherwise
+  */
+  function is($role_name){
+    $this->CI->load->model('role');
+    $role = $this->CI->role->getRoleOnUserByName($this->username(), $role_name);
+    if(!empty($role)) return $role;
+    else return false;
+  }    
 }
 ?>

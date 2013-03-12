@@ -38,6 +38,8 @@ Validation.prototype.__init__= function(){
 					}
 				);
 			}
+			//todo: attach some indicator to question that it is required
+			//console.log(this);
 		}
 	);
 
@@ -117,53 +119,82 @@ Validation.prototype.validateForm = function(callback){
 *	Validates an individual input for validity
 */
 Validation.prototype.validateInput = function(input){
+	var name = $(input).attr('name');
+	var hidden_fields = $('#dependhiddeninputs_'+this.form_id).val().split(',');
+	if(hidden_fields.indexOf(name) !== -1){
+		this.hideError(input);
+		return [];
+	}
+
 	//get this value as soon as we instantiate, because it's important
-	//that we know the state when it started, more than at the end! 
+	//that we know the state when it started, more than at the end!
 	var fullform = this.fullform;
 	//get validation string
 	var validation = $(input).attr('validation') || '';
+	
+	//figures out if input is even required
+	var is_required;
+	if(validation.indexOf('required') !== -1) is_required = true;
+	else is_required = false;
 		
 	//get validation objects parsed from validation string
 	var validations = this.parseValidationString(validation);
 
 	var validated = true;
 	var remotevalidations = [];
-	
-	//loop over validation objects and validate the value
-	for(i in validations){
-		var res = this.checkFunction(validations[i].function, validations[i].params, input);
-		if(res == 'undefined_function'){
-			//we need to hit the server with the function and hope!
-			var val = validations[i];
-			val.value = this.getInputValue(input);
-			val.input_id = $(input).attr('id');
-			remotevalidations.push(val);			
+
+	//determines whether validation functions actually should be run
+	//to fix case where there are validation functions but field has
+	//no input and isn't required
+	var do_validation = true;
+
+	if(is_required){
+		do_validation = true;
+	}else{
+		if(this.getInputValue(input).length > 0){
+			do_validation = true;
 		}else{
-			if(res == true){
-				//we don't care, go to next function
-				continue;
-			}else if(res == false){
-				//set error msg and break out of loop
-				var err = $(input).attr('validationmessage');
-				if(!err){
-					var err = this.getValidationError(validations[i].function);
-					if(err){
-						this.showError(input, err);
+			do_validation = false;
+		}
+	}
+
+	if(do_validation){
+		//loop over validation objects and validate the value
+		for(i in validations){
+			var res = this.checkFunction(validations[i].function, validations[i].params, input);
+			if(res == 'undefined_function'){
+				//we need to hit the server with the function and hope!
+				var val = validations[i];
+				val.value = this.getInputValue(input);
+				val.input_id = $(input).attr('id');
+				remotevalidations.push(val);			
+			}else{
+				if(res == true){
+					//we don't care, go to next function
+					continue;
+				}else if(res == false){
+					//set error msg and break out of loop
+					var err = $(input).attr('validationmessage');
+					if(!err){
+						var err = this.getValidationError(validations[i].function);
+						if(err){
+							this.showError(input, err);
+						}else{
+							var err = "Validation message not configured for "+validations[i].function+" but it failed validation!";
+							this.showError(input, err);
+						}
 					}else{
-						var err = "Validation message not configured for "+validations[i].function+" but it failed validation!";
 						this.showError(input, err);
 					}
+					validated = false;
+					break;				
 				}else{
-					this.showError(input, err);
-				}
-				validated = false;
-				break;				
-			}else{
-				//was a text modification function
-				//set the value of the input (NOT SUPORTED BY ANYTHING OTHER THAN <input> or <textarea>, and never will be!)
-				var tag = $(input).prop('tagName');
-				if(tag == "INPUT" || tag == "TEXTAREA"){
-					$(input).val(res);
+					//was a text modification function
+					//set the value of the input (NOT SUPORTED BY ANYTHING OTHER THAN <input> or <textarea>, and never will be!)
+					var tag = $(input).prop('tagName');
+					if(tag == "INPUT" || tag == "TEXTAREA"){
+						$(input).val(res);
+					}
 				}
 			}
 		}
@@ -426,6 +457,15 @@ Validation.prototype.submitForm = function(submit){
 
 /*********************** Validation functions go below this line *******************/
 
+Validation.prototype.required = function(value){
+	if(value && value.length > 0){
+		return true;
+	}else{
+		this.setValidationError('required', 'This field is required!');
+		return false;
+	}
+}
+
 Validation.prototype.min_length = function(value, params){
 	if(value.length < params[0]){
 		this.setValidationError('min_length', 'Must be at least '+params[0]+' in length!');
@@ -433,6 +473,24 @@ Validation.prototype.min_length = function(value, params){
 	}
 	return true;
 }
+
+Validation.prototype.max_length = function(value, params){
+	if(value.length > params[0]){
+		this.setValidationError('max_length', 'Must less than '+params[0]+' in length!');
+		return false;
+	}
+	return true;
+}
+
+Validation.prototype.exact_length = function(value, params){
+	if(value.length == params[0]){
+		this.setValidationError('exact_length', 'Must be at exactly '+params[0]+' in length!');
+		return false;
+	}
+	return true;
+}
+
+
 
 function trim(value, params){
 	return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');

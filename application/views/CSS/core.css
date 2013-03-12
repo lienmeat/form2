@@ -24,7 +24,8 @@ div.top_banner {
 
 #top_banner_menu_contain {
   float: right;
-  display: block;  
+  display: block;
+  /*background-color: pink;*/
 }
 
 #menu_indicator {
@@ -38,8 +39,12 @@ div.top_banner {
 }
 
 .banner_menu {
+  width: 150px;
+  z-index: 999;
   background: rgba(0,0,0,0.65);
-
+  position: absolute;
+  top: +35px;
+  right: +15px;
   margin: 0em;
   padding: 0.5em; 
   list-style: none;
@@ -58,8 +63,10 @@ div.top_banner {
   /*background: pink;*/
 }
 
-.banner_menu a {  
+.banner_menu a {
   color: white;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
 }
 
 .banner_menu a:hover {

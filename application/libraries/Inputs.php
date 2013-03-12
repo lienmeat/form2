@@ -370,8 +370,16 @@ class Radio_Input extends Input_Input{
 		$this->selected = $selections;
 	}
 
-	function isSelected($value){
-		return in_array((string) $value, $this->selected, true);		
+	function isSelected($value){		
+		if(is_array($this->selected) or is_object($this->selected)){
+			foreach ($this->selected as $k=>$s) {
+				if((string) $s === (string) $value){					
+					return true;					
+				}				
+			}
+		}
+		return false;
+		//return (in_array((string) $value, $this->selected) or in_array($value, $this->selected));
 	}
 }
 
@@ -430,7 +438,15 @@ class Checkbox_Input extends Input_Input implements iSelectable{
 	}
 
 	function isSelected($value){
-		return in_array($value, $this->selected, true);
+		if(is_array($this->selected) or is_object($this->selected)){
+			foreach ($this->selected as $k=>$s) {
+				if((string) $s === (string) $value){					
+					return true;					
+				}				
+			}
+		}
+		return false;
+		//return in_array($value, $this->selected, true);
 	}
 }
 
@@ -521,7 +537,15 @@ class Select_Input extends Base_Input implements iSelectable{
 	}
 
 	function isSelected($value){
-		return in_array($value, $this->selected, true);
+		if(is_array($this->selected) or is_object($this->selected)){
+			foreach ($this->selected as $k=>$s) {
+				if((string) $s === (string) $value){					
+					return true;					
+				}				
+			}
+		}
+		return false;
+		//return in_array($value, $this->selected, true);
 	}
 
 	function optionsToString(){

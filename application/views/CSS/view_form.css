@@ -1,3 +1,11 @@
 .form_question, .form_answer{
 	min-width: 465px;
 }
+
+.dependhidden{
+	display: none;
+}
+
+.dependvisible{
+	display: table-row;
+}

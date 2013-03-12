@@ -4,7 +4,7 @@
 */
 class Result extends MY_Model{
 	protected $table = 'formresults';
-	protected $dbfields = array('id', 'form_id', 'timestamp', 'post', 'submitter');
+	protected $dbfields = array('id', 'form_id', 'timestamp', 'post', 'submitter', 'user_agent', 'ip_address', 'deleted');
 
 	/**
   * Get all questions in form (in order)
@@ -15,7 +15,7 @@ class Result extends MY_Model{
 	  if($deleted) $deleted = 1;
 	  else $deleted = 0;
 	  if($form_id){
-      	if(!$order_by) $order_by = 'timestamp ASC';
+      	if(!$order_by) $order_by = 'timestamp DESC';
 	    $this->db->select()->from($this->table)->where(array('form_id'=>$form_id, 'deleted'=>$deleted))->order_by($order_by);
 	    $query = $this->db->get();
 	    return $query->result();

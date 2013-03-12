@@ -155,7 +155,7 @@ class Validation{
 	 * @param	field
 	 * @return	bool
 	 */
-	
+	/*
 	public function matches($str, $field)
 	{
 		if ( ! isset($_POST[$field]))
@@ -173,7 +173,7 @@ class Validation{
 			return $ret;
 		}
 	}
-	
+	*/
 	// --------------------------------------------------------------------
 
 	/**
@@ -208,15 +208,24 @@ class Validation{
 	{
 		if (preg_match("/[^0-9]/", $val))
 		{
+			$this->setValidationMessage('min_length', "ERROR! The min_length validation function has an invalid parameter! Please contact web services!");			
 			return FALSE;
 		}
 
 		if (function_exists('mb_strlen'))
 		{
-			return (mb_strlen($str) < $val) ? FALSE : TRUE;
+			$ret = (mb_strlen($str) < $val) ? FALSE : TRUE;
+			if(!$ret){
+				$this->setValidationMessage('min_length', "This field must contain a minimum of $val characters!");			
+			}
+			return $ret;
 		}
 
-		return (strlen($str) < $val) ? FALSE : TRUE;
+		$ret = (strlen($str) < $val) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('min_length', "This field must contain a minimum of $val characters!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -233,15 +242,24 @@ class Validation{
 	{
 		if (preg_match("/[^0-9]/", $val))
 		{
+			$this->setValidationMessage('max_length', "ERROR! The max_length validation function has an invalid parameter! Please contact web services!");
 			return FALSE;
 		}
 
 		if (function_exists('mb_strlen'))
 		{
-			return (mb_strlen($str) > $val) ? FALSE : TRUE;
+			$ret = (mb_strlen($str) > $val) ? FALSE : TRUE;
+			if(!$ret){
+				$this->setValidationMessage('max_length', "This field cannot contain more than $val characters!");			
+			}
+			return $ret;
 		}
 
-		return (strlen($str) > $val) ? FALSE : TRUE;
+		$ret = (strlen($str) > $val) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('max_length', "This field cannot contain more than $val characters!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -258,15 +276,24 @@ class Validation{
 	{
 		if (preg_match("/[^0-9]/", $val))
 		{
+			$this->setValidationMessage('exact_length', "ERROR! The exact_length validation function has an invalid parameter! Please contact web services!");
 			return FALSE;
 		}
 
 		if (function_exists('mb_strlen'))
 		{
-			return (mb_strlen($str) != $val) ? FALSE : TRUE;
+			$ret = (mb_strlen($str) != $val) ? FALSE : TRUE;
+			if(!$ret){
+				$this->setValidationMessage('exact_length', "This field must contain exactly $val characters!");			
+			}
+			return $ret;
 		}
 
-		return (strlen($str) != $val) ? FALSE : TRUE;
+		$ret = (strlen($str) != $val) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('exact_length', "This field must contain exactly $val characters!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -280,7 +307,11 @@ class Validation{
 	 */
 	public function valid_email($str)
 	{
-		return ( ! preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $str)) ? FALSE : TRUE;
+		$ret = ( ! preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $str)) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('valid_email', "This email address does not appear to be valid!");
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -296,18 +327,28 @@ class Validation{
 	{
 		if (strpos($str, ',') === FALSE)
 		{
-			return $this->valid_email(trim($str));
+			$ret = $this->valid_email(trim($str));
+			if(!$ret){
+				$this->setValidationMessage('valid_emails', "The email entered does not appear to be valid!");			
+			}
+			return $ret;
 		}
 
 		foreach (explode(',', $str) as $email)
 		{
 			if (trim($email) != '' && $this->valid_email(trim($email)) === FALSE)
 			{
-				return FALSE;
+				$ret = FALSE;
+				$this->setValidationMessage('valid_emails', "One of the emails entered does not appear to be valid!");			
+				return $ret;
 			}
 		}
 
-		return TRUE;
+		$ret = TRUE;
+		if(!$ret){
+			$this->setValidationMessage('valid_emails', "One of the emails entered does not appear to be valid!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -338,7 +379,11 @@ class Validation{
 	 */
 	public function alpha($str)
 	{
-		return ( ! preg_match("/^([a-z])+$/i", $str)) ? FALSE : TRUE;
+		$ret = ( ! preg_match("/^([a-z])+$/i", $str)) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('alpha', "This field can only contain letters (a-z)!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -352,7 +397,11 @@ class Validation{
 	 */
 	public function alpha_numeric($str)
 	{
-		return ( ! preg_match("/^([a-z0-9])+$/i", $str)) ? FALSE : TRUE;
+		$ret = ( ! preg_match("/^([a-z0-9])+$/i", $str)) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('alpha_numeric', "This field can only contain numbers and letters!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -366,7 +415,11 @@ class Validation{
 	 */
 	public function alpha_dash($str)
 	{
-		return ( ! preg_match("/^([-a-z0-9_-])+$/i", $str)) ? FALSE : TRUE;
+		$ret = ( ! preg_match("/^([-a-z0-9_-])+$/i", $str)) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('alpha_dash', "This field can only contain numbers, letters, underscore, and hyphen!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -380,8 +433,11 @@ class Validation{
 	 */
 	public function numeric($str)
 	{
-		return (bool)preg_match( '/^[\-+]?[0-9]*\.?[0-9]+$/', $str);
-
+		$ret = (bool)preg_match( '/^[\-+]?[0-9]*\.?[0-9]+$/', $str);
+		if(!$ret){
+			$this->setValidationMessage('numeric', "This field contain a numeric value!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -395,7 +451,11 @@ class Validation{
 	 */
 	public function is_numeric($str)
 	{
-		return ( ! is_numeric($str)) ? FALSE : TRUE;
+		$ret = ( ! is_numeric($str)) ? FALSE : TRUE;
+		if(!$ret){
+			$this->setValidationMessage('is_numeric', "This field must contain a numeric value!");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -409,7 +469,11 @@ class Validation{
 	 */
 	public function integer($str)
 	{
-		return (bool) preg_match('/^[\-+]?[0-9]+$/', $str);
+		$ret = (bool) preg_match('/^[\-+]?[0-9]+$/', $str);
+		if(!$ret){
+			$this->setValidationMessage('integer', "This field can only contain integers! (0, 1, 2...)");			
+		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -423,13 +487,11 @@ class Validation{
 	 */
 	public function decimal($str)
 	{
-		$res = (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
-		if(!$res){
-			$this->setValidationMessage('decimal', "This field must contain a decimal number!");
-			return false;
-		}else{
-			return true;
+		$ret = (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
+		if(!$ret){
+			$this->setValidationMessage('decimal', "This field must contain a decimal number!");			
 		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -445,17 +507,15 @@ class Validation{
 	{
 		if ( ! is_numeric($str))
 		{
-			$res = FALSE;
+			$ret = FALSE;
 		}else{
-			$res = $str > $min;
+			$ret = $str > $min;
 		}
 
-		if(!$res){
-			$this->setValidationMessage('greater_than', "This field must contain a value greater than $min!");
-			return false;
-		}else{
-			return true;
+		if(!$ret){
+			$this->setValidationMessage('greater_than', "This field must contain a value greater than $min!");			
 		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -471,16 +531,14 @@ class Validation{
 	{
 		if ( ! is_numeric($str))
 		{
-			$res = FALSE;
+			$ret = FALSE;
 		}else{
-			$res = $str < $max;
+			$ret = $str < $max;
 		}
-		if(!$res){
-			$this->setValidationMessage('less_than', "This field must contain a value less than $max!");
-			return false;
-		}else{
-			return true;
+		if(!$ret){
+			$this->setValidationMessage('less_than', "This field must contain a value less than $max!");		
 		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -494,14 +552,12 @@ class Validation{
 	 */
 	public function is_natural($str)
 	{
-		$res = (bool) preg_match( '/^[0-9]+$/', $str);
+		$ret = (bool) preg_match( '/^[0-9]+$/', $str);
 
-		if(!$res){
+		if(!$ret){
 			$this->setValidationMessage('is_natural', "This field must contain a natural number (ex: 0, 1, 2...)!");
-			return false;
-		}else{
-			return true;
 		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -518,20 +574,18 @@ class Validation{
 		$res = TRUE;
 		if ( ! preg_match( '/^[0-9]+$/', $str))
 		{
-			$res = FALSE;
+			$ret = FALSE;
 		}
 
 		if ($str == 0)
 		{
-			$res = FALSE;
+			$ret = FALSE;
 		}
 
-		if(!$res){
-			$this->setValidationMessage('is_natural_no_zero', "This field must contain a natural counting number (ex: 1, 2, 3...)!");
-			return false;
-		}else{
-			return true;
+		if(!$ret){
+			$this->setValidationMessage('is_natural_no_zero', "This field must contain a natural counting number (ex: 1, 2, 3...)!");		
 		}
+		return $ret;
 	}
 
 	// --------------------------------------------------------------------
@@ -548,13 +602,11 @@ class Validation{
 	 */
 	public function valid_base64($str)
 	{
-		$res = (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', $str);
-		if(!$res){
-			$this->setValidationMessage('valid_base64', "This field must contain valid base64 encoded content!");
-			return false;
-		}else{
-			return true;
+		$ret = (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', $str);
+		if(!$ret){
+			$this->setValidationMessage('valid_base64', "This field must contain valid base64 encoded content!");		
 		}
+		return $ret;
 
 	}
 
@@ -670,11 +722,11 @@ class Validation{
 		$this->CI->load->model('form');
 		
 		if(!empty($str)){
-			$res = $this->CI->form->nameExists($str);
+			$ret = $this->CI->form->nameExists($str);
 		}else{
-			$res = true;
+			$ret = true;
 		}
-		if($res){
+		if($ret){
 			$this->setValidationMessage('newformname', "The form name is required but must not be in use by another form! Please use a different name!");
 			return false;
 		}else{

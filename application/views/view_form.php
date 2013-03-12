@@ -1,12 +1,28 @@
 <?php
-	$this->load->view('header', array('title'=>$form->name));
+	$menu = array(
+		anchor('forms/results/'.$form->name, 'View Results'),
+		anchor('forms/edit/'.$form->name, 'Edit Form'),
+		anchor('forms/manage/'.$form->name, 'Manage Form'),
+	);
+	$this->load->view('header', array('title'=>$form->name, 'banner_menu'=>$menu));
 	//$this->load->view('JS/validation.js');
 	//$this->load->view('JS/dependencies.js');
 	$this->load->library('inputs');
+	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/dependencies.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/validation.js\"></script>";
 ?>
+<style>
+.dependhidden{
+	display: none;
+}
+
+.dependvisible{
+	display: table-row;
+}
+</style>
 <script type="text/javascript">
 	$(document).ready(function(){
+		var form_deps = new Dependencies('<?php echo $form->id; ?>');
 		var form_val = new Validation('<?php echo $form->id; ?>');
 	});
 </script>

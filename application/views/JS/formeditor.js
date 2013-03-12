@@ -21,6 +21,11 @@ FormEditor.__init__ = function(){
 	this.form_id = form_id;
 	this.initModals();
 	this.initSortable();
+	FormEditor.form_questions_dependencies = new Dependencies('form_questions_form');
+	//not needed yet...but maybe someday.
+	//FormEditor.form_config_dependencies = new Dependencies('form_config_form');
+	//FormEditor.question_config_dependencies = new Dependencies('question_config_form');
+
 	FormEditor.form_questions_validator = new Validation('form_questions_form');
 	FormEditor.form_config_valalidator = new Validation('form_config_form');
 	FormEditor.question_config_validator = new Validation('question_config_form');
@@ -162,6 +167,7 @@ FormEditor.saveQuestionCallback = function(resp){
 		FormEditor.closeEditQuestion();
 	}
 	$('#'+question_id).html(resp.html);
+	FormEditor.form_questions_dependencies.__init__();
 	FormEditor.form_questions_validator.__init__();
 }
 
@@ -206,6 +212,20 @@ FormEditor.loadElementConfig = function(question_id, type){
 FormEditor.loadElementConfigCallback = function(resp){	
 	$('#question_config_contain').html(resp.html.question_config);
 	FormEditor.question_config_validator.__init__();
+}
+
+
+FormEditor.deleteQuestion = function(question_id){
+	var conf = confirm('Are you sure you want to delete this question?!\nIt will not be able to be recovered!');
+	if(conf){
+		doAjax('questions/delete/'+question_id, {}, FormEditor.deleteQuestionCallback, function(){});
+	}
+}
+
+FormEditor.deleteQuestionCallback = function(resp){
+	if(resp && resp.status == 'success'){
+		$('#'+resp.question_id).hide();
+	}
 }
 
 /**

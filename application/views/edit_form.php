@@ -1,22 +1,38 @@
 <?php
-	$menu_items = array(
-		anchor('forms/manage/'.$form->name, 'Manage'),
-		'<a href="javascript:void(0);" onclick="FormEditor.openEditForm();">Edit form configuration</a>',
-		anchor('forms/publish/'.$form->id, 'Publish'),
-		anchor('forms/delete/'.$form->id, 'Delete'),
-	);
-	$this->load->view('header', array('title'=>$form->name, 'banner_text'=>"Edit \"$form->name\"!", 'banner_menu'=>$menu_items));	
-	$this->load->library('inputs');	
-	$this->load->view('JS/edit_form');
-	$this->load->view('JS/formeditor.php', array('form_id'=>$form->id));
-	echo "<style>";
-	$this->load->view('CSS/edit_form.css');
-	echo "</style>";
+$menu_items = array(		
+	anchor('forms/manage/'.$form->name, 'Manage Form'),
+	anchor('forms/viewid/'.$form->id, 'View Form'),
+	anchor('forms/results/'.$form->id, 'View Results'), 
+	'<a href="javascript:void(0);" onclick="FormEditor.openEditForm();">Edit form configuration</a>',
+	anchor('forms/publish/'.$form->id, 'Publish'),
+	anchor('forms/delete/'.$form->id, 'Delete'),
+);
+
+$this->load->view('header', array('title'=>$form->name, 'banner_text'=>"Edit \"$form->name\"!", 'banner_menu'=>$menu_items));	
+
+$this->load->library('inputs');	
+$this->load->view('JS/edit_form');
+$this->load->view('JS/formeditor.php', array('form_id'=>$form->id));
+echo "<style>";
+$this->load->view('CSS/edit_form.css');
+echo "</style>";
 ?>
 <style>
 
 .form_question, .form_answer{
 	min-width: 463px;
+}
+
+.dependvisible {
+	background-color: gray;
+	/*opacity: 0.8;*/
+	/*background-color: rgba(0,0,0,0.9);*/
+}
+
+.dependhidden {
+	background-color: lightgray;
+	/*opacity: 0.2;*/
+	/*rgba(0,0,0,0.1);*/
 }
 
 </style>
@@ -66,7 +82,6 @@
 	</form>
 </div>
 
-<?php
-	
-	$this->load->view('footer');
+<?php	
+$this->load->view('footer');
 ?>

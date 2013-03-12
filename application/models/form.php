@@ -6,11 +6,21 @@ class Form extends MY_Model{
 	protected $table = 'forms';
 	protected $dbfields = array('id', 'name', 'title', 'config', 'creator', 'created', 'published', 'disabled');
 
-  /**
-  * Get all forms this user created
-  * @param string $user Username
-  * @return array Forms (may be empty)
-  */
+	/**
+	*
+	*/
+	function getWithNameLike($q){
+		$param = $this->db->escape_like_str($q);
+		$sq = "SELECT DISTINCT `name` FROM `{$this->table}` WHERE `name` LIKE '%$param%'";
+		$query = $this->db->query($sq);
+		return $query->result();
+	}
+
+  	/**
+  	* Get all forms this user created
+  	* @param string $user Username
+  	* @return array Forms (may be empty)
+  	*/
 	function getByUser($user=null, $order_by=null){
 	  if($user){
 	    if(!$order_by)	$order_by = 'created DESC';

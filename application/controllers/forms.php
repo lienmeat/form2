@@ -46,8 +46,8 @@ class Forms extends MY_Controller{
 			$form->questions = $this->_getQuestions($form->id);
 			$this->load->view('view_form', array('form'=>$form));
 		}else{
-			$this->_saveResult($form);
-			$this->_doOnSuccess($form);
+			$result = $this->_saveResult($form);
+			$this->_doOnSuccess($form, $result);
 		}
 	}
 
@@ -58,15 +58,28 @@ class Forms extends MY_Controller{
 		$this->load->model('result');
 		$result->post = json_encode($_POST);
 		$result->submitter = $this->authorization->username();
+		$result->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		$result->ip_address = $_SERVER['REMOTE_ADDR'];
 		$result->timestamp = date('Y-m-d H:i:s');
 		$result->form_id = $form->id;
 		return $this->result->insert($result);		
 	}
 
 	/**
-	* Saves form resutls to database
+	* Runs actions needed to be done on a successful submition
 	*/
-	private function _doOnSuccess($form){
+	private function _doOnSuccess($form, $result){
+		//do any workflow or other tasks to do on a success
+
+		//print thank you message
+		//print link back to form result
+
+		//print normal form result view
+		$form->questions = $this->_getQuestions($form->id);
+		$form->result = $result;
+		$form->result->post = json_decode($form->result->post);
+		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou));
+		//echo "Good job. ".anchor('forms/results/'.$form->name, 'Form Results');
 
 	}	
 
@@ -117,7 +130,7 @@ class Forms extends MY_Controller{
 			return;
 		}
 
-		//a published form CANNOT be edited directly for safty reasons(you could un-publish...)
+		//a published form CANNOT be edited directly for safty reasons
 		if($form->published && $_GET['doDuplicate']){			
 			$form = $this->_duplicateForm($form->id);
 			$this->_redirect(site_url('forms/edit/'.$form->id));
@@ -164,6 +177,19 @@ class Forms extends MY_Controller{
 		}
 	}
 
+	function manage($name){
+		$forms = $this->form->getByName($name, 'created DESC');
+		
+		//get roles on this form
+
+
+		//get people who have roles on this form
+
+
+		//echo "<h1>This method is still under construction!<h1>";
+		$this->load->view('manage_form', array('forms'=>$forms));
+	}
+
 
 	function saveconfig($id){
 		if(!empty($_POST) and $id){
@@ -185,7 +211,7 @@ class Forms extends MY_Controller{
 	* Copy a form (forces a new name)
 	*/
 	function copy($name_or_id){
-
+		echo "This method is still under construction";
 	}
 
 	/**
@@ -193,7 +219,28 @@ class Forms extends MY_Controller{
 	*/
 	function results($name_or_id){
 		//todo: make sure user has permissions
+		$form = $this->form->getById($name_or_id);
+		if($form){
+			$forms[] = $form;
+		}else{
+			$forms = $this->form->getByName($name_or_id);
+		}
+		if(!$forms) $forms = array();
+		$this->load->model('result');
+		$formresults = array();
+		foreach($forms as $f){
+			$f->formresults = $this->result->getByForm($f->id);
+			$formresults = array_merge($formresults, $f->formresults);
+		}
+		$this->load->view('formresults', array('forms'=>$forms, 'formresults'=>$formresults));
+	}
 
+	function viewresult($result_id){
+		$result = $this->result->getById($id);
+		$form = $this->form->getById($result->form_id);
+		$form->questions = $this->_getQuestions($form->id);
+		$form->result = $result;
+		$this->load->view('result_form', array('form'=>$form));
 	}
 
 	/**

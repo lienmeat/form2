@@ -62,3 +62,11 @@ function submitClicked(button, form_id){
 function testAjax(){
   doAjax('forms/add', {something: 'silly'}, function(resp){ alert(resp); });
 }
+
+function toggleVisibility(selector){
+  if($(selector).css('display') == 'none'){
+    $(selector).show();
+  }else{
+    $(selector).hide();
+  }
+}

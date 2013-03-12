@@ -11,13 +11,7 @@ class Questions extends MY_Controller{
 	* @param string $form_id
 	*/
 	function add($form_id){
-		$this->authorization->forceLogin();
-		
-		//this shouldn't be possible, but as a precaution
-		if(!$this->authorization->username()){
-			$this->_failAuthResponse("You must be logged in to complete this action!");
-			return;
-		}
+		$this->authorization->forceLogin();		
 
 		//create a new blank question
 		$question = $this->question->insert(array('form_id'=>$form_id, 'order'=>'9999', 'config'=>array('type'=>'text')));
@@ -76,7 +70,8 @@ class Questions extends MY_Controller{
 	/**
 	* Saves a question after editing config, echos out question's edit view on success
 	*/
-	function savequestion($id){				
+	function savequestion($id){	
+		$this->authorization->forceLogin();			
 		if(!empty($_POST) and $id){
 			$question = $_POST;
 			//print_r($_POST);
@@ -98,7 +93,7 @@ class Questions extends MY_Controller{
 	}
 
 	function loadconfigview($question_id, $type){
-
+		$this->authorization->forceLogin();
 		if($question_id && $type){
 			$question = $this->question->getById($question_id);
 
@@ -113,11 +108,24 @@ class Questions extends MY_Controller{
 		}
 	}
 
+	function delete($id){
+		$this->authorization->forceLogin();
+		$this->question->delete($id);
+		echo json_encode(array('status'=>'success', 'question_id'=>$id));
+	}
+
 	/**
 	* Copy a question
 	*/
 	function copy($id){
+		//todo: copy and paste
+	}
 
+	/**
+	* Paste a question
+	*/
+	function paste($id){
+		//todo: copy and paste
 	}
 
 	/**
@@ -135,6 +143,7 @@ class Questions extends MY_Controller{
 	* (called from ajax on edit form mode)
 	*/
 	function reorder(){
+		$this->authorization->forceLogin();
 		if(!empty($_POST['question_ids']) && is_array($_POST['question_ids'])){
 			$this->question->reorder($_POST['question_ids']);
 			echo json_encode(array('status'=>'success'));

@@ -7,4 +7,4 @@
 
 <div class="menu" style="text-align: right;"><?php echo implode("<br />", $links); ?></div>
 
-<?php if(ENVIRONMENT == 'development') echo "<h3 style='color: red;'>FORMIT2_DEV_VERSION</h3>"; ?>
+<?php if(ENVIRONMENT == 'development') echo "<h3 style='color: red;'>".APP_NAME."_DEV_VERSION</h3>"; ?>

@@ -48,13 +48,13 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'webdb.wallawalla.edu';
+$db['default']['hostname'] = DATABASE_HOST;
 $db['default']['username'] = 'FormIt2';
 $db['default']['password'] = 'qWfY9AwSffPCv5Et';
 $db['default']['database'] = 'FormIt2';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
-$db['default']['pconnect'] = TRUE;
+$db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = TRUE;
 $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = '';

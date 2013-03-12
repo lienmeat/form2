@@ -18,7 +18,7 @@ require_once('templates.php');
 $aSiteHeader = array(
 'sTitle'=>$title,
 'secure'=>'true', //we MIGHT need to make this dynamic somehow! (cause formit does this)
-'bannerText'=>'FormIt2',
+'bannerText'=>APP_NAME,
 'bannerRight'=>$this->load->view('menu', array(),true),
 );
 
@@ -27,5 +27,5 @@ acadHeader($aSiteHeader); //WWU site header init
 //load local header requirements
 $this->load->view('include_css'); //load up core.css
 $this->load->view('include_js'); //load up core.js (or other core js libs)
-if($banner_text) $this->load->view('top_banner', array('banner_text'=>$banner_text));
+$this->load->view('top_banner', array('banner_text'=>$banner_text));
 ?>
