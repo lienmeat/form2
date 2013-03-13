@@ -6,11 +6,24 @@
 <div class="form_answer view_mode <?php echo $question->config->name; ?>_fi2" id="<?php echo $question->id; ?>_answer">
 	<div class="form_element_contain  view_mode <?php echo $question->config->name; ?>_fi2">
 		<?php
+		if($question->config->options->dataprovider){
+			$question->config->options = $this->dataprovider->run($question->config->options->dataprovider->method);
+		}		
 		$check_input_count = 0;
-		foreach($question->config->inputs as $input){
+		if(!$question->config->options) $question->config->options = array();
+		foreach($question->config->options as $label=>$value){
+			$input = array(
+				'name'=>$question->config->name,
+				'type'=>'checkbox',
+				'value'=>$value,
+				'label'=>$label,
+				'selected'=>$question->config->selected,
+			);		
+
 			$this->inputs->setConfig($input);
-			$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
-			$this->inputs->setName($question->config->name);
+
+			$this->inputs->setAttribute('validation', $question->config->validation);
+			$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');			
 			$this->inputs->setAttribute('id', $question->id."_input".$check_input_count);
 			echo $this->inputs;
 			$check_input_count++;

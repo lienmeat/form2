@@ -588,11 +588,14 @@ class Inputs implements iInput{
 	var $post_wrap = "";
 	
 	function __construct($config=null){
+		if(is_array($config)){ $config = (object) $config; }
+
 		if(!empty($config)) $this->setConfig($config);
 	}
 	
 	function setConfig($config=null){	  
-		$this->input = false; 
+		$this->input = false;
+		if(is_array($config)){ $config = (object) $config; }		
 		$type = ucfirst($config->type)."_Input";
 		if(isset($config->attributes->type)) $type = ucfirst($config->attributes->type)."_Input";
 		$this->input = new $type($config);

@@ -9,6 +9,7 @@
 		if($question->config->options->dataprovider){
 			$question->config->options = array_merge(array('Select One'=>''), $this->dataprovider->run($question->config->options->dataprovider->method));
 		}
+		if(!$question->config->options) $question->config->options = array();
 		$this->inputs->setConfig($question->config);
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
 		//$this->inputs->setName($config->name);

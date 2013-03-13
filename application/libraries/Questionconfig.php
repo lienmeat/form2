@@ -46,7 +46,9 @@ class Questionconfig{
 
 	function formatCheckbox($question){
 		$question['config']['options']=$options=$this->formatOptions($question);
-		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);		
+		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
+		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);		
+		/*		
 		$inputs = array();
 		foreach($options as $label=>$value){
 			$input = array(
@@ -61,13 +63,15 @@ class Questionconfig{
 			$inputs[] = $input;
 		}
 		$question['config']['inputs'] = $inputs;
+		*/
 		return $question;
 	}
 
 	function formatRadio($question){
 		$question['config']['options']=$options=$this->formatOptions($question);
 		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
-		if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';
+		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);
+		/*
 		$inputs = array();
 		foreach($options as $label=>$value){
 			$input = array(
@@ -82,6 +86,7 @@ class Questionconfig{
 			$inputs[] = $input;
 		}		
 		$question['config']['inputs'] = $inputs;
+		*/
 		return $question;
 	}
 
@@ -264,10 +269,15 @@ class Questionconfig{
 			'alt'=>'(Is this required to contain a value/be selected?)',	
 			'type'=>'radio',
 			'name'=>'config[required]',	
-			'inputs'=>array(
+			'options'=>array('Yes'=>'Y', 'No'=>'N'),
+			'selected'=>$selected,
+			/*
+
+
 				(object) array('type'=>'radio', 'value'=>'Y', 'label'=>'Yes', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),
 				(object) array('type'=>'radio', 'value'=>'N', 'label'=>'No', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),	
 			),
+			*/
 		);
 		$this->renderQuestion($question_config);
 	}
