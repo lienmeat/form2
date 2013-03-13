@@ -56,6 +56,8 @@ Dependencies.prototype.__init__ = function(){
 		$('#dependhiddenquestions_'+this.form_id).val('');
 		$('#dependhiddeninputs_'+this.form_id).val('');
 	}
+
+	this.checkAll();
 }
 
 /**
@@ -136,6 +138,16 @@ Dependencies.prototype.bindInputs = function(){
 }
 
 /**
+* Checks all dependencies
+*/
+Dependencies.prototype.checkAll = function(){
+	for(i in this.dependson){
+		for(j in this.dependson[i])
+			this.testDepend(this.dependson[i][j]);
+	}
+}
+
+/**
 * Checks a particular element to see if anything is depending on it
 * If so, will run all dependencies for those things.
 */
@@ -176,12 +188,12 @@ Dependencies.prototype.testDepend = function(question_id){
 	var pass = true;
 	for(var i=0 in rules){
 		if(this.testRule(rules[i])){
-			console.log("rule passed: ");
-			console.log(rules[i]);
+			//console.log("rule passed: ");
+			//console.log(rules[i]);
 			continue;
 		}else{
-			console.log("rule failed: ");
-			console.log(rules[i]);
+			//console.log("rule failed: ");
+			//console.log(rules[i]);
 			pass = false;
 			break;
 		}

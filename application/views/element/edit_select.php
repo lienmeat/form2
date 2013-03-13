@@ -9,6 +9,9 @@
 <div class="form_answer edit_mode <?php echo $question->config->name; ?>_fi2" id="<?php echo $question->id; ?>_answer">
 	<div class="form_element_contain edit_mode <?php echo $question->config->name; ?>_fi2">
 		<?php
+		if($question->config->options->dataprovider){
+			$question->config->options = array_merge(array('Select One'=>''), $this->dataprovider->run($question->config->options->dataprovider->method));
+		}
 		$this->inputs->setConfig($question->config);
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
 		$this->inputs->setAttribute('id', $question->id."_input0");

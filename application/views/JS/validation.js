@@ -120,7 +120,9 @@ Validation.prototype.validateForm = function(callback){
 */
 Validation.prototype.validateInput = function(input){
 	var name = $(input).attr('name');
-	var hidden_fields = $('#dependhiddeninputs_'+this.form_id).val().split(',');
+	var hidden_fields = $('#dependhiddeninputs_'+this.form_id).val()
+	if(hidden_fields && hidden_fields.length > 0) hidden_fields = hidden_fields.split(',');
+	else hidden_fields = '';
 	if(hidden_fields.indexOf(name) !== -1){
 		this.hideError(input);
 		return [];

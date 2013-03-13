@@ -36,15 +36,16 @@ class Questionconfig{
 	* Formats the select field for db insert
 	*/
 	function formatSelect($question){
-		$question['config']['options'] = $this->formatOptions($question['config']['options']);
+		$question['config']['options'] = $this->formatOptions($question);
 		$question['config']['selected'] = $this->formatSelected($question['config']['selected']);
 		$question['config']['attributes']['validation'] = $this->formatRequiredField($question['config']['required']);
+		unset($question['config']['dataprovider']);
 		//if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';				
 		return $question;
 	}
 
 	function formatCheckbox($question){
-		$question['config']['options']=$options=$this->formatOptions($question['config']['options']);
+		$question['config']['options']=$options=$this->formatOptions($question);
 		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);		
 		$inputs = array();
 		foreach($options as $label=>$value){
@@ -64,7 +65,7 @@ class Questionconfig{
 	}
 
 	function formatRadio($question){
-		$question['config']['options']=$options=$this->formatOptions($question['config']['options']);
+		$question['config']['options']=$options=$this->formatOptions($question);
 		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
 		if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';
 		$inputs = array();
@@ -118,10 +119,10 @@ class Questionconfig{
 
 	function renderExpDP(){
 		$question_config = (object) array(
-		'text'=>'expdp: ',
-		'name'=>'config[expdp]',
-		'type'=>'select',		
-		'options'=>(object) array('dataprovider'=>(object) array('method'=>'countryOptions')),
+			'text'=>'expdp: ',
+			'name'=>'config[expdp]',
+			'type'=>'select',		
+			'options'=>(object) array('dataprovider'=>(object) array('method'=>'countryOptions')),
 		);
 				
 		$this->renderQuestion($question_config);
@@ -181,7 +182,7 @@ class Questionconfig{
 	*/
 	function renderOptionsField($question){
 		$o_txt = '';
-		$first = true;
+		$first = true;		
 		//we are using a dataprovider for the options!
 		if($question->config->options->dataprovider){
 			$method = $question->config->options->dataprovider->method;			
@@ -191,16 +192,14 @@ class Questionconfig{
 				else $o_txt.="\n";
 				$o_txt.=$label.":".$value;
 			}
-
-		}
-
-		
+		}	
 		$question_config =(object) array(
-			'type'=>'textarea',
+			'type'=>'optionsconf',
 			'text'=>'Options: ',
-			'alt'=>'(In the format: "label:value", one per line. Label is what the user will see, value is what is submitted.)',	
+			'alt'=>'(In the format: "label:value", one per line. You don\'t need the ":value" if you don\'t require a different value than label. Label is what the user will see, value is what is submitted, OR choose a data provider that will populate the options from a database.)',	
 			'name'=>'config[options]',
 			'value'=>$o_txt,
+			'dataprovider'=>$method,
 		);
 		$this->renderQuestion($question_config);
 	}
@@ -208,18 +207,24 @@ class Questionconfig{
 	/**
 	* format the results of the options field
 	*/
-	function formatOptions($options){
-		$raw_o_arr = explode("\n", $options);
-		$option_arr = array();
-		foreach($raw_o_arr as $o){
-			$o_parts = explode(":", $o);
-			if(count($o_parts) < 2){//only one thing, set value same as label
-				$option_arr[$o_parts[0]] = $o_parts[0];
-			}else{
-				$option_arr[$o_parts[0]] = $o_parts[1];
+	function formatOptions($question){
+		$options = $question['config']['options'];
+		$dataprovider = $question['config']['dataprovider'];		
+		if(!$dataprovider || empty($dataprovider['method'])){ //only use custom entry if no dataprovider is set
+			$raw_o_arr = explode("\n", $options);
+			$option_arr = array();
+			foreach($raw_o_arr as $o){
+				$o_parts = explode(":", $o);
+				if(count($o_parts) < 2){//only one thing, set value same as label
+					$option_arr[$o_parts[0]] = $o_parts[0];
+				}else{
+					$option_arr[$o_parts[0]] = $o_parts[1];
+				}
 			}
+			return $option_arr; //use custom options
+		}else{
+			return array('dataprovider'=>$dataprovider); //use the dataprovider
 		}
-		return $option_arr;
 	}
 
 	function renderSelectionsField($question){

@@ -16,7 +16,7 @@ class Dataprovider{
 
 	function __construct(){
 		$this->CI =& get_instance();
-		$this->CI->load->model('dataprovider_model', 'dp');
+		$this->CI->load->model('dataproviderlib_model', 'dp');
 		$this->dp =& $this->CI->dp;
 	}
 
@@ -63,6 +63,19 @@ class Dataprovider{
 		return $opt;
 	}
 
+	/**
+	* Gets dataproviders as options
+	*/
+	function dataproviders(){
+		$this->CI->load->model('dataprovider_model');
+		$opt = array('Select One'=>'');
+		$rows = $this->CI->dataprovider_model->getAll('title');
+		foreach($rows as $r){
+			$opt[$r->title] = $r->method;
+		}
+		return $opt;
+	}
+
 	/** 
 	* Get states and providences as options
 	*/
@@ -74,7 +87,7 @@ class Dataprovider{
 		);
 		$this->dp->connect($db_conf);
 	
-		$query = "SELECT * FROM `stateprov`";
+		$query = "SELECT * FROM `stateprov` ORDER BY `stateprov`";
 		$opt = $this->dp->getOptions($query, 'stateprov', 'stateprovcode');
 		$this->dp->close();
 		return $opt;
@@ -91,7 +104,7 @@ class Dataprovider{
 		);
 		$this->dp->connect($db_conf);
 	
-		$query = "SELECT * FROM `countrycodes`";
+		$query = "SELECT * FROM `countrycodes` ORDER BY `country`";
 		$opt = $this->dp->getOptions($query, 'country', 'countrycode');
 		$this->dp->close();
 		return $opt;
