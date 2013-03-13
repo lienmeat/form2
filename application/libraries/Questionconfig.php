@@ -19,6 +19,7 @@ class Questionconfig{
 	*/
 	function formatText($question){
 		$question['config']['attributes']['validation'] = $this->formatValidationField($question['config']['validation']);
+		$question = $this->formatDependenciesField($question);
 		return $question;
 	}
 
@@ -29,6 +30,7 @@ class Questionconfig{
 	*/
 	function formatTextarea($question){
 		$question['config']['attributes']['validation'] = $this->formatValidationField($question['config']['validation']);
+		$question = $this->formatDependenciesField($question);
 		return $question;
 	}
 
@@ -39,6 +41,7 @@ class Questionconfig{
 		$question['config']['options'] = $this->formatOptions($question);
 		$question['config']['selected'] = $this->formatSelected($question['config']['selected']);
 		$question['config']['attributes']['validation'] = $this->formatRequiredField($question['config']['required']);
+		$question = $this->formatDependenciesField($question);
 		unset($question['config']['dataprovider']);
 		//if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';				
 		return $question;
@@ -47,23 +50,9 @@ class Questionconfig{
 	function formatCheckbox($question){
 		$question['config']['options']=$options=$this->formatOptions($question);
 		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
-		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);		
-		/*		
-		$inputs = array();
-		foreach($options as $label=>$value){
-			$input = array(
-				'name'=>$question['config']['name'],
-				'type'=>'checkbox',
-				'value'=>$value,
-				'label'=>$label,
-				'selected'=>$selected,
-			);
-			$input['attributes']['validation'] = $this->formatRequiredField($question['config']['required']);
-			//if($question['config']['required']) $input['attributes']['validation'] = 'required';
-			$inputs[] = $input;
-		}
-		$question['config']['inputs'] = $inputs;
-		*/
+		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);
+		$question = $this->formatDependenciesField($question);
+		unset($question['config']['dataprovider']);
 		return $question;
 	}
 
@@ -71,22 +60,8 @@ class Questionconfig{
 		$question['config']['options']=$options=$this->formatOptions($question);
 		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
 		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);
-		/*
-		$inputs = array();
-		foreach($options as $label=>$value){
-			$input = array(
-				'name'=>$question['config']['name'],
-				'type'=>'radio',
-				'value'=>$value,
-				'label'=>$label,
-				'selected'=>$selected,
-			);
-			$input['attributes']['validation'] = $this->formatRequiredField($qustion['config']['required']);
-			//if($question['config']['required'] == "Y") $input['attributes']['validation'] = 'required';
-			$inputs[] = $input;
-		}		
-		$question['config']['inputs'] = $inputs;
-		*/
+		$question = $this->formatDependenciesField($question);
+		unset($question['config']['dataprovider']);
 		return $question;
 	}
 
@@ -270,14 +245,7 @@ class Questionconfig{
 			'type'=>'radio',
 			'name'=>'config[required]',	
 			'options'=>array('Yes'=>'Y', 'No'=>'N'),
-			'selected'=>$selected,
-			/*
-
-
-				(object) array('type'=>'radio', 'value'=>'Y', 'label'=>'Yes', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),
-				(object) array('type'=>'radio', 'value'=>'N', 'label'=>'No', 'selected'=>$selected, 'attributes'=>(object) array('validation'=>'required')),	
-			),
-			*/
+			'selected'=>$selected,			
 		);
 		$this->renderQuestion($question_config);
 	}
@@ -285,6 +253,23 @@ class Questionconfig{
 	function formatRequiredField($required){
 		if($required == 'Y') return 'required';
 		else return '';
+	}
+
+	function renderDependenciesField($question){
+		$depends = str_replace("&&", "\n", $question->config->dependencies);
+		$question_config =(object) array(
+			'text'=>'Dependent On: ',
+			'alt'=>'(Rules for when this question will show up, based on input of other questions.  One rule per line.  Format: &lt;inputname&gt;=&lt;value&gt;<br />You can use the logical operators =,!=,&lt;,&lt;=,&gt;,&gt;= in the place of =.  Also, you can use "*" as a wildcard in &lt;value&gt;.)',	
+			'type'=>'textarea',
+			'name'=>'config[dependencies]',				
+			'value'=>$depends,
+		);
+		$this->renderQuestion($question_config);
+	}
+
+	function formatDependenciesField($question){
+		$question['config']['dependencies'] = str_replace("\n", '&&', $question['config']['dependencies']);
+		return $question;
 	}
 
 	/**

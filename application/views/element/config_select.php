@@ -18,4 +18,6 @@ $this->questionconfig->renderOptionsField($question);
 $this->questionconfig->renderSelectionsField($question);
 
 $this->questionconfig->renderRequiredField($question);
+
+$this->questionconfig->renderDependenciesField($question);
 ?>

@@ -14,4 +14,6 @@ $this->questionconfig->renderAltField($question);
 $this->questionconfig->renderValueField($question);
 
 $this->questionconfig->renderValidationField($question);
+
+$this->questionconfig->renderDependenciesField($question);
 ?>
