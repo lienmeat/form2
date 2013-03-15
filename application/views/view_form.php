@@ -11,15 +11,6 @@
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/dependencies.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/validation.js\"></script>";
 ?>
-<style>
-.dependhidden{
-	display: none;
-}
-
-.dependvisible{
-	display: table-row;
-}
-</style>
 <script type="text/javascript">
 	$(document).ready(function(){
 		var form_deps = new Dependencies('<?php echo $form->id; ?>');

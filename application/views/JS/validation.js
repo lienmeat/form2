@@ -153,7 +153,8 @@ Validation.prototype.validateInput = function(input){
 	if(is_required){
 		do_validation = true;
 	}else{
-		if(this.getInputValue(input).length > 0){
+		var iv = this.getInputValue(input);
+		if(iv && iv.length > 0){
 			do_validation = true;
 		}else{
 			do_validation = false;
@@ -222,9 +223,15 @@ Validation.prototype.doRemoteValidations = function(validations, submit, callbac
 	var validations = validations || [];
 	var callback = callback || function(){};	
 	var handle = this.getHandle();
+	var vals = [];
+	for(i in validations){
+		if(validations[i].function && validations[i].function.length > 0){
+			vals.push(validations[i]);
+		}
+	}
 
 	if(validations.length > 0){
-		doAjax('validate/', {validations: validations}, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit, callback); }, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit, callback); });
+		doAjax('validate/', {validations: vals}, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit, callback); }, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit, callback); });
 		return true;
 	}
 	return false;
@@ -312,6 +319,7 @@ Validation.prototype.parseValidationString = function(validation){
 * @return misc Whatever the function returns, or "undefined_function"
 */
 Validation.prototype.checkFunction = function(func, params, input){
+	if(!func || func.length < 1) return true;
 	var value = this.getInputValue(input);
 
 	//test for globalally accessible functions
@@ -341,11 +349,10 @@ Validation.prototype.checkFunction = function(func, params, input){
 Validation.prototype.getInputValue = function(input){
 	var tag = $(input).prop('tagName');
 	var type = $(input).attr('type');
-	var name = $(input).attr('name');
-		
+	var name = $(input).attr('name');	
 	//handle cases where we need to get the value in any way besides just using .val() on the input itself
 	if(type && (type == 'checkbox' || type == 'radio')){
-		name = name.replace('[', '\\[').replace(']', '\\]');		
+		name = name.replace(/\[/g, '\\[').replace(/\]/g, '\\]');		
 		var value = $('[name='+name+']:checked').val();
 	}else{
 		var value = $(input).val();
@@ -416,7 +423,7 @@ Validation.prototype.hideError = function(input){
 
 Validation.prototype.getNotif = function(input){
 	//var input_id = $(input).attr('id');
-	var input_name = $(input).attr('name').replace('[', '--').replace(']', '--');
+	var input_name = $(input).attr('name').replace(/\[/g, '--').replace(/\]/g, '--');
 	var notif_id = input_name+'_err';
 	var notif = $('#'+notif_id).get(0);
 	if(!notif){

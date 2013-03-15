@@ -10,7 +10,7 @@ class Permissions extends MY_Controller{
 	function index(){
 
 		echo "Can current user edit 'example-name'? ";
-		if($this->authorization->can('edit', 'example-name')){
+		if($this->authorization->can('viewresults', 'example-name')){
 			echo "yes";
 		}else{
 			echo "no";

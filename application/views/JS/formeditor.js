@@ -23,7 +23,7 @@ FormEditor.__init__ = function(){
 	this.initSortable();
 	FormEditor.form_questions_dependencies = new Dependencies('form_questions_form');
 	//not needed yet...but maybe someday.
-	//FormEditor.form_config_dependencies = new Dependencies('form_config_form');
+	FormEditor.form_config_dependencies = new Dependencies('form_config_form');
 	//FormEditor.question_config_dependencies = new Dependencies('question_config_form');
 
 	FormEditor.form_questions_validator = new Validation('form_questions_form');
@@ -166,7 +166,7 @@ FormEditor.saveQuestionCallback = function(resp){
 		var question_id = FormEditor.current_question_config;		
 		FormEditor.closeEditQuestion();
 	}
-	$('#'+question_id).html(resp.html);
+	$('#'+question_id).replaceWith(resp.html);
 	FormEditor.form_questions_dependencies.__init__();
 	FormEditor.form_questions_validator.__init__();
 }

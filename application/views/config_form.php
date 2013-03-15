@@ -9,7 +9,7 @@ $question_config =(object) array(
 	'name'=>'title',
 	'type'=>'text', 
 	'value'=>$form->title,
-	'attributes'=>(object) array('validation'=>'required'),
+	'validation'=>'required',
 );
 
 $this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
@@ -22,7 +22,7 @@ $question_config =(object) array(
 );
 
 if($mode != 'edit'){
-	$question_config->attributes->validation = 'required|formnameformat|newformname';
+	$question_config->validation = 'required|formnameformat|newformname';
 }else{
 	$question_config->value = $form->name;
 	$question_config->attributes->disabled = 'disabled';
@@ -30,6 +30,8 @@ if($mode != 'edit'){
 
 $this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));		
 
+
+/*  Replaced by a more complex/sophisticated control
 $question_config =(object) array(			
 	'text'=>'Editors: (Comma separated usernames of people who can edit this form)',
 	'alt'=>'(Do not put your own username here! You automatically have rights!)',
@@ -39,6 +41,8 @@ $question_config =(object) array(
 );
 
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+*/
+
 
 $question_config =(object) array(
 	'text'=>'URL of special receiving script:',
@@ -70,17 +74,44 @@ $question_config =(object) array(
 
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
+/*
 $inputs = array(
 	(object) array('type'=>'radio', 'value'=>'1', 'label'=>'Yes', 'selected'=>array($form->config->login_required)),
 	(object) array('type'=>'radio', 'value'=>'0', 'label'=>'No', 'selected'=>array($form->config->login_required)),
 );
-
+*/
+if(!$form->config->login_required) $form->config->login_required = 'N';
 $question_config =(object) array(			
 	'text'=>'Is a login required?',
 	'alt'=>'(ensures only one answer per person, but requires them to login)',
 	'name'=>'config[login_required]',
 	'type'=>'radio',
-	'inputs'=>$inputs,
+	'options'=>array('Yes'=>'Y', 'No'=>'N'),
+	'selected'=>array($form->config->login_required),
+);
+
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+
+if(!$form->config->ad_groups) $form->config->ad_groups = array("*");
+$question_config =(object) array(
+	'text'=>'If a login is required, what WWU Active Directory user groups are permitted to view this form?',	
+	'name'=>'config[ad_groups][]',
+	'type'=>'checkbox',
+	'options'=>array('All'=>'*', 'Student'=>'student', 'Staff'=>'staff', 'Faculty'=>'faculty', 'Administration'=>'administration'),
+	'selected'=>$form->config->ad_groups,
+	'dependencies'=>'config[login_required]=Y',
+	'validation'=>'required',
+);
+
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+
+$question_config =(object) array(
+	'text'=>'If limiting form viewing by AD groups isn\'t sufficient, you can permit certain users by username:',
+	'alt'=>'(one per line, do not include yourself)',
+	'name'=>'config[viewers]',
+	'type'=>'textarea',
+	'dependencies'=>'config[login_required]=Y',
+	'value'=>$form->config->viewers,
 );
 
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));

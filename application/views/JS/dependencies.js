@@ -38,7 +38,7 @@ Dependencies.prototype.getHandle = function(){
 */
 Dependencies.prototype.__init__ = function(){
 	var handle = this.getHandle();
-	this.dependson = [];	
+	this.dependson = {};	
 	//match inputs with validation attribute and loop
 
 	$('#'+this.form_id+' [dependencies]').each(
@@ -70,7 +70,7 @@ Dependencies.prototype.parseRules = function(question){
 	//split rules string into individual rules.
 	var raw_rules = $(question).attr('dependencies').split('&&');
 	var rules = [];
-	for(i in raw_rules){
+	for(var i=0 in raw_rules){
 		var operator = null;
 		
 		//get operator
@@ -112,15 +112,15 @@ Dependencies.prototype.addDependsOn = function(fieldname, question_id){
 Dependencies.prototype.bindInputs = function(){
 	var handle = this.getHandle();
 	
-	for(i in this.dependson){
+	for(var i=0 in this.dependson){
 		var name = i;
 		//make name compatible with jquery selectors if a multi-select elem
-		name = name.replace('[', '\\[').replace(']', '\\]');
+		name = name.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
 		$('#'+this.form_id+" [name='"+name+"']").each(
 			function(elem){
 				//bind event to the elem
 				if($(this).attr('type') != 'checkbox' && $(this).attr('type') != 'radio'){
-					$(this).blur(
+					$(this).change( //I was doing blur, but it wasn't working right
 						function(event){
 							window.dependencies[handle].checkDepend(event.target);
 						}
@@ -141,9 +141,15 @@ Dependencies.prototype.bindInputs = function(){
 * Checks all dependencies
 */
 Dependencies.prototype.checkAll = function(){
-	for(i in this.dependson){
-		for(j in this.dependson[i])
-			this.testDepend(this.dependson[i][j]);
+	if(this.dependson){		
+		for(var i=0 in this.dependson){
+			if(this.dependson[i] && this.dependson[i].length > 0){
+				for(var j=0 in this.dependson[i]){
+
+					this.testDepend(this.dependson[i][j]);
+				}
+			}
+		}
 	}
 }
 
@@ -152,10 +158,9 @@ Dependencies.prototype.checkAll = function(){
 * If so, will run all dependencies for those things.
 */
 Dependencies.prototype.checkDepend = function(target){
-	 //console.log(target);
 	var name = $(target).attr('name');
 	if(this.dependson[name]){
-		for(i in this.dependson[name]){
+		for(var i=0 in this.dependson[name]){
 			this.testDepend(this.dependson[name][i]);
 		}
 	}
@@ -212,18 +217,26 @@ Dependencies.prototype.testDepend = function(question_id){
 * @return bool True if rule passes, False otherwise
 */
 Dependencies.prototype.testRule = function(rule){
+	//fail the dependency if something this rule depends on is
+	//already hidden
+	var hidden = $('#dependhiddeninputs_'+this.form_id).val();
+	hidden = hidden.split(',');
+	if(typeof hidden != Array) hidden = [hidden];
+	if(hidden.indexOf(rule.fieldname) >= 0) return false;
+
 	var value = this.getInputValue(rule.fieldname);
 	var pass = true;
-	var val = rule.value.replace("*", ".*");
+	var val = rule.value;
+	var regex = new RegExp("^" + val.replace("*", ".*") + "$");
 	switch(rule.operator){
 		case "!=":
 			//test !=			
-			var res = value.match(val);
+			var res = value.match(regex);			
 			if(res) pass = false;
 			break;
 		case "=":
 			//test =
-			var res = value.match(val);
+			var res = value.match(regex);
 			if(!res || res.length <= 0) pass = false;
 			break;
 		case "<=":
@@ -252,7 +265,7 @@ Dependencies.prototype.testRule = function(rule){
 * @return string Values as comma-separated string if more than one value
 */
 Dependencies.prototype.getInputValue = function(name){
-	name = name.replace('[', '\\[').replace(']', '\\]');
+	name = name.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
 	var inputs = $("#"+this.form_id+" [name='"+name+"']").toArray();
 	var type = $(inputs[0]).attr('type');
 	var values = [];
@@ -267,40 +280,121 @@ Dependencies.prototype.getInputValue = function(name){
 
 Dependencies.prototype.passDepend = function(question_id){
 	$('#'+question_id).removeClass('dependhidden').addClass('dependvisible');
+	// console.log('pass: ');
+	// console.log(question_id);
 	var children = this.getChildInputs(question_id);
-	var hidden_questions = $('#dependhiddenquestions_'+this.form_id).val().replace(question_id+',', '').replace(question_id, '');
+	
+	//remove from hidden questions
+	var hidden_questions = $('#dependhiddenquestions_'+this.form_id).val();	
+	// console.log('pre: ');
+	// console.log(hidden_questions);
+	if(hidden_questions.length > 0){
+		hidden_questions = hidden_questions.split(',');
+		if(typeof hidden_questions != 'object') hidden_questions = [hidden_questions];
+		// console.log('blarg ');
+		var index = $.inArray(question_id, hidden_questions);		
+		if ( index >= 0) {
+		   // hidden_questions = hidden_questions.slice(index, 1);
+		   hidden_questions.splice(index, 1);
+		}
+	}else{
+		hidden_questions = [];
+	}
+	hidden_questions = hidden_questions.join();
+	// console.log('post: ');
+	// console.log(hidden_questions);
 	$('#dependhiddenquestions_'+this.form_id).val(hidden_questions);
-	var hidden_inputs = $('#dependhiddeninputs_'+this.form_id).val().replace(children+',', '').replace(children, '');
-	$('#dependhiddeninputs_'+this.form_id).val(hidden_inputs);	
+	// console.log("value: "+$('#dependhiddenquestions_'+this.form_id).val());
+
+
+	//then remove children
+	var hidden_inputs = $('#dependhiddeninputs_'+this.form_id).val();
+	if(hidden_inputs.length > 0){
+		hidden_inputs = hidden_inputs.split(',');
+		if(typeof hidden_inputs != 'object') hidden_inputs = [hidden_inputs];
+		for(var i=0 in children){			
+			var index = $.inArray(children[i], hidden_inputs);
+			if ( index >= 0) {
+			   // hidden_inputs = hidden_inputs.slice(index, 1);
+			   hidden_inputs.splice(index, 1);
+			}
+		}
+	}else{
+		hidden_inputs = [];
+	}
+	hidden_inputs = hidden_inputs.join();		
+	$('#dependhiddeninputs_'+this.form_id).val(hidden_inputs);
+	// console.log("value: "+$('#dependhiddeninputs_'+this.form_id).val());
+
+	if(children){
+		if(typeof children != Array){
+			children = [children];
+		}
+		for(var i=0 in children){
+			if(this.dependson[children[i]]){
+				//console.log('testing: ');
+				//console.log(this.dependson[children[i]]);				
+				for(var j=0 in this.dependson[children[i]]){
+					this.testDepend(this.dependson[children[i]][j]);
+				}
+			}
+		}
+	}	
 }
 
 Dependencies.prototype.failDepend = function(question_id){
 	$('#'+question_id).removeClass('dependvisible').addClass('dependhidden');
-	var children = this.getChildInputs(question_id);
+	//console.log('fail: ');
+	//console.log(question_id);
+	var children = this.getChildInputs(question_id);	
 	
-	var hidden_questions = $('#dependhiddenquestions_'+this.form_id).val().replace(question_id+',', '').replace(question_id, '');
-	if(hidden_questions.indexOf(',') !== -1){
+	//get hidden questions and put this one in array
+	var hidden_questions = $('#dependhiddenquestions_'+this.form_id).val();
+	// console.log('pre: ');
+	// console.log(hidden_questions);
+	if(hidden_questions.length > 0){
 		hidden_questions = hidden_questions.split(',');
-	}	
-	if(hidden_questions.length){
-		hidden_questions.push(question_id);
-		hidden_questions = hidden_questions.join();
+		if(typeof hidden_questions != 'object') hidden_questions = [hidden_questions];
+		if(hidden_questions.indexOf(question_id) < 0) {			
+		  hidden_questions.push(question_id);
+		}
 	}else{
-		hidden_questions = question_id;
+		hidden_questions = [question_id];
 	}
+
+	hidden_questions = hidden_questions.join();
+	// console.log('post: ');
+	// console.log(hidden_questions);	
 	$('#dependhiddenquestions_'+this.form_id).val(hidden_questions);
 
-	var hidden_inputs = $('#dependhiddeninputs_'+this.form_id).val().replace(children+',', '').replace(children, '');
-	if(hidden_inputs.indexOf(',') !== -1){
+	//do similar with hidden inputs
+	var hidden_inputs = $('#dependhiddeninputs_'+this.form_id).val();
+	if(hidden_inputs.length > 0){
 		hidden_inputs = hidden_inputs.split(',');
-	}
-	if(hidden_inputs.length){
-		hidden_inputs.push(children);
-		hidden_inputs = hidden_inputs.join();
+		if(typeof hidden_questions != 'object') hidden_questions = [hidden_questions];
+		for(var i=0 in children){
+			if(hidden_inputs.indexOf(children[i]) < 0){
+				hidden_inputs.push(children[i]);
+			}
+		}
 	}else{
 		hidden_inputs = children;
 	}
+
+	hidden_inputs = hidden_inputs.join();
 	$('#dependhiddeninputs_'+this.form_id).val(hidden_inputs);
+	
+	if(children){		
+		for(var i=0 in children){			
+			if(this.dependson[children[i]]){
+				//console.log('failing: ');
+				//console.log(this.dependson[children[i]]);
+				for(var j=0 in this.dependson[children[i]]){
+					this.failDepend(this.dependson[children[i]][j]);
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -310,25 +404,25 @@ Dependencies.prototype.failDepend = function(question_id){
 Dependencies.prototype.getChildInputs = function(question_id){
 	var names = [];
 	var inputs = $('#'+question_id+' input').toArray();
-	for(i in inputs){
+	for(var i=0 in inputs){
 		var name = $(inputs[i]).attr('name');
 		if(names.indexOf(name) === -1){
 			names.push(name);
 		}
 	}
 	var inputs = $('#'+question_id+' textarea').toArray();
-	for(i in inputs){
+	for(var i=0 in inputs){
 		var name = $(inputs[i]).attr('name');
 		if(names.indexOf(name) === -1){
 			names.push(name);
 		}
 	}
 	var inputs = $('#'+question_id+' select').toArray();
-	for(i in inputs){
+	for(var i=0 in inputs){
 		var name = $(inputs[i]).attr('name');
 		if(names.indexOf(name) === -1){
 			names.push(name);
 		}
 	}
-	return names.join();	
+	return names;	
 }

@@ -25,6 +25,7 @@
 			$this->inputs->setAttribute('validation', $question->config->validation);
 			$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');			
 			$this->inputs->setAttribute('id', $question->id."_input".$check_input_count);
+			$this->inputs->setAttribute('validation', $question->config->validation);
 			echo $this->inputs;
 			$check_input_count++;
 		}

@@ -8,7 +8,8 @@ $question_config =(object) array(
 	'text'=>'Type: ',
 	'name'=>'config[type]',
 	'type'=>'select',
-	'attributes'=>array('validation'=>'required', 'onchange'=>'FormEditor.loadElementConfig(\''.$question->id.'\', $(this).val());'),
+	'validation'=>'required',
+	'attributes'=>array('onchange'=>'FormEditor.loadElementConfig(\''.$question->id.'\', $(this).val());'),
 	'options'=>$element_type_options, //we get this in Questions->edit()...
 	'selected'=>array($question->config->type),	
 );

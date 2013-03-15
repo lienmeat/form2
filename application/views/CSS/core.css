@@ -79,7 +79,7 @@ div.top_banner {
 
 #rightBanner {
   width: auto;
-  height: auto;
+  height: auto;  
 }
 
 div.menu a {
@@ -97,7 +97,7 @@ div.menu a:hover {
 }
 
 .input_multiple {
-  float: left;
+  display: inline-block;
   margin-left: 5px;
 }
 /*
@@ -152,7 +152,7 @@ label {
 /** This stuff below is stuff I added for this app! **/
 
 .form_contain{
-  display: table;
+  /*display: table;*/
   width: 100%;
   list-style: none;
   margin-left: 0px;
@@ -161,17 +161,18 @@ label {
 }
 
 .form_row { 
-  
   margin-right: auto;
   margin-left: auto;
   width: 100%;  
-  display: table-row;
-  /*border-bottom: 4px solid pink;*/ 
+  /*display: table-row;*/
   background-color: #F5EFE4;
-  
-  border: 1px solid #000;
+  /*background-color: pink;*/
+  /*border: 1px solid #000;*/  
+  border-radius: 10px;
+  margin-bottom: 5px;
+  clear: both;
 }
-
+/*
 .form_row:first-child div:first-child {
   border-top-left-radius: 10px; 
 }
@@ -184,12 +185,12 @@ label {
 .form_row:last-child  div:first-child {
   border-bottom-left-radius: 10px;
 }
-
+*/
 .form_question {  
-  vertical-align: top;
+  /*vertical-align: top;*/
   padding: 5px;
-  width: 50%;
-  display: table-cell;
+  /*width: 50%;*/
+  /*display: table-cell;*/
   /*border-bottom: 2px solid #806C46;
   border-left: 1px solid #806C46;
   
@@ -198,8 +199,9 @@ label {
   border-top-left-radius: 10px
   background-color: #F5EFE4; ; 
   border-right: 1px dotted rgba(0,0,0,0.55);*/
-  margin-bottom:10px;
-  background-color:
+  /*margin-bottom:10px;*/
+  width: 100%;
+  clear: both; 
 }
 .form_question_text{
 font-size:1.2em;
@@ -209,9 +211,14 @@ font-size:1.2em;
 }
 .form_answer {
   /*float: left;*/
+  background-color: rgba(255,255,255,0.40);
   padding: 5px;
-  width: 50%;    
-  display: table-cell;
+  /*width: 100%;*/
+  clear: both;
+  /*width: 50%; */
+  /*display: table-cell;*/
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
   
  /* border-bottom: 2px solid #806C46;
   border-right: 1px solid #806C46;
@@ -220,14 +227,20 @@ font-size:1.2em;
   border-top-right-radius: 10px;
   background-color: #F5EFE4;*/
   /*background: blue;*/
-  vertical-align:middle;
+  /*vertical-align: middle;*/
 }
 
 
+.dependhidden{
+  display: none;
+}
 
+.dependvisible{
+  display: block;
+}
 
 .form_element_contain {
-  float: right;
+  /*float: right; */
   position:relative;
 }
 
@@ -256,4 +269,8 @@ font-size:1.2em;
 
 .icon {
   cursor: pointer;
+}
+
+label {
+  font-weight: bold;
 }

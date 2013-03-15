@@ -113,21 +113,22 @@ class Permission extends MY_Model{
 	}
 
 	/**
+	* Deletes a Permission from a form for a user
+	* @param string $id Permission id
+	* @param string $username
+	* @param string $form_name
+	*/ 
+	function deleteFromUser($id, $username, $form_name){
+		return $this->db->delete('permissions_users', array('permission_id'=>$id, 'user'=>$username, 'form'=>$form_name));
+	}
+
+	/**
 	* Deletes a Permission from a form
 	* @param string $id Permission id
 	* @param string $form_name
 	*/ 
 	function deleteFromForm($id, $form_name){
 		return $this->db->delete('permissions_users', array('permission_id'=>$id, 'form'=>$form_name));
-	}
-
-	/**
-	* Deletes a Permission from a user
-	* @param string $id Permission id
-	* @param string $username Username
-	*/ 
-	function deleteFromUser($id, $username){
-		return $this->db->delete('permissions_users', array('permission_id'=>$id, 'user'=>$username));
 	}
 
 	/**

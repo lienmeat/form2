@@ -83,9 +83,9 @@ class Questions extends MY_Controller{
 		}
 		//print_r($question);
 		//if it actually updates...		
-		if(is_object($question)){
-			$this->load->library('inputs');
-			$html = $this->load->view('element/edit_'.$question->config->type, array('question'=>$question), true);
+		if(is_object($question)){			
+			$html = $this->load->view('question/edit_question', array('question'=>$question), true);
+			//$html = $this->load->view('element/edit_'.$question->config->type, array('question'=>$question), true);
 			echo json_encode(array('status'=>'success', 'question_id'=>$question->id, 'html'=>$html));
 		}else{//othwise notify of fail
 			echo json_encode(array('status'=>'fail', 'question_id'=>$id, 'html'=>'<h3 class="Err">This question failed to save!</h3>'));

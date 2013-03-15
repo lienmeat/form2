@@ -107,6 +107,10 @@ class Authorization{
   function can($permission, $form){
     $this->CI->load->model('permission');
 
+    $this->CI->load->model('form');
+    $res = $this->CI->form->getByName($form);
+    if($res[0]->creator == $this->username()) return true;
+
     //first check granular permissions on a form
     $res = $this->CI->permission->hasPermissionOnUserAndForm($permission, $this->username(), $form);
     if($res) return $res;

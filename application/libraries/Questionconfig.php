@@ -18,7 +18,7 @@ class Questionconfig{
 	* @return array
 	*/
 	function formatText($question){
-		$question['config']['attributes']['validation'] = $this->formatValidationField($question['config']['validation']);
+		$question = $this->formatValidationField($question);
 		$question = $this->formatDependenciesField($question);
 		return $question;
 	}
@@ -29,7 +29,7 @@ class Questionconfig{
 	* @return array
 	*/
 	function formatTextarea($question){
-		$question['config']['attributes']['validation'] = $this->formatValidationField($question['config']['validation']);
+		$question = $this->formatValidationField($question);
 		$question = $this->formatDependenciesField($question);
 		return $question;
 	}
@@ -38,30 +38,37 @@ class Questionconfig{
 	* Formats the select field for db insert
 	*/
 	function formatSelect($question){
-		$question['config']['options'] = $this->formatOptions($question);
-		$question['config']['selected'] = $this->formatSelected($question['config']['selected']);
-		$question['config']['attributes']['validation'] = $this->formatRequiredField($question['config']['required']);
-		$question = $this->formatDependenciesField($question);
-		unset($question['config']['dataprovider']);
-		//if($question['config']['required']) $question['config']['attributes']['validation'] = 'required';				
+		$question = $this->formatOptions($question);
+		$question = $this->formatSelected($question);
+		$question = $this->formatRequiredField($question);
+		$question = $this->formatDependenciesField($question);		
 		return $question;
 	}
 
 	function formatCheckbox($question){
-		$question['config']['options']=$options=$this->formatOptions($question);
-		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
-		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);
-		$question = $this->formatDependenciesField($question);
-		unset($question['config']['dataprovider']);
+		$question = $this->formatOptions($question);
+		$question = $this->formatSelected($question);
+		$question = $this->formatRequiredField($question);
+		$question = $this->formatDependenciesField($question);		
 		return $question;
 	}
 
 	function formatRadio($question){
-		$question['config']['options']=$options=$this->formatOptions($question);
-		$question['config']['selected']=$selected=$this->formatSelected($question['config']['selected']);
-		$question['config']['validation']=$this->formatRequiredField($question['config']['required']);
+		$question = $this->formatOptions($question);
+		$question = $this->formatSelected($question);
+		$question = $this->formatRequiredField($question);
+		$question = $this->formatDependenciesField($question);		
+		return $question;
+	}
+
+	function formatInfo($question){
 		$question = $this->formatDependenciesField($question);
-		unset($question['config']['dataprovider']);
+		return $question;
+	}
+
+	function formatAddress($question){
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
 		return $question;
 	}
 
@@ -78,11 +85,7 @@ class Questionconfig{
 			$attributes[$attr[0]] = $attr[1];			
 		}
 		return (object) $attributes;
-	}
-
-	function formatDependencies($dependencies){
-		//not yet implemented
-	}
+	}	
 
 	function renderNameField($question){
 		$question_config =(object) array(			
@@ -91,20 +94,9 @@ class Questionconfig{
 		'text'=>'Question Name: ',
 		'alt'=>'(a-z, 0-9, -, _)',
 		'value'=>$question->config->name,
-		'attributes'=>array('validation'=>'required|alpha_dash'),
+		'validation'=>'required|alpha_dash',
 		);
 
-		$this->renderQuestion($question_config);
-	}
-
-	function renderExpDP(){
-		$question_config = (object) array(
-			'text'=>'expdp: ',
-			'name'=>'config[expdp]',
-			'type'=>'select',		
-			'options'=>(object) array('dataprovider'=>(object) array('method'=>'countryOptions')),
-		);
-				
 		$this->renderQuestion($question_config);
 	}
 
@@ -114,7 +106,7 @@ class Questionconfig{
 			'text'=>'Question Text: ',	
 			'name'=>'config[text]',	
 			'value'=>$question->config->text,
-			'attributes'=>array('validation'=>'required'),
+			'validation'=>'required',
 		);
 
 		$this->renderQuestion($question_config);
@@ -148,13 +140,14 @@ class Questionconfig{
 			'alt'=>"(validation you want to assign to the actual input/s, one per line. ex. required<br />min_length[3]<br />max_length[20])",
 			'name'=>'config[validation]',
 			'type'=>'textarea',
-			'value'=>str_replace('|',"\n",$question->config->attributes->validation),
+			'value'=>str_replace('|',"\n",$question->config->validation),
 		);
 		$this->renderQuestion($question_config);
 	}
 
-	function formatValidationField($validation){
-		return str_replace("\n",'|',$validation);
+	function formatValidationField($question){
+		$question['config']['validation'] = str_replace("\n",'|',$question['config']['validation']);
+		return $question;
 	}
 
 	/**
@@ -189,7 +182,8 @@ class Questionconfig{
 	*/
 	function formatOptions($question){
 		$options = $question['config']['options'];
-		$dataprovider = $question['config']['dataprovider'];		
+		$dataprovider = $question['config']['dataprovider'];
+		unset($question['config']['dataprovider']);		
 		if(!$dataprovider || empty($dataprovider['method'])){ //only use custom entry if no dataprovider is set
 			$raw_o_arr = explode("\n", $options);
 			$option_arr = array();
@@ -201,9 +195,11 @@ class Questionconfig{
 					$option_arr[$o_parts[0]] = $o_parts[1];
 				}
 			}
-			return $option_arr; //use custom options
+			$question['config']['options'] = $option_arr; //use custom options
+			return $question;
 		}else{
-			return array('dataprovider'=>$dataprovider); //use the dataprovider
+			$question['config']['options'] = array('dataprovider'=>$dataprovider); //use the dataprovider
+			return $question;
 		}
 	}
 
@@ -230,29 +226,37 @@ class Questionconfig{
 	/**
 	* format the results of the selected field
 	*/
-	function formatSelected($selected){
-		$s_arr = explode("\n", $selected);
+	function formatSelected($question){
+		$s_arr = explode("\n", $question['config']['selected']);
 		if(!is_array($s_arr)) $s_arr = array();
-		return $s_arr;
+		$question['config']['selected'] = $s_arr;
+		return $question;
 	}
 
 	function renderRequiredField($question){
-		$selected = array($question->config->required);
-		//var_dump($selected);
+		if(strpos('required', $question->config->validation) !== FALSE){
+			$selected = array('Y');
+		}else{
+			$selected = array('N');
+		}		
 		$question_config =(object) array(
 			'text'=>'Required?',
 			'alt'=>'(Is this required to contain a value/be selected?)',	
 			'type'=>'radio',
 			'name'=>'config[required]',	
 			'options'=>array('Yes'=>'Y', 'No'=>'N'),
-			'selected'=>$selected,			
+			'selected'=>$selected,
+			'validation'=>'required',			
 		);
 		$this->renderQuestion($question_config);
 	}
 
-	function formatRequiredField($required){
-		if($required == 'Y') return 'required';
-		else return '';
+	function formatRequiredField($question){
+		if($question['config']['required'] == 'Y'){
+			$question['config']['validation'] = 'required';
+		}
+		unset($question['config']['required']); 
+		return $question;
 	}
 
 	function renderDependenciesField($question){
