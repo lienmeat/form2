@@ -17,26 +17,6 @@ echo "<style>";
 $this->load->view('CSS/edit_form.css');
 echo "</style>";
 ?>
-<style>
-
-.form_question, .form_answer{
-	min-width: 463px;
-}
-
-.dependvisible {
-	background-color: gray;
-	/*opacity: 0.8;*/
-	/*background-color: rgba(0,0,0,0.9);*/
-}
-
-.dependhidden {
-	background-color: lightgray;
-	/*opacity: 0.2;*/
-	/*rgba(0,0,0,0.1);*/
-}
-
-</style>
-
 
 <div id="form_view_contain">	
 	<div class="form_title_contain edit_mode">

@@ -8,7 +8,7 @@ class Admin extends MY_Controller{
 		$this->_auth();
 	}
 
-	function index(){		
+	function index(){
 		$this->load->view('admin/dashboard');
 	}
 
@@ -160,7 +160,7 @@ class Admin extends MY_Controller{
 	*/
 	private function _auth(){
 		if(!$this->authorization->is('superadmin')){
-			$this->_failAuthResp("You must have global role \"superadmin\" to access this page!  NO ACCESS for user: ".$this->authorization->username()."!");			
+			$this->_failAuthResp("You must have global role \"superadmin\" to access this page!  NO ACCESS for user: ".$this->authorization->username()."!");
 		}
 	}
 

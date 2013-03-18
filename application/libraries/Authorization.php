@@ -90,7 +90,7 @@ class Authorization{
     return $this->auth->isLoggedInWith($function);
   }
 
-  function forceLogin($functions='dirlogin'){
+  function forceLogin($functions='dirlogin,nonwwulogin'){
     return $this->auth->login($functions);
   }
 
@@ -105,19 +105,25 @@ class Authorization{
   * @return bool
   */
   function can($permission, $form){
-    $this->CI->load->model('permission');
 
+    $this->CI->load->model('permission');
     $this->CI->load->model('form');
-    $res = $this->CI->form->getByName($form);
-    if($res[0]->creator == $this->username()) return true;
+    if(!is_object($form)){
+      $res = $this->CI->form->getByName($form);
+      $formname = $res[0]->name;
+      if($res[0]->creator == $this->username()) return true;
+    }else{
+      $formname = $form->name;
+      if($form->creator == $this->username()) return true;      
+    }
 
     //first check granular permissions on a form
-    $res = $this->CI->permission->hasPermissionOnUserAndForm($permission, $this->username(), $form);
+    $res = $this->CI->permission->hasPermissionOnUserAndForm($permission, $this->username(), $formname);
     if($res) return $res;
     
     //see if we have a role with the perm
     $this->CI->load->model('role');
-    $roles = $this->CI->role->getOnFormAndUser($form, $this->username());
+    $roles = $this->CI->role->getOnFormAndUser($formname, $this->username());
     foreach($roles as $r){
       if($this->CI->permission->hasPermissionOnRole($permission, $r->id)) return true;
     }

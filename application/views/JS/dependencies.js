@@ -57,7 +57,7 @@ Dependencies.prototype.__init__ = function(){
 		$('#dependhiddeninputs_'+this.form_id).val('');
 	}
 
-	this.checkAll();
+	this.checkAll();	
 }
 
 /**

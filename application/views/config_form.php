@@ -92,25 +92,24 @@ $question_config =(object) array(
 
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
-if(!$form->config->ad_groups) $form->config->ad_groups = array("*");
+if(!$form->config->ad_groups && $mode != 'edit') $form->config->ad_groups = array("all");
 $question_config =(object) array(
-	'text'=>'If a login is required, what WWU Active Directory user groups are permitted to view this form?',	
+	'text'=>'If a login is required, what WWU Active Directory statuses are permitted to view this form?',	
 	'name'=>'config[ad_groups][]',
 	'type'=>'checkbox',
-	'options'=>array('All'=>'*', 'Student'=>'student', 'Staff'=>'staff', 'Faculty'=>'faculty', 'Administration'=>'administration'),
+	'options'=>array('All'=>'all', 'Student'=>'student', 'Staff'=>'staff', 'Faculty'=>'faculty', 'Administration'=>'administration'),
 	'selected'=>$form->config->ad_groups,
-	'dependencies'=>'config[login_required]=Y',
-	'validation'=>'required',
+	'dependencies'=>'config[login_required]=Y',	
 );
 
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
-	'text'=>'If limiting form viewing by AD groups isn\'t sufficient, you can permit certain users by username:',
-	'alt'=>'(one per line, do not include yourself)',
+	'text'=>'If limiting form viewing by AD statuses isn\'t sufficient, you can permit certain users by username:',
+	'alt'=>'(One per line. These users will be able to view in addtion to anyone with a status selected above!)',
 	'name'=>'config[viewers]',
 	'type'=>'textarea',
-	'dependencies'=>'config[login_required]=Y',
+	'dependencies'=>'config[login_required]=Y&&config[ad_groups][]!=*all*',
 	'value'=>$form->config->viewers,
 );
 

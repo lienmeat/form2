@@ -24,13 +24,34 @@ function toggleView(selector){
 }
 </script>
 
+<!--
+echo "<h1>Someday this will be something akin to the /form/my/ page, but better.</h1>
+".anchor('forms/add', 'Make a Form')."
+<ul>";
+foreach ($forms as $form) {
+	if($form->published and $form->published != "0000-00-00 00:00:00") $published = "&nbsp;(published)";
+	else $published = "";
+	echo "<li>ID: $form->id ".$form->name.$published.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name).'">Results</a></li>';
+}
+echo "</ul><br />".anchor('forms/add', 'Make a Form');
+-->
+
 <div id="form_versions_contain" class="section">
 	<div id="form_versions_heading" class="section_heading"><a href="javascript:void(0);" onclick="toggleView('#form_versions');">Versions:</a></div>
 	<ul id="form_versions">
 	<?php
-	foreach ($forms as $f){
+	foreach ($forms as $form){
+
 		//create ability to View, View Results, Edit, Publish, Delete, right from a row showing basic info about it.
-		echo '<li>'.$f->id.'</li>';
+		if($form->published and $form->published != "0000-00-00 00:00:00"){
+			$published = "class=\"published\"";
+			$p_div = "<div class=\"pub_div\">PUBLISHED</div>";		
+		}else{
+			$published = "";
+			$p_div = "";
+		}
+		echo "<li $published>ID: ".$form->id.'&nbsp;CREATED: '.$form->created.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name)."\">Results</a>$p_div</li>";
+		//echo '<li>'.$form->id.'</li>';
 	}
 	?>
 	</ul>

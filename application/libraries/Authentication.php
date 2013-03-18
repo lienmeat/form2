@@ -63,10 +63,10 @@ class Authentication{
 	function login($functions='dirlogin'){
 		$functions = strtolower($functions);
 		if(!$functions) $functions = 'dirlogin';
-		if(strpos('nonwwulogin', $functions) !== false) $userInfo = nonWWULogin();
-		if(!$userInfo && strpos('dirlogin', $functions) !== false){
+		if(strpos($functions, 'nonwwulogin') !== false){ $userInfo = nonWWULogin(); }
+		if((!$userInfo || empty($userInfo)) && (strpos($functions, 'dirlogin') !== false) ){			
 			$userInfo = dirLogin();
-		}
+		}		
 		if($userInfo){
 			$this->setUser($userInfo);
 		}

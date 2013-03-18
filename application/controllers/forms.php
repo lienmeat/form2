@@ -1,6 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Forms extends MY_Controller{
+	//functions to run on the success of submitted form
+	private $on_form_success = array();
+
 	function __construct(){
 		parent::__construct();
 		$this->load->model('form');
@@ -30,24 +33,93 @@ class Forms extends MY_Controller{
 	* view a form by it's id
 	*/
 	function viewid($id){
-		$form = $this->form->getById($id);
+		$form = $this->form->getById($id);		
 		if($form){
 			$this->_view($form);
 		}
 	}
 
-
 	/**
 	* does the logic of rendering and saving form results
+	* @param object $form
 	*/
-	private function _view($form){		
-		if(empty($_POST)){
+	private function _view($form){
+		//check rights to view this form version (if unpublished)
+		if(!$form->published &&
+		 ( !$this->authorization->can('edit', $form->name)
+		 	&& !$this->authorization->can('admin', $form->name) )
+		){
+			$this->_failAuthResp('You must have edit or admin rights on a form to view it\'s non-published versions!');
+		}
+
+		//check that this person has the right qualifications according to the form view settings itself
+		$this->_checkViewRights($form);
+
+		//set any mandatory functions that will run on successful form submit
+		$this->_bindFormSuccess('_showFormResult');		
+		
+
+		if(empty($_POST) || $_POST['submit_fi2'] != "Submit"){
 			//show the form...
 			$form->questions = $this->_getQuestions($form->id);
 			$this->load->view('view_form', array('form'=>$form));
 		}else{
 			$result = $this->_saveResult($form);
-			$this->_doOnSuccess($form, $result);
+			$this->_doOnFormSuccess($form, $result);
+		}
+	}
+
+	/**
+	* Tests login/auth requirements on a form
+	* @param object $form
+	*/
+	private function _checkViewRights($form){
+		if($form->config->login_required == 'Y'){
+			$this->authorization->forceLogin();
+			if($this->authorization->can('edit', $form->name) || $this->authorization->can('admin', $form->name)){
+				$can_view = true;
+			}
+			//format viewers into array
+			if(!empty($form->config->viewers)){
+				$viewers = explode("\n", $form->config->viewers);
+				for($i=0; $i<count($viewers); $i++){
+					$viewers[$i] = trim(strtolower($viewers[$i]));
+				}
+			}
+			if(is_array($form->config->ad_groups)){
+				if(!in_array("all", $form->config->ad_groups)){  //any valid login will do if this fails
+					if(!in_array(strtolower($this->authorization->status()), $form->config->ad_groups) ){
+						if(!empty($viewers)){
+							if(!in_array(strtolower($this->authorization->username()), $viewers)){
+								if($can_view) return;
+								else $this->_failAuthResp("You must have one of the following AD statuses to view this form:<br />".implode(", ", $form->config->ad_groups)."<br />OR be one of these users:<br />".implode(", ", $viewers));
+							}else{
+								//we are one of the allowed users
+								return;
+							}
+						}else{
+							if($can_view) return;
+							else $this->_failAuthResp("You must have one of the following AD statuses to view this form:<br />".implode(", ", $form->config->ad_groups));
+						}
+					}else{
+						//we have the right status
+						return;
+					}
+				}
+			}else{ //no ad_status configured, check viewers
+				if(!empty($viewers)){
+					if(!in_array(strtolower($this->authorization->username()), $viewers)){
+						if($can_view) return;
+						else $this->_failAuthResp("You must be one of the following users to access this form:<br />".implode(", ", $viewers));
+					}else{
+						//we have the right user
+						return;
+					}
+				}else{
+					//this is bad.  This means no ad_status is configured, and neither are any viewers!  LET EVERYONE KNOW ABOUT THIS SITUATION!
+					$this->_failAuthResp("FORM CONFIGURATION ERROR: No AD Status or users have been allowed to access this form, yet a login is required!  Please notify webservices!");
+				}
+			}
 		}
 	}
 
@@ -55,8 +127,11 @@ class Forms extends MY_Controller{
 	* Saves form resutls to database
 	*/
 	private function _saveResult($form){
+		//todo: decided if we should save based on form config.
+		// It might be that the form is ONLY to be sent to a remote addr, not saved.
 		$this->load->model('result');
-		$result->post = json_encode($_POST);
+		$post = $this->_filterPost();		
+		$result->post = json_encode($post);
 		$result->submitter = $this->authorization->username();
 		$result->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$result->ip_address = $_SERVER['REMOTE_ADDR'];
@@ -66,34 +141,58 @@ class Forms extends MY_Controller{
 	}
 
 	/**
+	* Filters post data so that stuff we don't want doesn't show up in results
+	*/
+	private function _filterPost(){
+		$post = $_POST;
+		$input_names = explode(',',$post['dependhiddeninputs']);
+		foreach($input_names as $name){
+			$name = str_replace('[]','', $name);
+			unset($post[$name]);
+		}		
+		return $post;		
+	}
+
+	/**
 	* Runs actions needed to be done on a successful submition
 	*/
-	private function _doOnSuccess($form, $result){
-		//do any workflow or other tasks to do on a success
-
-		//print thank you message
-		//print link back to form result
-
-		//print normal form result view
+	private function _doOnFormSuccess($form, $result){
 		$form->questions = $this->_getQuestions($form->id);
 		$form->result = $result;
 		$form->result->post = json_decode($form->result->post);
-		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou));
-		//echo "Good job. ".anchor('forms/results/'.$form->name, 'Form Results');
 
+		//do any workflow or other tasks to do on a success
+		foreach($this->on_form_success as $fn){
+			if(method_exists($this, $fn)){
+				$this->$fn($form);
+			}
+		}
+	}
+
+	/**
+	* Bind a function in this class to run on form success
+	* @param string $function Name of method to run
+	*/
+	public function _bindFormSuccess($function){
+		if(!in_array($function, $this->on_form_success)){
+			$this->on_form_success[] = $function;			
+		}
+	}
+
+	/**
+	* Shows user the form result when form is submitted
+	* @param object $form
+	*/
+	private function _showFormResult($form){
+		//todo: detect when it shouldn't run!  ex: pass to external script instead...						
+		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou));
 	}	
 
 	/**
 	* Make a new form
 	*/
 	function add(){
-		$this->authorization->forceLogin();
-		
-		//this shouldn't be possible, but as a precaution
-		if(!$this->authorization->username()){
-			$this->_failAuthResponse("You must be logged in to complete this action!");
-			return;
-		}
+		$this->authorization->forceLogin();		
 		if(empty($_POST)){ //todo: server-side validation!
 			//ask user to create the form
 			$this->load->view('add_form');			
@@ -125,8 +224,8 @@ class Forms extends MY_Controller{
 		}
 
 		//edit rights need to be tested here!
-		if($form->creator != $this->authorization->username()){
-			$this->_failAuthResponse('You do not have sufficient rights to edit this form!');
+		if($form->creator != $this->authorization->username() && !$this->authorization->can('edit', $form) && !$this->authorization->can('admin', $form)){
+			$this->_failAuthResp('You do not have sufficient rights to edit this form!');
 			return;
 		}
 
@@ -150,8 +249,9 @@ class Forms extends MY_Controller{
 	}
 
 	function delete($id){
-		//todo: make sure user has permissions
+		$this->authorization->forceLogin();		
 		$form = $this->form->getById($id);
+
 		if($_POST['deleteconfirm'] == 'yes'){
 			$this->form->delete($form->id);
 			$this->load->model('question');
@@ -165,6 +265,7 @@ class Forms extends MY_Controller{
 	}
 
 	function publish($id){
+		$this->authorization->forceLogin();
 		//todo: make sure user has permissions
 		$form = $this->form->getById($id);
 		if($_POST['publishconfirm'] == 'yes'){
@@ -178,16 +279,19 @@ class Forms extends MY_Controller{
 	}
 
 	function manage($name){
+		$this->authorization->forceLogin();
+		if(!$this->authorization->can('admin', $name)){
+			$this->_failAuthResp('You must have admin rights on a form to access this page!');
+		}
 		$forms = $this->form->getByName($name, 'created DESC');
 		
 		//get roles on this form
 
 
 		//get people who have roles on this form
-
-
-		//echo "<h1>This method is still under construction!<h1>";
+		
 		$this->load->view('manage_form', array('forms'=>$forms));
+		echo "<h1>This method is still under construction!<h1>";
 	}
 
 
@@ -211,6 +315,7 @@ class Forms extends MY_Controller{
 	* Copy a form (forces a new name)
 	*/
 	function copy($name_or_id){
+		$this->authorization->forceLogin();
 		echo "This method is still under construction";
 	}
 
@@ -218,6 +323,7 @@ class Forms extends MY_Controller{
 	* Get results for a form
 	*/
 	function results($name_or_id){
+		$this->authorization->forceLogin();
 		//todo: make sure user has permissions
 		$form = $this->form->getById($name_or_id);
 		if($form){

@@ -6,7 +6,7 @@
 		anchor('forms/edit/'.$form->name, 'Edit Form'),
 		
 	);
-	$this->load->view('header', array('title'=>$name, 'banner_menu'=>$menu));
+	$this->load->view('header', array('title'=>"F2 Result ".$form->result->id, 'banner_menu'=>$menu));
 	//$this->load->view('JS/dependencies.js');
 ?>
 
@@ -37,14 +37,19 @@
 	<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
 </div>
 
+<ul class="form_contain result_mode">
 <?php
+$hidden = explode(',', $form->result->post->dependhiddenquestions);
+if(!is_array($hidden)) $hidden = array();
 //probably shouldn't have called questions questions,
 //because there is other crap in forms than questions....
 foreach($form->questions as $question){
-	$this->load->view('question/result_question', array('question'=>$question, 'formresult'=>$form->result));	
+	if(!in_array($question->id, $hidden)){
+		$this->load->view('question/result_question', array('question'=>$question, 'formresult'=>$form->result));
+	}
 }
-
 ?>
+</ul>
 
 
 

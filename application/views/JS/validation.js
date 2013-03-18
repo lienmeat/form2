@@ -499,8 +499,6 @@ Validation.prototype.exact_length = function(value, params){
 	return true;
 }
 
-
-
 function trim(value, params){
 	return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 	//return false;

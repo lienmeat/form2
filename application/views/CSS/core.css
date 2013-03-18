@@ -204,12 +204,12 @@ label {
   clear: both; 
 }
 .form_question_text{
-font-size:1.2em;
+  font-size:1.2em;
 }
 .form_question_alt{
- color:#8F2F2F;
+  color:#8F2F2F;
 }
-.form_answer {
+.form_answer, .form_information{
   /*float: left;*/
   background-color: rgba(255,255,255,0.40);
   padding: 5px;
@@ -231,12 +231,30 @@ font-size:1.2em;
 }
 
 
-.dependhidden{
+/*.form_information{
+  background-color: rgba(255,255,255,0.40);
+  font-size:1.2em;
+  padding: 5px;
+}*/
+
+.dependhidden.view_mode{
   display: none;
 }
 
-.dependvisible{
+.dependvisible.view_mode{
   display: block;
+}
+
+.dependvisible.edit_mode{
+  background-color: gray;
+  /*opacity: 0.8;*/
+  /*background-color: rgba(0,0,0,0.9);*/
+}
+
+.dependhidden.edit_mode{
+  background-color: #EEE9E9;
+  /*opacity: 0.2;*/
+  /*rgba(0,0,0,0.1);*/
 }
 
 .form_element_contain {
@@ -274,3 +292,16 @@ font-size:1.2em;
 label {
   font-weight: bold;
 }
+
+.published{
+  background-color: lightgreen;
+  border-radius: 5px;
+}
+.pub_div{
+  float: right; 
+  color: green;
+}
+
+/*.form_question, .form_answer{
+  min-width: 463px;
+}*/
