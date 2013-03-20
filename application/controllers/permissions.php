@@ -4,7 +4,7 @@ class Permissions extends MY_Controller{
 	function __construct(){
 		parent::__construct();
 		$this->load->model('permission');
-		$this->output->enable_profiler(TRUE);
+		//$this->output->enable_profiler(TRUE);
 	}
 
 	function index(){
@@ -22,5 +22,34 @@ class Permissions extends MY_Controller{
 		}else{
 			echo "no";
 		}
+	}
+
+	function addToUser(){		
+		if($_POST['username'] && $_POST['permission'] && $_POST['form']){
+			$res = $this->permission->hasPermissionOnUserAndForm($_POST['permission'], $_POST['username'], $_POST['form']);
+			if(!empty($res)){ echo json_encode(array('status'=>'fail')); return; }
+			$perms = $this->permission->getBy('permission', $_POST['permission']);
+			if(!empty($perms)){
+				$this->permission->addToUser($perms[0]->id, $_POST['username'], $_POST['form']);
+				echo json_encode(array('status'=>'success'));
+				return;
+			}
+		}
+		echo json_encode(array('status'=>'fail'));
+	}
+
+	function removeFromUser(){
+		if($_POST['username'] && $_POST['permission'] && $_POST['form']){
+			$res = $this->permission->hasPermissionOnUserAndForm($_POST['permission'], $_POST['username'], $_POST['form']);
+			if(!empty($res)){  
+				$perms = $this->permission->getBy('permission', $_POST['permission']);
+				if(!empty($perms)){
+					$this->permission->deleteFromUser($perms[0]->id, $_POST['username'], $_POST['form']);
+					echo json_encode(array('status'=>'success'));
+					return;
+				}			
+			}		
+		}
+		echo json_encode(array('status'=>'fail'));
 	}
 }

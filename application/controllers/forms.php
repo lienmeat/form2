@@ -285,13 +285,19 @@ class Forms extends MY_Controller{
 		}
 		$forms = $this->form->getByName($name, 'created DESC');
 		
-		//get roles on this form
+		//get permissions on this form
+		$this->load->model('permission');
+		$perms_raw = $this->permission->getOnForm($name);
+		$perms = array();
+		foreach($perms_raw as $p){
+			if(!array_key_exists($p->user, $perms)){
+				$perms[$p->user] = array();
+			}
+			$perms[$p->user][] = $p;
+		}
 
-
-		//get people who have roles on this form
 		
-		$this->load->view('manage_form', array('forms'=>$forms));
-		echo "<h1>This method is still under construction!<h1>";
+		$this->load->view('manage_form', array('forms'=>$forms, 'users_with_perms'=>$perms));		
 	}
 
 
@@ -323,13 +329,16 @@ class Forms extends MY_Controller{
 	* Get results for a form
 	*/
 	function results($name_or_id){
-		$this->authorization->forceLogin();
-		//todo: make sure user has permissions
+		$this->authorization->forceLogin();		
+		
 		$form = $this->form->getById($name_or_id);
 		if($form){
 			$forms[] = $form;
 		}else{
 			$forms = $this->form->getByName($name_or_id);
+		}
+		if(!$this->authorization->can('admin', $forms[0]) && !$this->authorization->can('viewresults', $forms[0])){
+			$this->_failAuthResp('You must have admin rights on a form to access this page!');
 		}
 		if(!$forms) $forms = array();
 		$this->load->model('result');

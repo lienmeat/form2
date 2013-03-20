@@ -70,3 +70,7 @@ function toggleVisibility(selector){
     $(selector).hide();
   }
 }
+
+function toggleView(selector){  
+  toggleVisibility(selector);
+}

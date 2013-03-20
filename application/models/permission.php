@@ -32,7 +32,7 @@ class Permission extends MY_Model{
 	function getOnForm($form_name){
 		$q = "SELECT `permissions`.*, `permissions_users`.`form`, `permissions_users`.`user` FROM `permissions` 
 		JOIN `permissions_users` ON (`permissions`.`id` = `permissions_users`.`permission_id`) 
-		WHERE `permissions_users`.`form` = ?";
+		WHERE `permissions_users`.`form` = ? ORDER BY `permissions_users`.`user` ASC";
 
 		$query = $this->db->query($q, $form_name);
 		return $query->result();

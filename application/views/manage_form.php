@@ -12,29 +12,21 @@ $headdata = array(
 	'banner_menu'=>$menu_items
 );
 $this->load->view('header', $headdata);
+echo "<script type=\"text/javascript\" src=\"".base_url()."application/views/JS/permissionsui.js\"></script>";
 ?>
 
 <script>
-function toggleView(selector){	
-	if($(selector).css('display') != 'none'){
-		$(selector).hide();
-	}else{
-		$(selector).show();
-	}
-}
-</script>
+var perms_ui_data = {
+	form_name: "<?php echo $forms[0]->name; ?>",
+	users: <?php echo json_encode($users_with_perms); ?>,
+};
 
-<!--
-echo "<h1>Someday this will be something akin to the /form/my/ page, but better.</h1>
-".anchor('forms/add', 'Make a Form')."
-<ul>";
-foreach ($forms as $form) {
-	if($form->published and $form->published != "0000-00-00 00:00:00") $published = "&nbsp;(published)";
-	else $published = "";
-	echo "<li>ID: $form->id ".$form->name.$published.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name).'">Results</a></li>';
-}
-echo "</ul><br />".anchor('forms/add', 'Make a Form');
--->
+$(document).ready(
+	function(){
+		var form_perms = new PermissionsUI('form_perms', perms_ui_data);		
+	}
+);
+</script>
 
 <div id="form_versions_contain" class="section">
 	<div id="form_versions_heading" class="section_heading"><a href="javascript:void(0);" onclick="toggleView('#form_versions');">Versions:</a></div>
@@ -57,16 +49,10 @@ echo "</ul><br />".anchor('forms/add', 'Make a Form');
 	</ul>
 </div>
 
-<div id="form_roles_contain" class="section">
-	<div id="form_roles_heading" class="section_heading"><a href="javascript:void(0);" onclick="toggleView('#form_roles');">Roles:</a></div>
-	<ul id="form_roles">
-	<?php
-	foreach ($roles as $r){
-		//View and administer roles from this list
-		echo '<li>'.$r->id.'</li>';
-	}
-	?>
-	</ul>
+<div id="form_perms_contain" class="section">
+	<div id="form_perms_heading" class="section_heading"><a href="javascript:void(0);" onclick="toggleView('#form_perms');">Permissions:</a></div>
+	<div id="form_perms">		
+	</div>
 </div>
 <?php
 $this->load->view('footer');

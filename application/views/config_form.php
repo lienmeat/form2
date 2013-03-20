@@ -89,7 +89,6 @@ $question_config =(object) array(
 	'options'=>array('Yes'=>'Y', 'No'=>'N'),
 	'selected'=>array($form->config->login_required),
 );
-
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 if(!$form->config->ad_groups && $mode != 'edit') $form->config->ad_groups = array("all");
@@ -101,7 +100,6 @@ $question_config =(object) array(
 	'selected'=>$form->config->ad_groups,
 	'dependencies'=>'config[login_required]=Y',	
 );
-
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
@@ -112,6 +110,5 @@ $question_config =(object) array(
 	'dependencies'=>'config[login_required]=Y&&config[ad_groups][]!=*all*',
 	'value'=>$form->config->viewers,
 );
-
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 ?>
