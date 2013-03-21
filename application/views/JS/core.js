@@ -74,3 +74,24 @@ function toggleVisibility(selector){
 function toggleView(selector){  
   toggleVisibility(selector);
 }
+
+function f2Help(id){
+
+  if($('#f2help_contain_'+id).hasClass('open')){    
+    $('#f2help_contain_'+id).removeClass('open');
+  }else{    
+    var html = $('#f2help_'+id).html();    
+    if(html.length == 0){
+      doAjax('helps/getHelpTXT/'+id, {}, f2HelpDone);
+    }else{
+      $('#f2help_contain_'+id).addClass('open');
+    }
+  }
+}
+
+function f2HelpDone(resp){
+  if(resp && resp.help){
+    $('#f2help_'+resp.help.id).html(resp.help.help);
+    $('#f2help_contain_'+resp.help.id).addClass('open');
+  }
+}

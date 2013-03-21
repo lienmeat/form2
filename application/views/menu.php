@@ -1,7 +1,7 @@
 <?php
-  if(uri_string() == "/" or uri_string() == "")
+if(uri_string() == "/" or uri_string() == "")
     $links[]=anchor(site_url(), "Dashboard", array('style'=>'font-weight: bold;'));
-  else
+else
     $links[]=anchor(site_url(), "Dashboard");
 ?>
 

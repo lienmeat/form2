@@ -1,7 +1,5 @@
 <?php
-$menu = array(
-	anchor('admin', 'Admin Dashboard'),
-	anchor('admin/forms', 'Form Admin'),			
+$menu = array(	
 );
 $this->load->view('header', array('title'=>$form->name, 'banner_menu'=>$menu));	
 ?>

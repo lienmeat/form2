@@ -17,10 +17,19 @@ class Admin extends MY_Controller{
 		$this->load->view('admin/roleconfig', $data);
 	}
 
+	function help(){
+		$this->load->model('help');
+		$helps = $this->help->getAll();
+		$this->load->view('admin/helpadmin', array('helps'=>$helps));
+	}
+
+/*
 	function forms(){
 		//do stuff to get whatever is needed		
 		$this->load->view('admin/formadmin', $data);
 	}
+*/
+
 
 	/**
 	* search for roles by name

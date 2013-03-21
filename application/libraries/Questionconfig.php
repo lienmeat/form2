@@ -263,7 +263,8 @@ class Questionconfig{
 		$depends = str_replace("&&", "\n", $question->config->dependencies);
 		$question_config =(object) array(
 			'text'=>'Dependent On: ',
-			'alt'=>'(Rules for when this question will show up, based on input of other questions.  One rule per line.  Format: &lt;inputname&gt;=&lt;value&gt;<br />You can use the logical operators =,!=,&lt;,&lt;=,&gt;,&gt;= in the place of =.  Also, you can use "*" as a wildcard in &lt;value&gt;.)',	
+			//'alt'=>'(Rules for when this question will show up, based on input of other questions.  One rule per line.  Format: &lt;inputname&gt;=&lt;value&gt;<br />You can use the logical operators =,!=,&lt;,&lt;=,&gt;,&gt;= in the place of =.  Also, you can use "*" as a wildcard in &lt;value&gt;.)'.f2Help(1),
+			'alt'=>"One rule per line.<br />Format: inputname=value<br />You can use the logical operators =,!=,<,<=,>,>= in the place of =. Also, you can use \"*\" as a wildcard in the value.".f2Help(1),
 			'type'=>'textarea',
 			'name'=>'config[dependencies]',				
 			'value'=>$depends,

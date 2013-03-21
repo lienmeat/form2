@@ -1,6 +1,8 @@
 <?php
 	if(!$banner_menu) $banner_menu = array();
-	$banner_menu = array_merge(array(anchor('/', 'Dashboard')), $banner_menu);
+	$default_menu = array(anchor('/', 'Dashboard'));
+	if($this->authorization->is('superadmin'))	$default_menu[]=anchor('admin', 'Admin Dashboard');
+	$banner_menu = array_merge($default_menu, $banner_menu);
 	if(is_array($banner_menu)){
 		$banner_menu_html = '<div id="top_banner_menu_contain" onmouseover="$(\'.banner_menu\').show();" onmouseout="$(\'.banner_menu\').hide();">
 		<div id="menu_indicator">Menu</div>

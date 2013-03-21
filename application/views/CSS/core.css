@@ -256,3 +256,27 @@ textarea{
 /*.form_question, .form_answer{
   min-width: 463px;
 }*/
+
+.f2help_contain{
+  background-image: url('../IMG/f2help.png');
+  background-repeat: no-repeat;
+  background-position: left top;
+  cursor: pointer;
+  min-width: 16px;
+  min-height: 16px;
+}
+
+.f2help_contain .f2help{
+  display: none;
+}
+
+.f2help_contain.open .f2help{
+  display: block;
+}
+
+.f2help{
+  padding-top: 16px; /* use px because the graphic is a px size! */
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  /*border: 1px solid black;*/
+}

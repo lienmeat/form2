@@ -10,12 +10,13 @@ class Helps extends MY_Controller {
 	* Add a new help entry (ajax)
 	*/
 	public function add(){
-		if($_POST['seachterms'] && $_POST['help']){
+		if($_POST['searchterms'] && $_POST['help']){
 			$this->load->model('help');
 			$help = $this->help->insert($_POST);
+			mail('eric.lien@wallawalla.edu', 'New f2help', print_r($help, true));
 			echo json_encode(array('status'=>'success', 'help'=>$help));
 			return;
-		}
+		}		
 		echo json_encode(array('status'=>'fail'));
 	}
 
@@ -26,9 +27,11 @@ class Helps extends MY_Controller {
 	public function getHelpTXT($id){
 		$this->load->model('help');
 		$help = $this->help->getById($id);
-		if($help)
+		if($help){
+			$help->help = nl2br($help->help);
 			echo json_encode(array('status'=>'success', 'help'=>$help));
-		else
+		}else{
 			echo json_encode(array('status'=>'fail'));
+		}
 	}
 }
