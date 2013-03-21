@@ -155,21 +155,21 @@ class Form extends MY_Model{
 	
 	//override insert to return the actual db record inserted
 	function insert($data){
-	  if($data and (is_array($data) or is_object($data))){
-	    $data = (object) $data;
-    }else return false;
-	  $data->created = date('Y-m-d H:i:s');
-	  $data->id = uniqid('');
-    $data =& $this->encode($data);
-    //echo print_r($data, true);
-    if(parent::insert($data)){
+		if($data and (is_array($data) or is_object($data))){
+	    	$data = (object) $data;
+    	}else return false;
+	  	$data->created = date('Y-m-d H:i:s');
+		$data->id = uniqid('');
+    	$data =& $this->encode($data);
     	//echo print_r($data, true);
-	    //$ret = $this->getById($data->id);
-	    //echo print_r($ret, true);
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
+	    if(parent::insert($data)){
+			//echo print_r($data, true);
+			//$ret = $this->getById($data->id);
+			//echo print_r($ret, true);
+			return $this->getById($data->id);
+		}else{
+		    return false;
+		}
 	}	
 
 

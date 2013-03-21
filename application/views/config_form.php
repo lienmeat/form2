@@ -52,7 +52,8 @@ $question_config =(object) array(
 	'value'=>$form->config->processing_url
 );
 
-$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+//todo: make this feature work
+//$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(			
 	'text'=>'URL of script to forward the results to after the form is successfully submitted and saved.',
@@ -62,7 +63,8 @@ $question_config =(object) array(
 	'value'=>$form->config->processing_url,
 );
 
-$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+//todo: make this feature work
+//$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
 	'text'=>'Thank You Text',
@@ -83,7 +85,7 @@ $inputs = array(
 if(!$form->config->login_required) $form->config->login_required = 'N';
 $question_config =(object) array(			
 	'text'=>'Is a login required?',
-	'alt'=>'(ensures only one answer per person, but requires them to login)',
+	'alt'=>'(If logged in, their username is automatically associated with the form result.)',
 	'name'=>'config[login_required]',
 	'type'=>'radio',
 	'options'=>array('Yes'=>'Y', 'No'=>'N'),
@@ -107,7 +109,7 @@ $question_config =(object) array(
 	'alt'=>'(One per line. These users will be able to view in addtion to anyone with a status selected above!)',
 	'name'=>'config[viewers]',
 	'type'=>'textarea',
-	'dependencies'=>'config[login_required]=Y&&config[ad_groups][]!=*all*',
+	'dependencies'=>'config[login_required]=Y&&config[ad_groups][]!=all*',
 	'value'=>$form->config->viewers,
 );
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));

@@ -39,12 +39,12 @@ div.top_banner {
 }
 
 .banner_menu {
-  width: 150px;
+  width: 15em;
   z-index: 999;
   background: rgba(0,0,0,0.65);
   position: absolute;
-  top: +35px;
-  right: +15px;
+  top: +2.7em;
+  right: +0.8em;
   margin: 0em;
   padding: 0.5em; 
   list-style: none;
@@ -98,56 +98,8 @@ div.menu a:hover {
 
 .input_multiple {
   display: inline-block;
-  margin-left: 5px;
+  margin-left: 0.2em;
 }
-/*
-div.obj_list_item {
-  border: 1px solid #BEB091;
-  background: #E9E1D2;
-  margin: 2px;
-  padding: 5px;
-}
-
-span.req {
-  font-size: 8pt;
-  color: #961400;
-  font-weight: bold;
-}
-
-.Err {
- color: #961400;
- font-weight: bold;
-}
-
-.info{
-	font-size: 8pt;
-}
-
-.small_link {
-	font-size: 8pt;
-}
-
-.delete_this, .delete_this:hover{
-	color: red;
-}
-
-.property {
-  font-weight: bold;
-}
-
-.multiline_property_data {
-  padding-left: 9px;
-}
-
-label {
-  font-weight: bold;
-}
-
-.longlist {
-  max-height: 500px;
-  overflow: auto;
-}
-*/
 
 /** This stuff below is stuff I added for this app! **/
 
@@ -155,9 +107,9 @@ label {
   /*display: table;*/
   width: 100%;
   list-style: none;
-  margin-left: 0px;
-  padding-left: 0px;   
-  border-spacing:0px 3px;
+  margin-left: 0em;
+  padding-left: 0em;   
+  border-spacing:0em 0.3em;
 }
 
 .form_row { 
@@ -168,8 +120,8 @@ label {
   background-color: #F5EFE4;
   /*background-color: pink;*/
   /*border: 1px solid #000;*/  
-  border-radius: 10px;
-  margin-bottom: 5px;
+  border-radius: 1em;
+  margin-bottom: 0.4em;
   clear: both;
 }
 /*
@@ -188,7 +140,7 @@ label {
 */
 .form_question {  
   /*vertical-align: top;*/
-  padding: 5px;
+  padding: 0.4em;
   /*width: 50%;*/
   /*display: table-cell;*/
   /*border-bottom: 2px solid #806C46;
@@ -204,21 +156,21 @@ label {
   clear: both; 
 }
 .form_question_text{
-  font-size:1.2em;
+  font-size: 1.2em;
 }
 .form_question_alt{
-  color:#8F2F2F;
+  color: #8F2F2F;
 }
 .form_answer, .form_information{
   /*float: left;*/
   background-color: rgba(255,255,255,0.40);
-  padding: 5px;
+  padding: 0.4em;
   /*width: 100%;*/
   clear: both;
   /*width: 50%; */
   /*display: table-cell;*/
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 1em;
+  border-bottom-left-radius: 1em;
   
  /* border-bottom: 2px solid #806C46;
   border-right: 1px solid #806C46;
@@ -230,12 +182,6 @@ label {
   /*vertical-align: middle;*/
 }
 
-
-/*.form_information{
-  background-color: rgba(255,255,255,0.40);
-  font-size:1.2em;
-  padding: 5px;
-}*/
 
 .dependhidden.view_mode{
   display: none;
@@ -269,11 +215,11 @@ label {
 .err_notif{
   z-index: +1;
   position: absolute;
-  max-width: 300px;
+  max-width: 20em;
   background-color: rgba(255,192,203,0.85);
-  border: 1px solid red;
-  border-radius: 0px 5px 5px 5px;
-  padding: 0px 3px 0px 3px;
+  border: 0.1em solid red;
+  border-radius: 0em 0.4em 0.4em 0.4em;
+  padding: 0em 0.2em 0em 0.2em;
   color: red;
 }
 
@@ -295,11 +241,16 @@ label {
 
 .published{
   background-color: lightgreen;
-  border-radius: 5px;
+  border-radius: 0.5em;
 }
 .pub_div{
   float: right; 
   color: green;
+}
+
+textarea{
+  width: 30em;
+  height: 10em;  
 }
 
 /*.form_question, .form_answer{

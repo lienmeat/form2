@@ -13,22 +13,22 @@ class Dataprovider_model extends MY_Model{
 		if($data and (is_array($data) or is_object($data))){
 	    	$data = (object) $data;
     	}else return false;	  
-		if(parent::update($data)){
+	  	if(parent::update($data)){
 	    	return $this->getById($data->id);
-		}else{
-	    	return false;
-		}
+	  	}else{
+	  		return false;
+	  	}
 	}
 	
 	//override insert to return the actual db record inserted
 	function insert($data){
 		if($data and (is_array($data) or is_object($data))){
 	    	$data = (object) $data;
-    	}else return false;	  
-    	if(parent::insert($data)){
-        	return $this->getById($data->id);
-	  	}else{
-	    	return false;
+    	}else return false;
+		if(parent::insert($data)){
+			return $this->getById($data->id);
+		}else{
+		    return false;
 		}
 	}
 }

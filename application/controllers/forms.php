@@ -49,7 +49,7 @@ class Forms extends MY_Controller{
 		 ( !$this->authorization->can('edit', $form->name)
 		 	&& !$this->authorization->can('admin', $form->name) )
 		){
-			$this->_failAuthResp('You must have edit or admin rights on a form to view it\'s non-published versions!');
+			$this->_failAuthResp('You must have edit or admin permissions on a form to view it\'s non-published versions!');
 		}
 
 		//check that this person has the right qualifications according to the form view settings itself
@@ -225,7 +225,7 @@ class Forms extends MY_Controller{
 
 		//edit rights need to be tested here!
 		if($form->creator != $this->authorization->username() && !$this->authorization->can('edit', $form) && !$this->authorization->can('admin', $form)){
-			$this->_failAuthResp('You do not have sufficient rights to edit this form!');
+			$this->_failAuthResp('You do not have sufficient rights to edit this form! You must have edit or admin permissions!');
 			return;
 		}
 
@@ -252,6 +252,11 @@ class Forms extends MY_Controller{
 		$this->authorization->forceLogin();		
 		$form = $this->form->getById($id);
 
+		if($form->creator != $this->authorization->username() && !$this->authorization->can('admin', $form)){
+			$this->_failAuthResp('You do not have sufficient rights to delete this form!  You must be the creator of this form, or have the admin permission on this form!');
+			return;
+		}
+
 		if($_POST['deleteconfirm'] == 'yes'){
 			$this->form->delete($form->id);
 			$this->load->model('question');
@@ -266,8 +271,13 @@ class Forms extends MY_Controller{
 
 	function publish($id){
 		$this->authorization->forceLogin();
-		//todo: make sure user has permissions
 		$form = $this->form->getById($id);
+
+		if($form->creator != $this->authorization->username() && !$this->authorization->can('edit', $form) && !$this->authorization->can('admin', $form)){
+			$this->_failAuthResp('You do not have sufficient rights to publish this form!  You must be the creator of this form, or have edit or admin permissions on this form!');
+			return;
+		}
+
 		if($_POST['publishconfirm'] == 'yes'){
 			$this->form->publish($form->id);
 			$this->load->view('redirect', array('location'=>'forms/view/'.$form->name, 'message'=>'Form id:'.$form->id.' published successfully!'));
@@ -337,8 +347,8 @@ class Forms extends MY_Controller{
 		}else{
 			$forms = $this->form->getByName($name_or_id);
 		}
-		if(!$this->authorization->can('admin', $forms[0]) && !$this->authorization->can('viewresults', $forms[0])){
-			$this->_failAuthResp('You must have admin rights on a form to access this page!');
+		if(!$this->authorization->can('admin', $forms[0]) && !$this->authorization->can('edit', $forms[0]) && !$this->authorization->can('viewresults', $forms[0])){
+			$this->_failAuthResp('You must have edit, admin, or viewresults permissions on a form to access this page!');
 		}
 		if(!$forms) $forms = array();
 		$this->load->model('result');

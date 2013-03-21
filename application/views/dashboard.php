@@ -12,7 +12,7 @@ foreach ($forms as $form) {
 		$published = "";
 		$p_div = "";
 	}
-	echo "<li $published>ID: $form->id ".$form->name.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name)."\">Results</a>$p_div</li>";
+	echo "<li $published>ID: $form->id ".$form->name.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name).'\">Results</a>&nbsp;<a href="'.site_url('forms/manage/'.$form->name)."\">Manage</a>$p_div</li>";
 }
 echo "</ul><br />".anchor('forms/add', 'Make a Form');
 
