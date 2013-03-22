@@ -66,6 +66,11 @@ class Questionconfig{
 		return $question;
 	}
 
+	function formatDivider($question){
+		$question = $this->formatDependenciesField($question);
+		return $question;
+	}
+
 	function formatAddress($question){
 		$question = $this->formatDependenciesField($question);
 		$question = $this->formatRequiredField($question);
@@ -88,16 +93,18 @@ class Questionconfig{
 	}	
 
 	function renderNameField($question){
+		$name = $question->config->name;
+		if(!$name) $name = "element_".$question->id;
 		$question_config =(object) array(			
 		'type'=>'text',
 		'name'=>'config[name]',
-		'text'=>'Question Name: ',
+		'text'=>'Element Name: ',
 		'alt'=>'(a-z, 0-9, -, _)',
-		'value'=>$question->config->name,
+		'value'=>$name,
 		'validation'=>'required|alpha_dash',
 		);
 
-		$this->renderQuestion($question_config);
+		$this->renderQuestion($question_config);		
 	}
 
 	function renderTextField($question){
@@ -163,13 +170,14 @@ class Questionconfig{
 			foreach($question->config->options as $label=>$value){
 				if($first) $first = false;
 				else $o_txt.="\n";
-				$o_txt.=$label.":".$value;
+				if($label == $value) $o_txt.=$label;
+				else $o_txt.=$label.":".$value;
 			}
 		}	
 		$question_config =(object) array(
 			'type'=>'optionsconf',
 			'text'=>'Options: ',
-			'alt'=>'(In the format: "label:value", one per line. You don\'t need the ":value" if you don\'t require a different value than label. Label is what the user will see, value is what is submitted, OR choose a data provider that will populate the options from a database.)',	
+			'alt'=>'(One option per line, OR choose a set of pre-defined answers. There is also an advanced syntax explanation in the help!)'.f2Help(3),	
 			'name'=>'config[options]',
 			'value'=>$o_txt,
 			'dataprovider'=>$method,

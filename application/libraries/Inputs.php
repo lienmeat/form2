@@ -586,18 +586,24 @@ class Inputs implements iInput{
 	private $input;
 	var $pre_wrap = "";
 	var $post_wrap = "";
+	private $config;
 	
 	function __construct($config=null){
 		if(is_array($config)){ $config = (object) $config; }
-
 		if(!empty($config)) $this->setConfig($config);
 	}
 	
-	function setConfig($config=null){	  
+	function setConfig($config=null){
 		$this->input = false;
-		if(is_array($config)){ $config = (object) $config; }		
-		$type = ucfirst($config->type)."_Input";
-		if(isset($config->attributes->type)) $type = ucfirst($config->attributes->type)."_Input";
+		$this->config = false;
+		if(is_array($config)){ $config = (object) $config; }
+		$this->config = $config;
+		if($this->config->visibility == 'viewonly' || $this->config->visibility == 'hidden'){
+			$type = 'Hidden_Input';
+		}else{
+			$type = ucfirst($config->type)."_Input";
+			if(isset($config->attributes->type)) $type = ucfirst($config->attributes->type)."_Input";
+		}
 		$this->input = new $type($config);
 	}
 
@@ -634,7 +640,7 @@ class Inputs implements iInput{
 	}
 	
 	function getValue(){
-		$this->input->getValue();
+		return $this->input->getValue();
 	}
 	
 	function setAttribute($name, $value){
@@ -670,7 +676,12 @@ class Inputs implements iInput{
 	}
 	
 	function __toString(){
-		return $this->pre_wrap.$this->input->__toString().$this->post_wrap;
+		if($this->config->visibility == 'viewonly'){
+			return $this->pre_wrap.$this->getValue().$this->input->__toString().$this->post_wrap;
+		}else{
+			return $this->pre_wrap.$this->input->__toString().$this->post_wrap;
+		}
+		
 	}
 	
 	function serialize(){

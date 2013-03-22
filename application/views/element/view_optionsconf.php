@@ -14,7 +14,7 @@
 		}
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
 		$this->inputs->setAttribute('id', $question->id."_input0");
-		echo "<div><label>Custom: </label><br />".$this->inputs."</div>";		
+		echo "<div><label>Available Answers: </label><br />".$this->inputs."</div>";		
 		
 		$select->config = $question->config;
 		$select->config->type = 'select';
@@ -28,7 +28,7 @@
 		$this->inputs->setConfig($select->config);
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
 		$this->inputs->setAttribute('id', $question->id."_input1");
-		echo '<div>OR <label>Data Provider: </label><br />'.$this->inputs."</div>";		
+		echo '<div>OR <label>Pre-defined Answers: </label><br />'.$this->inputs."</div>";		
 		?>
 	</div>
 </div>

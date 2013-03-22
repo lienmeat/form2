@@ -44,6 +44,8 @@ class Forms extends MY_Controller{
 	* @param object $form
 	*/
 	private function _view($form){
+		//get get args and register them properly so we can know what is readonly or force-filled
+		$this->_captureGetArgs();
 		//check rights to view this form version (if unpublished)
 		if(!$form->published &&
 		 ( !$this->authorization->can('edit', $form->name)
@@ -56,7 +58,7 @@ class Forms extends MY_Controller{
 		$this->_checkViewRights($form);
 
 		//set any mandatory functions that will run on successful form submit
-		$this->_bindFormSuccess('_showFormResult');		
+		$this->_bindFormSuccess('_clearCapturedGetArgs','_showFormResult');		
 		
 
 		if(empty($_POST) || $_POST['submit_fi2'] != "Submit"){
@@ -121,6 +123,34 @@ class Forms extends MY_Controller{
 				}
 			}
 		}
+	}
+	
+	/**
+	* get get args and register them properly so we can know what is readonly or force-filled
+	*/
+	private function _captureGetArgs(){
+		if(!empty($_GET)){
+			$readonly = array();
+			$forcedfilled = array();
+			foreach($_GET as $key=>$value){
+				if(strpos($value, "~") !== 0){
+					$forcedfilled[$key] = $value; 
+				}else{
+					$count = 1;
+					$readonly[$key] = str_replace("~", '', $value, &$count);
+				}
+			}
+			$_SESSION['f2']['readonly'] = $readonly;
+			$_SESSION['f2']['forcefilled'] = $forcedfilled;
+			$this->_redirect(str_replace("?".$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']));
+		}
+	}
+
+	/**
+	* clears out what _captureGetArgs put in the SESSION VAR
+	*/
+	private function _clearCapturedGetArgs(){
+		unset($_SESSION['f2']['readonly'], $_SESSION['f2']['forcefilled']);
 	}
 
 	/**

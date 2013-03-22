@@ -161,7 +161,7 @@ div.menu a:hover {
 .form_question_alt{
   color: #8F2F2F;
 }
-.form_answer, .form_information{
+.form_answer, .form_information, .form_divider{
   /*float: left;*/
   background-color: rgba(255,255,255,0.40);
   padding: 0.4em;
@@ -182,6 +182,20 @@ div.menu a:hover {
   /*vertical-align: middle;*/
 }
 
+.form_row.view_mode.visibility_hidden{
+  display: none;
+}
+
+.form_divider{
+  background-color: #747c53;
+  border-radius: 0em;  
+}
+
+.form_divider_text{
+  color: white;
+  font-size: 16pt;
+  text-align: center;
+}
 
 .dependhidden.view_mode{
   display: none;
