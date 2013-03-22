@@ -130,27 +130,25 @@ class Forms extends MY_Controller{
 	*/
 	private function _captureGetArgs(){
 		if(!empty($_GET)){
-			$readonly = array();
-			$forcedfilled = array();
+			$this->_clearCapturedGetArgs();
 			foreach($_GET as $key=>$value){
 				if(strpos($value, "~") !== 0){
-					$forcedfilled[$key] = $value; 
+					$this->prefill->setForcefilled($key, $value); 
 				}else{
 					$count = 1;
-					$readonly[$key] = str_replace("~", '', $value, &$count);
+					$this->prefill->setReadonly($key, str_replace("~", '', $value, &$count));
 				}
-			}
-			$_SESSION['f2']['readonly'] = $readonly;
-			$_SESSION['f2']['forcefilled'] = $forcedfilled;
+			}			
 			$this->_redirect(str_replace("?".$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']));
-		}
+		}		
 	}
 
 	/**
-	* clears out what _captureGetArgs put in the SESSION VAR
+	* clears out what _captureGetArgs put in prefill (or really anything in there)
 	*/
 	private function _clearCapturedGetArgs(){
-		unset($_SESSION['f2']['readonly'], $_SESSION['f2']['forcefilled']);
+		$this->prefill->clearReadOnlys();
+		$this->prefill->clearForcefilleds();
 	}
 
 	/**
@@ -278,6 +276,9 @@ class Forms extends MY_Controller{
 		}		
 	}
 
+	/**
+	* Delete a form
+	*/
 	function delete($id){
 		$this->authorization->forceLogin();		
 		$form = $this->form->getById($id);
@@ -299,6 +300,9 @@ class Forms extends MY_Controller{
 		}
 	}
 
+	/**
+	* Publish a form (make it viewable by people)
+	*/
 	function publish($id){
 		$this->authorization->forceLogin();
 		$form = $this->form->getById($id);
@@ -318,6 +322,10 @@ class Forms extends MY_Controller{
 		}
 	}
 
+	/**
+	* Manage form named $name
+	* (edit perms, see versions, etc...)
+	*/
 	function manage($name){
 		$this->authorization->forceLogin();
 		if(!$this->authorization->can('admin', $name)){
@@ -340,7 +348,9 @@ class Forms extends MY_Controller{
 		$this->load->view('manage_form', array('forms'=>$forms, 'users_with_perms'=>$perms));		
 	}
 
-
+	/**
+	* saves the form configuration (ajax)
+	*/
 	function saveconfig($id){
 		if(!empty($_POST) and $id){
 			$form = $_POST;
@@ -390,12 +400,50 @@ class Forms extends MY_Controller{
 		$this->load->view('formresults', array('forms'=>$forms, 'formresults'=>$formresults));
 	}
 
+	/**
+	* I'm pretty sure this is going to only be handled by the results controller...
+	*/
 	function viewresult($result_id){
 		$result = $this->result->getById($id);
 		$form = $this->form->getById($result->form_id);
 		$form->questions = $this->_getQuestions($form->id);
 		$form->result = $result;
 		$this->load->view('result_form', array('form'=>$form));
+	}
+
+	/**
+	* Saves a partially completed form as a draft
+	* @param string $id What form the draft is from
+	*/
+	function saveDraft($id){
+		if(!empty($_POST)){
+			$this->load->model('draft');
+			$data = array(
+				'form_id'=>$id,
+				'post'=>json_encode($_POST['formdata']),
+				'readonlys'=>json_encode($this->prefill->getReadonlys()),
+				);			
+			$draft = $this->draft->insert($data);
+			echo json_encode(array('status'=>'success', 'url'=>site_url('forms/draft/'.$draft->id)));		
+		}
+	}
+
+	/**
+	* Gets draft and populates all info it needs to into prefill lib,
+	* Then redirects to the form so you can finish filling it out.
+	*/
+	function draft($id){
+		$this->load->model('draft');
+		$draft = $this->draft->getById($id);
+		if($draft){
+			if(!empty($draft->readonlys)){
+				$this->prefill->setReadOnlys((array) json_decode($draft->readonlys));
+			}
+			$this->prefill->setForcefilleds((array) json_decode($draft->post));
+			$this->_redirect(site_url('forms/viewid/'.$draft->form_id));
+		}else{
+			$this->_failAuthResp("The draft '$id' does not exist!");
+		}
 	}
 
 	/**
@@ -437,7 +485,7 @@ class Forms extends MY_Controller{
 	}
 
 	/**
-	* Validate a submitted form
+	* Validate a submitted form (might never care to do this)
 	*/
 	private function _validateForm(){
 

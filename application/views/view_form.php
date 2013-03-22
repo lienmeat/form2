@@ -40,8 +40,7 @@ foreach($form->questions as $question){
 		</div>
 		<div class="form_answer">
 			<div class="form_element_contain">
-				<input type="submit" name="submit_fi2" value="Submit">
-			</div>
+				<input type="submit" name="submit_fi2" value="Submit">&nbsp;&nbsp;<button onclick="window.print();">Print</button>&nbsp;&nbsp;<button onclick="saveDraft('<?php echo $form->id; ?>');">Save as Draft</button>			</div>
 		</div>
 	</li>
 </ul>

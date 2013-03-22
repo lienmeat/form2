@@ -503,11 +503,11 @@ class Select_Input extends Base_Input implements iSelectable{
 	}
 
 	function setValue($value){
-		$this->value = $value;
+		$this->setSelected($value);
 	}
 
 	function getValue(){
-		return $this->value;
+		return $this->getSelected();
 	}
 
 	function setOption($label, $value=null){
@@ -583,6 +583,7 @@ class Multipleselect_Input extends Select_Input{
 * This class is a convienience class to handle any input implementing iInput
 */
 class Inputs implements iInput{
+	private $CI;
 	private $input;
 	var $pre_wrap = "";
 	var $post_wrap = "";
@@ -591,6 +592,7 @@ class Inputs implements iInput{
 	function __construct($config=null){
 		if(is_array($config)){ $config = (object) $config; }
 		if(!empty($config)) $this->setConfig($config);
+		$this->CI =& get_instance();
 	}
 	
 	function setConfig($config=null){
@@ -598,13 +600,34 @@ class Inputs implements iInput{
 		$this->config = false;
 		if(is_array($config)){ $config = (object) $config; }
 		$this->config = $config;
-		if($this->config->visibility == 'viewonly' || $this->config->visibility == 'hidden'){
+		$readonly = $this->CI->prefill->readonly($config->name);
+		if(!$readonly) $readonly = $this->CI->prefill->readonly($config->name."[]");
+		$forcefill = $this->CI->prefill->forcefilled($config->name);
+		if(!$forcefill) $forcefill = $this->CI->prefill->forcefilled($config->name."[]");
+		if($this->config->visibility == 'viewonly' || $this->config->visibility == 'hidden' || $readonly){	
 			$type = 'Hidden_Input';
 		}else{
 			$type = ucfirst($config->type)."_Input";
 			if(isset($config->attributes->type)) $type = ucfirst($config->attributes->type)."_Input";
 		}
-		$this->input = new $type($config);
+		$this->input = new $type($config);		
+		if($readonly){
+			if($this->getType() != 'radio' && $this->getType() != 'checkbox'){
+				$this->setValue($readonly);
+			}else{
+				if(!is_array($readonly)) $readonly = array($readonly);
+				$this->setSelections($readonly);
+			}
+			$this->config->visibility = 'viewonly';
+		}
+		if($forcefill){
+			if($this->getType() != 'radio' && $this->getType() != 'checkbox'){
+				$this->setValue($forcefill);
+			}else{
+				if(!is_array($forcefill)) $forcefill = array($forcefill);
+				$this->setSelections($forcefill);
+			}
+		}
 	}
 
 	function getCopy(){
@@ -674,9 +697,39 @@ class Inputs implements iInput{
 	function getReadOnly(){
 		$this->input->getReadonly();
 	}
+
+	function getSelected(){
+		return $this->input->getSelected();
+	}
+
+	function setSelected($selected=null){
+		$this->input->setSelected($selected);
+	}
+
+	function setSelections(Array $selections){
+		$this->input->setSelections($selections);
+	}
+
+	function isSelected($value){
+		return $this->input->isSelected();
+	}
+
+	function setOption($label, $value=null){
+		$this->input->setOption($label, $value);
+	}
+
+	function setOptions($options=null){
+		$this->input->setOptions($options);
+	}
 	
 	function __toString(){
-		if($this->config->visibility == 'viewonly'){
+		if($this->config->visibility == 'viewonly' || $this->config->visibility == 'hidden'){
+			//hack to not allow too many renderings of the value of a radio or checkbox...
+			if(!$this->names) $this->names = array();
+			if(in_array($this->getName(), $this->names)) return '';
+			else $this->names[] = $this->getName();
+		}
+		if($this->config->visibility == 'viewonly'){			
 			return $this->pre_wrap.$this->getValue().$this->input->__toString().$this->post_wrap;
 		}else{
 			return $this->pre_wrap.$this->input->__toString().$this->post_wrap;

@@ -236,18 +236,6 @@ FormEditor.deleteQuestionCallback = function(resp){
 * @return object Resembling a normal form's $_POST representation
 */
 FormEditor.parseSerializedForm = function(form_answers){
-	var form_answers = form_answers || {};
-	var ans = {};	
-	for(i in form_answers){
-		if(form_answers[i].name.indexOf('[]') >= 0){
-			form_answers[i].name = form_answers[i].name.replace('[]', '');
-			if(!ans[form_answers[i].name]){
-				ans[form_answers[i].name] = [];
-			}
-			ans[form_answers[i].name].push(form_answers[i].value);
-		}else{
-			ans[form_answers[i].name] = form_answers[i].value;
-		}
-	}
-	return ans;
+	//moved function body to core.js as it's needed other places
+	return parseSerializedForm(form_answers);
 }
