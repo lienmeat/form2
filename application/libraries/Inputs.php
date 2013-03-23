@@ -729,12 +729,18 @@ class Inputs implements iInput{
 			if(in_array($this->getName(), $this->names)) return '';
 			else $this->names[] = $this->getName();
 		}
-		if($this->config->visibility == 'viewonly'){			
-			return $this->pre_wrap.$this->getValue().$this->input->__toString().$this->post_wrap;
+		if($this->config->visibility == 'viewonly'){
+			$readonly = $this->CI->prefill->readonly($this->getName());
+			if(!$readonly) $readonly = $this->CI->prefill->readonly($this->getName()."[]");
+			if($readonly){
+				if(is_array($readonly)) $readonly = implode(', ', $readonly);				
+				return $this->pre_wrap.$readonly.$this->input->__toString().$this->post_wrap;
+			}else{
+				return $this->pre_wrap.$this->getValue().$this->input->__toString().$this->post_wrap;	
+			}
 		}else{
 			return $this->pre_wrap.$this->input->__toString().$this->post_wrap;
-		}
-		
+		}		
 	}
 	
 	function serialize(){

@@ -133,10 +133,13 @@ class Forms extends MY_Controller{
 			$this->_clearCapturedGetArgs();
 			foreach($_GET as $key=>$value){
 				if(strpos($value, "~") !== 0){
+					if(strpos($value, "|")) $value = explode("|", $value);
 					$this->prefill->setForcefilled($key, $value); 
 				}else{
 					$count = 1;
-					$this->prefill->setReadonly($key, str_replace("~", '', $value, &$count));
+					$value = str_replace("~", '', $value, &$count);
+					if(strpos($value, "|")) $value = explode("|", $value);
+					$this->prefill->setReadonly($key, $value);
 				}
 			}			
 			$this->_redirect(str_replace("?".$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']));
