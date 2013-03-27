@@ -4,7 +4,7 @@
 */
 class Question extends MY_Model{
 	protected $table = 'questions';
-	protected $dbfields = array('id', 'form_id', 'order', 'config');
+	protected $dbfields = array('id', 'form_id', 'order', 'name', 'config');
 
 	/**
   * Get all questions in form (in order)
@@ -20,6 +20,14 @@ class Question extends MY_Model{
 	  }else{
 	    return array();
 	  }
+	}
+
+	function isUniquelyNamed($question_id, $form_id, $name){
+		$q = "SELECT * FROM {$this->table} WHERE `id` != ? AND `form_id` = ? AND `name` != ?";
+		$res = $this->db->query($q, array($question_id, $form_id, $name));
+		$questions = $res->result();
+		if(empty($questions)) return true;
+		else return false;
 	}
 
 	function deleteByForm($form_id){

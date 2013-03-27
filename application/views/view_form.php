@@ -4,24 +4,38 @@
 		anchor('forms/edit/'.$form->name, 'Edit Form'),
 		anchor('forms/manage/'.$form->name, 'Manage Form'),
 	);
-	$this->load->view('header', array('title'=>$form->name, 'banner_menu'=>$menu));
-	//$this->load->view('JS/validation.js');
-	//$this->load->view('JS/dependencies.js');
-	$this->load->library('inputs');
+	
+	$this->load->view('header', array('title'=>$form->name, 'banner_menu'=>$menu, 'embedded'=>$embedded_form));
+	
+		
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/dependencies.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/validation.js\"></script>";
+	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/tiny_mce.js\"></script>";
+	echo "<link rel=\"stylesheet\" href=\"".base_url()."/application/views/JS/tiny_mce/themes/simple/skins/default/ui.css\">";
 ?>
 <script type="text/javascript">
 	$(document).ready(function(){
 		var form_deps = new Dependencies('<?php echo $form->id; ?>');
 		var form_val = new Validation('<?php echo $form->id; ?>');
 	});
+	
+	tinyMCE.init({
+		mode : "none",
+		theme : "simple"
+	});
+</script>
 </script>
 <div class="form_title_contain edit_mode">
 	<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
 </div>
 <!-- form header common to all forms -->
-<form name="<?php echo $form->name; ?>" id="<?php echo $form->id; ?>" method="POST">
+<form name="<?php echo $form->name; ?>" id="<?php echo $form->id; ?>" method="POST"  action="<?php echo site_url('forms/postForm/'.$form->id); ?>" enctype="multipart/form-data">
+
+<?php
+	if($embedded_form){
+		echo "<input type=\"hidden\" name=\"embedded_form\" value=\"true\">";
+	}
+?>
 
 <ul class="form_contain view_mode">
 
@@ -47,5 +61,5 @@ foreach($form->questions as $question){
 
 </form>
 <?php
-	$this->load->view('footer');
+	$this->load->view('footer', array('embedded'=>$embedded_form));
 ?>

@@ -6,7 +6,7 @@
 		anchor('forms/edit/'.$form->name, 'Edit Form'),
 		
 	);
-	$this->load->view('header', array('title'=>"F2 Result ".$form->result->id, 'banner_menu'=>$menu));
+	$this->load->view('header', array('title'=>"F2 Result ".$form->result->id, 'banner_menu'=>$menu, 'embedded'=>$embedded_form));
 	//$this->load->view('JS/dependencies.js');
 ?>
 
@@ -58,5 +58,5 @@ foreach($form->questions as $question){
 	<!-- Maybe a standard submit footer or something...idk -->
 </div>
 <?php
-	$this->load->view('footer');
+	$this->load->view('footer', array('embedded'=>$embedded_form));
 ?>

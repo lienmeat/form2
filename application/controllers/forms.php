@@ -43,7 +43,7 @@ class Forms extends MY_Controller{
 	* does the logic of rendering and saving form results
 	* @param object $form
 	*/
-	private function _view($form){
+	private function _view($form, $embedded=false){
 		//get get args and register them properly so we can know what is readonly or force-filled
 		$this->_captureGetArgs();
 		//check rights to view this form version (if unpublished)
@@ -57,19 +57,83 @@ class Forms extends MY_Controller{
 		//check that this person has the right qualifications according to the form view settings itself
 		$this->_checkViewRights($form);
 
-		//set any mandatory functions that will run on successful form submit
-		$this->_bindFormSuccess('_clearCapturedGetArgs','_showFormResult');		
-		
+		//show the form...
+		$form->questions = $this->_getQuestions($form->id);
+		$this->load->view('view_form', array('form'=>$form, 'embedded_form'=>$embedded));
+	}
 
-		if(empty($_POST) || $_POST['submit_fi2'] != "Submit"){
-			//show the form...
-			$form->questions = $this->_getQuestions($form->id);
-			$this->load->view('view_form', array('form'=>$form));
+	function viewEmbedded($name){
+		$form = $this->form->getPublishedWithName($name);
+		if($form){
+			$this->_view($form, true);
 		}else{
-			$result = $this->_saveResult($form);
-			$this->_doOnFormSuccess($form, $result);
+			echo "<h1>No form exists with the name \"$name\"!</h1>";
 		}
 	}
+
+	function postForm($id){
+		if(!empty($_POST) && $_POST['submit_fi2'] == "Submit"){
+			//something was actually posted, get the form
+			$form = $this->form->getById($id);
+
+			//make sure that form was found
+			if(!$form) $this->_failAuthResp('That form could not be found!');
+
+			//make sure user was allowed to post that form
+			if(!$form->published &&
+				( !$this->authorization->can('edit', $form->name)
+		 		&& !$this->authorization->can('admin', $form->name) )
+			){
+				$this->_failAuthResp('You must have edit or admin permissions on a form to view it\'s non-published versions!');
+			}
+
+			//check that this person has the right qualifications according to the form view settings itself
+			$this->_checkViewRights($form);
+		}else{
+			$this->_failAuthResp('NOTHING WAS POSTED! Please fill the form out again!');
+		}
+
+		$this->_checkUniquePost($id);
+
+		$_POST = $this->_doUploads($_POST); //if there were uploads, we have to handle them first
+		//if we made it here it means we posted and have rights
+		$result = $this->_saveResult($form);
+		//these need to be run always
+		$this->_bindFormSuccess('_clearCapturedGetArgs');
+		$this->_bindFormSuccess('_showFormResult');
+
+		//provides a way of hijacking success behavior in other funcitons
+		//as we go.
+		$this->_doOnFormSuccess($form, $result);
+	}
+
+
+	private function _doUploads($post_data){
+		if($_FILES && !empty($_FILES)){
+			ini_set('upload_max_filesize', '100M');
+			$config = array(
+				'upload_path'=>'./uploads/',
+				'allowed_types'=>'*',
+				'max_size'=>'102400', //100M
+				'max_filename'=>0,
+				'encrypt_name'=>TRUE,
+				'remove_spaces'=>TRUE,
+			);
+			$this->load->library('upload', $config);
+
+			foreach($_FILES as $key=>$f){
+				if(!$this->upload->do_upload($key)){
+					$post_data[$key] = $this->upload->display_errors();
+				}else{
+					$data = $this->upload->data();
+					$post_data[$key] = "<a href=\"".base_url()."uploads/".$data['file_name']."\">".$data['orig_name']."</a>";
+				}
+			}
+		}
+
+		return $post_data;
+	}
+
 
 	/**
 	* Tests login/auth requirements on a form
@@ -149,9 +213,43 @@ class Forms extends MY_Controller{
 	/**
 	* clears out what _captureGetArgs put in prefill (or really anything in there)
 	*/
-	private function _clearCapturedGetArgs(){
+	private function _clearCapturedGetArgs($form=null){
 		$this->prefill->clearReadOnlys();
-		$this->prefill->clearForcefilleds();
+		$this->prefill->clearForcefilleds();		
+	}
+
+	/**
+	* tries to make sure this isn't a dupicate post
+	*/
+	private function _checkUniquePost($form_id){
+		if($_SESSION['f2']['posts'][$form_id]){
+			if($_SESSION['f2']['posts'][$form_id] == $_POST){
+				$this->_redirect(site_url('forms/indenticalPost/'.$form_id));
+			}
+		}
+		$_SESSION['f2']['posts'][$form_id] = $_POST;		
+	}
+
+	function indenticalPost($form_id){
+		if($_SESSION['f2']['postconfirm'][$form_id]){
+			unset($_SESSION['f2']['postconfirm'][$form_id]);
+			$this->_redirect(base_url());
+		}
+		if($_POST['identconfirm'] == 'Yes'){
+			$_SESSION['f2']['postconfirm'][$form_id] = true;
+			//set post to what was posted
+			$_POST = $_SESSION['f2']['posts'][$form_id];
+			//unset the saved post so it doesn't warn again
+			unset($_SESSION['f2']['posts'][$form_id]);
+			//run function that handles form posts again
+			$this->postForm($form_id);			
+		}elseif($_POST['identconfirm'] == 'No'){
+			//they messed up or something, go back to blank form
+			$this->_redirect(site_url('forms/viewid/'.$form_id));
+		}else{
+			$this->load->view('identicalpost', array('form_id'=>$form_id));
+		}
+
 	}
 
 	/**
@@ -177,10 +275,12 @@ class Forms extends MY_Controller{
 	private function _filterPost(){
 		$post = $_POST;
 		$input_names = explode(',',$post['dependhiddeninputs']);
-		foreach($input_names as $name){
-			$name = str_replace('[]','', $name);
-			unset($post[$name]);
-		}		
+		if(is_array($input_names)){
+			foreach($input_names as $name){
+				$name = str_replace('[]','', $name);
+				unset($post[$name]);
+			}
+		}
 		return $post;		
 	}
 
@@ -214,9 +314,14 @@ class Forms extends MY_Controller{
 	* Shows user the form result when form is submitted
 	* @param object $form
 	*/
-	private function _showFormResult($form){
-		//todo: detect when it shouldn't run!  ex: pass to external script instead...						
-		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou));
+	private function _showFormResult($form){		
+		//todo: detect when it shouldn't run!  ex: pass to external script instead...
+		if($_POST['embedded_form'] == 'true'){
+			$embedded = true;
+		}else{
+			$embedded = false;
+		}
+		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou, 'embedded_form'=>$embedded));
 	}	
 
 	/**
@@ -345,9 +450,7 @@ class Forms extends MY_Controller{
 				$perms[$p->user] = array();
 			}
 			$perms[$p->user][] = $p;
-		}
-
-		
+		}		
 		$this->load->view('manage_form', array('forms'=>$forms, 'users_with_perms'=>$perms));		
 	}
 
@@ -355,9 +458,20 @@ class Forms extends MY_Controller{
 	* saves the form configuration (ajax)
 	*/
 	function saveconfig($id){
+		if(!$this->authorization->isLoggedIn()){
+			echo json_encode(array('loggedout'=>true));
+			return;
+		}
+
+		$tmp = $this->form->getById($id);
+		if(!$this->authorization->can('edit', $tmp) && !$this->authorization->can('admin', $tmp)){
+			echo json_encode(array('insufficientpermissions'=>true));
+			return;
+		}
+
 		if(!empty($_POST) and $id){
 			$form = $_POST;
-			$form['id'] = $id;			
+			$form['id'] = $id;	
 			$form = $this->form->update($form);
 		}		
 		//if it actually updates...		

@@ -294,3 +294,11 @@ textarea{
   padding-right: 0.2em;
   /*border: 1px solid black;*/
 }
+
+.rtebutton {
+  display: none;
+  padding-left: 18px;
+  background-image: url("../IMG/edit_rte.png");
+  background-repeat: no-repeat;
+  background-position: left top;
+}

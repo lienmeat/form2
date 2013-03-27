@@ -26,20 +26,34 @@ var paths = new Paths();
 function doAjax(path, data, callBackSuccess, callBackFail){
   var path = path || '';
   var data = data || {};
-  var callBackSuccess = callBackSuccess || defaultAjaxSuccessCallback;
-  var callBackFail = callBackFail || defaultAjaxFailCallback;
 
   var defaultAjaxSuccessCallback = function(responce, status, error){ alert('NO CALLBACK FOR AJAX SUCCESS METHOD WAS DEFINED!'); };
   var defaultAjaxFailCallback = function(responce, status, error){ alert('Unable to talk to server via ajax!\nerror: '+error); };
+
+  var callBackSuccess = callBackSuccess || defaultAjaxSuccessCallback;
+  var callBackFail = callBackFail || defaultAjaxFailCallback;
 
   $.ajax({
     url: paths.site_url(path),
     data: data,
     dataType: 'json',
     type: 'POST',
-    success: callBackSuccess,
-    error: callBackFail,
+    success: function(responce, status, error){ ajaxDone(responce, status, error, callBackSuccess); },
+    error: function(responce, status, error){ ajaxDone(responce, status, error, callBackFail); },
   });
+}
+
+
+function ajaxDone(responce, status, error, callback){  
+  if(responce && responce.loggedout){
+    notifyLoggedOut();
+  }else{
+    callback(responce);
+  }
+}
+
+function notifyLoggedOut(){
+  alert('You have been logged out it seems!');
 }
 
 /**
@@ -141,13 +155,44 @@ function parseSerializedForm(form_answers){
   return ans;
 }
 
+
+/**
+* Save a form as a draft
+* @param string form_id
+*/
 function saveDraft(form_id){
   var formdata = parseSerializedForm($('#'+form_id).serializeArray());
   doAjax('forms/saveDraft/'+form_id, {formdata: formdata}, saveDraftDone);
 }
 
+/**
+* Callback to announce link to draft
+*/
 function saveDraftDone(resp){
   if(resp && resp.url){
     alert("You can continue filling out this form at a later date by going to the following address:\n"+resp.url);
   }
+}
+
+function openRTE(textarea_id, clicked_elem){
+  if(clicked_elem){
+    $(clicked_elem).attr('onclick', "closeRTE('"+textarea_id+"', this);");
+  }
+  tinyMCE.execCommand("mceAddControl", true, textarea_id);
+}
+
+function closeRTE(textarea_id, clicked_elem){
+  if(clicked_elem){
+    $(clicked_elem).attr('onclick', "openRTE('"+textarea_id+"', this);");
+  }
+  tinyMCE.execCommand("mceRemoveControl", true, textarea_id);
+}
+
+function getCheckedResultIds(){
+  var checked = $('.formresult_chk:checked').toArray();
+  var ids = [];
+  for(var i=0 in checked){
+    ids.push($(checked[i]).val());
+  }
+  return ids;
 }

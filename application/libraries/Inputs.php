@@ -309,6 +309,118 @@ class Hidden_Input extends Input_Input{
 	}
 }
 
+class File_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('file');
+	}
+}
+
+class Color_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('color');
+	}
+}
+
+class Date_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('date');
+	}
+}
+
+class Datetime_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('datetime');
+	}
+}
+
+class Datetime_local_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('datetime-local');
+	}
+}
+
+class Email_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('email');
+	}
+}
+
+class Image_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('image');
+	}
+}
+
+class Month_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('month');
+	}
+}
+
+class Number_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('number');
+	}
+}
+
+class Range_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('range');
+	}
+}
+
+class Reset_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('reset');
+	}
+}
+
+class Search_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('Search');
+	}
+}
+
+class Tel_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('tel');
+	}
+}
+
+class Time_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('time');
+	}
+}
+
+class Url_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('url');
+	}
+}
+
+class Week_Input extends Input_Input{
+	function __construct($config=null){
+		parent::__construct($config);
+		$this->setType('week');
+	}
+}
+
 class Button_Input extends Input_Input{
 	function __construct($config=null){
 		parent::__construct($config);

@@ -37,6 +37,10 @@ class Authorization{
   function wwuid(){
     return $this->user->wwcid;
   }
+
+  function email(){
+    return strtolower($this->user->email);
+  }
   
   function firstname(){
     return $this->user->firstname;

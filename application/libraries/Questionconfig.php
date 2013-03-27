@@ -18,6 +18,7 @@ class Questionconfig{
 	* @return array
 	*/
 	function formatText($question){
+		$question = $this->formatNameField($question);
 		$question = $this->formatValidationField($question);
 		$question = $this->formatDependenciesField($question);
 		return $question;
@@ -29,6 +30,7 @@ class Questionconfig{
 	* @return array
 	*/
 	function formatTextarea($question){
+		$question = $this->formatNameField($question);
 		$question = $this->formatValidationField($question);
 		$question = $this->formatDependenciesField($question);
 		return $question;
@@ -38,6 +40,7 @@ class Questionconfig{
 	* Formats the select field for db insert
 	*/
 	function formatSelect($question){
+		$question = $this->formatNameField($question);
 		$question = $this->formatOptions($question);
 		$question = $this->formatSelected($question);
 		$question = $this->formatRequiredField($question);
@@ -46,6 +49,7 @@ class Questionconfig{
 	}
 
 	function formatCheckbox($question){
+		$question = $this->formatNameField($question);
 		$question = $this->formatOptions($question);
 		$question = $this->formatSelected($question);
 		$question = $this->formatRequiredField($question);
@@ -54,6 +58,7 @@ class Questionconfig{
 	}
 
 	function formatRadio($question){
+		$question = $this->formatNameField($question);
 		$question = $this->formatOptions($question);
 		$question = $this->formatSelected($question);
 		$question = $this->formatRequiredField($question);
@@ -72,6 +77,63 @@ class Questionconfig{
 	}
 
 	function formatAddress($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwuid($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwuusername($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwufirstname($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwulastname($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwufullname($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwuemail($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatWwustatus($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		$question = $this->formatRequiredField($question);
+		return $question;
+	}
+
+	function formatFile($question){
+		$question = $this->formatNameField($question);
 		$question = $this->formatDependenciesField($question);
 		$question = $this->formatRequiredField($question);
 		return $question;
@@ -105,6 +167,13 @@ class Questionconfig{
 		);
 
 		$this->renderQuestion($question_config);		
+	}
+
+	function formatNameField($question){
+		if($question['config']['name']){
+			$question['name'] = $question['config']['name'];
+		}
+		return $question;
 	}
 
 	function renderTextField($question){
@@ -241,6 +310,9 @@ class Questionconfig{
 		return $question;
 	}
 
+	/**
+	* Render the field that determins if a question is required
+	*/
 	function renderRequiredField($question){
 		if(strpos('required', $question->config->validation) !== FALSE){
 			$selected = array('Y');
@@ -259,6 +331,9 @@ class Questionconfig{
 		$this->renderQuestion($question_config);
 	}
 
+	/**
+	* Format results of the required field
+	*/
 	function formatRequiredField($question){
 		if($question['config']['required'] == 'Y'){
 			$question['config']['validation'] = 'required';
@@ -267,6 +342,9 @@ class Questionconfig{
 		return $question;
 	}
 
+	/**
+	* Render the field that handles dependencies
+	*/
 	function renderDependenciesField($question){
 		$depends = str_replace("&&", "\n", $question->config->dependencies);
 		$question_config =(object) array(
@@ -280,9 +358,33 @@ class Questionconfig{
 		$this->renderQuestion($question_config);
 	}
 
+	/**
+	* Format the dependencies field
+	*/
 	function formatDependenciesField($question){
 		$question['config']['dependencies'] = str_replace("\n", '&&', $question['config']['dependencies']);
 		return $question;
+	}
+
+	/**
+	* Render the field to set element visibility
+	*/
+	function renderVisibilityField($question){
+		if($question->config->visibility){
+			$selected = array($question->config->visibility);
+		}else{
+			$selected = array('editable');
+		}
+		$question_config =(object) array(
+			'text'=>'Element Visibility: ',
+			'alt'=>'(Will the element be editable, view-only, or hidden?)',
+			'type'=>'radio',
+			'name'=>'config[visibility]',				
+			'options'=>array('Editable'=>'editable', 'View-only'=>'viewonly', 'Hidden'=>'hidden'),
+			'selected'=>$selected,
+			'validation'=>'required',
+		);
+		$this->renderQuestion($question_config);	
 	}
 
 	/**
