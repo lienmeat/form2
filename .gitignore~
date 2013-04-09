@@ -1,4 +1,4 @@
-*.htaccess
+.htaccess
 *cache
 *errors
 *logs

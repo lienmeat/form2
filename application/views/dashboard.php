@@ -18,11 +18,6 @@ echo "</ul>".anchor('forms/add', 'Make a Form');
 
 ?>
 
-<br />
-<div style="width: 700px; height: 500px;">
-<iframe src="https://www.wallawalla.edu/dev/form2/forms/viewEmbedded/example-name" height="100%;" width="100%;"></iframe>
-</div>
-
 <?php
 $this->load->view('footer');
 ?>

@@ -43,9 +43,11 @@ $hidden = explode(',', $form->result->post->dependhiddenquestions);
 if(!is_array($hidden)) $hidden = array();
 //probably shouldn't have called questions questions,
 //because there is other crap in forms than questions....
-foreach($form->questions as $question){
-	if(!in_array($question->id, $hidden)){
-		$this->load->view('question/result_question', array('question'=>$question, 'formresult'=>$form->result));
+if($form->questions){
+	foreach($form->questions as $question){
+		if(!in_array($question->id, $hidden)){
+			$this->load->view('question/result_question', array('question'=>$question, 'formresult'=>$form->result));
+		}
 	}
 }
 ?>

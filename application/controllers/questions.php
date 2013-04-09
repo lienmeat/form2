@@ -10,7 +10,8 @@ class Questions extends MY_Controller{
 	* Make a new question on form $form_id
 	* @param string $form_id
 	*/
-	function add($form_id){
+	function add($form_id=false){
+		if(!$form_id) return;
 		$this->authorization->forceLogin();		
 
 		//create a new blank question

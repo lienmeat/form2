@@ -42,16 +42,27 @@ $(document).ready(
 			$published = "";
 			$p_div = "";
 		}
-		echo "<li $published>ID: ".$form->id.'&nbsp;CREATED: '.$form->created.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name)."\">Results</a>$p_div</li>";
+		echo "<li $published>ID: ".$form->id.'&nbsp;CREATED: '.$form->created.'&nbsp;&nbsp;<a href="'.site_url('forms/viewid/'.$form->id).'">View</a>&nbsp;<a href="'.site_url('forms/edit/'.$form->id).'">Edit</a>&nbsp;<a href="'.site_url('forms/results/'.$form->name)."\">Results</a>&nbsp;<a href=\"".site_url('forms/delete/'.$form->id)."\">Delete</a>$p_div</li>";
 		//echo '<li>'.$form->id.'</li>';
 	}
 	?>
 	</ul>
 </div>
-
+<br />
 <div id="form_perms_contain" class="section">
 	<div id="form_perms_heading" class="section_heading"><a href="javascript:void(0);" onclick="toggleView('#form_perms');">Permissions:</a></div>
 	<div id="form_perms">		
+	</div>
+</div>
+
+<br />
+<div>
+	<div id="embed_code_heading" class="section_heading"><a href="javascript:void(0);" onclick="toggleView('#embed_code');">Embed Code:</a></div>
+	<div id="embed_code" style="display: none;">
+		<p>You can use the following code to include this form on any web page, by just pasting into the existing html.</p>
+		<textarea disabled="disabled"><iframe src="<?php echo base_url(); ?>forms/viewEmbedded/<?php echo $forms[0]->name; ?>" height="100%;" width="100%;"></iframe></textarea>
+		<p>If you have problems with the embedded form breaking the page due to size, put it inside a div styled to be the size you want.
+		</p>
 	</div>
 </div>
 <?php

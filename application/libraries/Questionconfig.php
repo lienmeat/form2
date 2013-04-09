@@ -139,6 +139,13 @@ class Questionconfig{
 		return $question;
 	}
 
+	function formatWorkflow($question){
+		$question['config']['email_addresses'] = explode("\n",$question['config']['email_addresses']);
+		$question = $this->formatOptions($question);
+		$question = $this->formatDependenciesField($question);
+		return $question;
+	}
+
 	/**
 	* Formats "unparsed" attribute string into object
 	* @param string $attributes

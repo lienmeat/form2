@@ -100,12 +100,15 @@ class Forms extends MY_Controller{
 		$result = $this->_saveResult($form);
 		//these need to be run always
 		$this->_bindFormSuccess('_clearCapturedGetArgs');
+		$this->_bindFormSuccess('_doWorkflows');
 		$this->_bindFormSuccess('_showFormResult');
 
 		//provides a way of hijacking success behavior in other funcitons
 		//as we go.
 		$this->_doOnFormSuccess($form, $result);
 	}
+
+
 
 
 	private function _doUploads($post_data){
@@ -210,10 +213,15 @@ class Forms extends MY_Controller{
 		}		
 	}
 
+	private function _doWorkflows($form){
+		$this->load->library('workflows');
+		$this->workflows->doWorkflows($form, $form->result);
+	}
+
 	/**
 	* clears out what _captureGetArgs put in prefill (or really anything in there)
 	*/
-	private function _clearCapturedGetArgs($form=null){
+	private function _clearCapturedGetArgs(){
 		$this->prefill->clearReadOnlys();
 		$this->prefill->clearForcefilleds();		
 	}
@@ -231,10 +239,12 @@ class Forms extends MY_Controller{
 	}
 
 	function indenticalPost($form_id){
+		//catch case where someone might hit refresh on the identicalPost page!
 		if($_SESSION['f2']['postconfirm'][$form_id]){
 			unset($_SESSION['f2']['postconfirm'][$form_id]);
 			$this->_redirect(base_url());
 		}
+
 		if($_POST['identconfirm'] == 'Yes'){
 			$_SESSION['f2']['postconfirm'][$form_id] = true;
 			//set post to what was posted
@@ -321,6 +331,7 @@ class Forms extends MY_Controller{
 		}else{
 			$embedded = false;
 		}
+		$this->load->library('workflows');
 		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou, 'embedded_form'=>$embedded));
 	}	
 
@@ -343,7 +354,7 @@ class Forms extends MY_Controller{
 	/**
 	* Edit an existing form
 	*/
-	function edit($name_or_id){
+	function edit($name_or_id=false){
 		//todo: make sure user has permissions
 		$this->authorization->forceLogin();
 		$form = $this->form->getById($name_or_id);		
@@ -495,7 +506,7 @@ class Forms extends MY_Controller{
 	/**
 	* Get results for a form
 	*/
-	function results($name_or_id){
+	function results($name_or_id=false){
 		$this->authorization->forceLogin();		
 		
 		$form = $this->form->getById($name_or_id);
