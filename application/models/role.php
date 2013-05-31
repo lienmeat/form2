@@ -1,6 +1,6 @@
 <?php
 
-class Role extends MY_Model{
+class Role extends RetRecord_Model{
 	
 	protected $table = 'roles';
 	protected $dbfields = array('id', 'role', 'description');
@@ -146,29 +146,13 @@ class Role extends MY_Model{
 		return false;		
 	}
 
-	//override update to return the actual db record inserted
-	function update($data){
-		if($data and (is_array($data) or is_object($data))){
-	    $data = (object) $data;
-	  }
-	  if(parent::update($data)){
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
-	}
-	
-	//override insert to return the actual db record inserted
+	//override insert to add uniqid
 	function insert($data){
 	  if($data and (is_array($data) or is_object($data))){
 	    $data = (object) $data;
 	  }else return false;
 	  $data->id = uniqid('');
-	  if(parent::insert($data)){
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
+	  return parent::insert($data);	    
 	}
 }
 ?>

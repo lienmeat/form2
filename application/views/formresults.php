@@ -33,21 +33,101 @@ echo "<style>
 	display: table-cell;
 	padding-left: 5px;
 }
-</style>";
-//echo "<pre>".print_r($forms, true).print_r($formresults, true)."</pre>";
 
-echo '<div class="disp_table">';
+#result_manage_contain {
+	padding: 0.4em;
+	border: 1px dotted rgba(0, 0, 0, 0.50);
+	background: rgba(0, 0, 0, 0.10);
+}
+
+#result_manage_contain div.result_manage_section {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.50);
+}
+
+#result_manage_contain div.result_manage_section:last-child {
+	border-bottom: none;
+}
+</style>";
+
+echo "
+<script>
+function toggleResultTimestamps(button_elem){
+	if($(button_elem).attr('data-role-status') == 'off'){
+		$(button_elem).attr('data-role-status', 'on');
+		$('.formresult_timestamp').show();
+	}else{
+		$(button_elem).attr('data-role-status', 'off');
+		$('.formresult_timestamp').hide();
+	}
+}
+
+function toggleResultSelections(checkbox_elem){
+	if($(checkbox_elem).attr('checked')){		
+		$('.formresult_chk:visible').attr('checked', 'checked');
+	}else{
+		$('.formresult_chk:visible').attr('checked', false);
+	}	
+}
+
+$(document).ready(function(){
+	$('.formresult_chk').on('click', function(event){
+		if(!$(event.target).attr('checked')){
+			$('.formresultselectionstoggle').attr('checked', false);
+		}else{
+			var frs = $('.formresult_chk').get();
+			var check = true;
+			for(var i=0 in frs){
+				if(!$(frs[i]).attr('checked')){
+					check = false;
+				}
+			}			
+			if(check){
+				$('.formresultselectionstoggle').attr('checked', 'checked');
+			}else{
+				$('.formresultselectionstoggle').attr('checked', false);				
+			}
+		}
+	});
+});
+</script>
+";
+
+//gui for result management
+echo '
+<div id="result_manage_contain">
+	<div id="result_tagmanage_contain" class="result_manage_section">'
+		.$this->load->view('resulttagmanager', array('form'=>$forms[0]->name, 'resulttags'=>$resulttags), true).
+	'</div>
+	<div id="" class="result_manage_section">
+		<input class="formresultselectionstoggle" type="checkbox" onclick="toggleResultSelections(this);">Select/Unselect All Results&nbsp;&nbsp;<button onclick="toggleResultTimestamps(this);" data-role-status="off">Show/Hide Time Stamps</button>
+	</div>
+</div>';
+
+echo '<div class="">';
 $count = 0;
 foreach($formresults as $fr){
+	$tags = '';
+	$tagids = array();
+	if($fr->resulttags){		
+		foreach ($fr->resulttags as $tag) {
+			$tagids[] = $tag->id;
+		}
+		$tags = implode(',', $tagids);
+	}
 	if($count%5 == 0){
+		/*
 		if($count !== 0) echo "</div>";
-		echo '<div class="disp_table_row">';
+		echo '<div class="">';
+		*/
 	}
 	if($fr->submitter) $res_name = $fr->submitter;
 	else $res_name = $fr->timestamp;
 	$title =
 	'title="Submitted: '.$fr->timestamp.'"';	
-	echo '<div class="disp_table_cell"><input class="formresult_chk" type="checkbox" value="'.$fr->id.'">'.anchor('results/view/'.$fr->id,$res_name, $title).'</div>';
+	echo '<div id="formresult_'.$fr->id.'" class="formresult" data-role-tags="'.$tags.'">
+	<div><input class="formresult_chk" type="checkbox" value="'.$fr->id.'">'.anchor('results/view/'.$fr->id,$res_name, $title).'</div>
+	<div class="formresult_timestamp hide">'.$fr->timestamp.'</div>
+	</div>';
 	$count++;
 }
 if($count%5) echo '</div>';

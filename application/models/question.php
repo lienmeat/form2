@@ -2,7 +2,7 @@
 /**
 * Model controls access to Question records
 */
-class Question extends MY_Model{
+class Question extends RetRecord_Model{
 	protected $table = 'questions';
 	protected $dbfields = array('id', 'form_id', 'order', 'name', 'config');
 
@@ -95,29 +95,13 @@ class Question extends MY_Model{
   	return $this->insert($res[0]);
 	}
 	
-  //override update to return the actual db record inserted
-	function update($data){
-		if($data and (is_array($data) or is_object($data))){
-	    $data = (object) $data;
-	  }
-	  if(parent::update($data)){
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
-	}
-	
-	//override insert to return the actual db record inserted
+    //override insert to set uniqid
 	function insert($data){
 	  if($data and (is_array($data) or is_object($data))){
 	    $data = (object) $data;
-	  }else return false;    
+	  }else return false;
 	  $data->id = uniqid('');
-	  if(parent::insert($data)){
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
+	  return parent::insert($data);	    
 	}
 }
 

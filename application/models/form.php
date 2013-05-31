@@ -2,9 +2,14 @@
 /**
 * Model controls access to Form records
 */
-class Form extends MY_Model{
+class Form extends RetRecord_Model{
 	protected $table = 'forms';
 	protected $dbfields = array('id', 'name', 'title', 'config', 'creator', 'created', 'published', 'disabled');
+
+	function search($input){
+		$query = $this->db->select()->from($this->table)->or_like('id', $input)->or_like('name', $input)->or_like('title', $input)->or_like('creator', $input)->order_by('`name` ASC, `created` DESC')->get();
+		return $query->result();
+	}
 
 	/**
 	*
@@ -23,10 +28,10 @@ class Form extends MY_Model{
   	*/
 	function getByUser($user=null, $order_by=null){
 	  if($user){
-	    if(!$order_by)	$order_by = 'created DESC';
-	    $this->db->select()->from($this->table)->where('user', $user)->order_by($order_by);
+	    if(!$order_by)	$order_by = '`name` ASC, `created` DESC';
+	    $this->db->select()->from($this->table)->where('creator', $user)->order_by($order_by);
 	    $query = $this->db->get();
-	    return $this->decodeMany($query->results());
+	    return $this->decodeMany($query->result());
 	  }else{
 	    return array();
 	  }
@@ -141,35 +146,14 @@ class Form extends MY_Model{
   	return $this->insert($form);
 	}
 	
-	//override update to return the actual db record updated
-	function update($data){
-		if($data and (is_array($data) or is_object($data))){
-	    $data = (object) $data;
-    }else return false;	  
-	  if(parent::update($data)){
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
-	}
-	
-	//override insert to return the actual db record inserted
+	//override insert
 	function insert($data){
 		if($data and (is_array($data) or is_object($data))){
 	    	$data = (object) $data;
     	}else return false;
 	  	$data->created = date('Y-m-d H:i:s');
-		$data->id = uniqid('');
-    	$data =& $this->encode($data);
-    	//echo print_r($data, true);
-	    if(parent::insert($data)){
-			//echo print_r($data, true);
-			//$ret = $this->getById($data->id);
-			//echo print_r($ret, true);
-			return $this->getById($data->id);
-		}else{
-		    return false;
-		}
+		$data->id = uniqid('');    	
+	    return parent::insert($data);	
 	}	
 
 
@@ -186,6 +170,17 @@ class Form extends MY_Model{
 		}else{
 			return false;
 		}
+	}
+
+	function getAllCreators(){
+		$creators = $this->db->select('creator')->distinct()->from($this->table)->get()->result();
+		$tmp = array();
+		if(!empty($creators)){
+			foreach($creators as $c){
+				$tmp[] = $c->creator;
+			}
+		}
+		return $tmp;
 	}
 }
 ?>

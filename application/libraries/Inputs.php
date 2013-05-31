@@ -777,6 +777,19 @@ class Inputs implements iInput{
 	function getValue(){
 		return $this->input->getValue();
 	}
+
+	function setLabel($label){
+		if(method_exists($this->input, 'setLabel')){
+			$this->input->setLabel($label);
+		}
+	}
+	
+	function getLabel(){
+		if(method_exists($this->input, 'getLabel')){
+			return $this->input->getLabel();
+		}
+		return false;
+	}
 	
 	function setAttribute($name, $value){
 		$this->input->setAttribute($name, $value);

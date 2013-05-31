@@ -123,6 +123,7 @@ div.menu a:hover {
   border-radius: 1em;
   margin-bottom: 0.4em;
   clear: both;
+  line-height: 1;
 }
 /*
 .form_row:first-child div:first-child {
@@ -141,6 +142,7 @@ div.menu a:hover {
 .form_question {  
   /*vertical-align: top;*/
   padding: 0.4em;
+  /*padding-bottom: 0.1em; */
   /*width: 50%;*/
   /*display: table-cell;*/
   /*border-bottom: 2px solid #806C46;
@@ -156,7 +158,8 @@ div.menu a:hover {
   clear: both; 
 }
 .form_question_text{
-  font-size: 1.2em;
+  /*font-size: 1.2em;*/
+  font-weight: bold;
 }
 .form_question_alt{
   color: #8F2F2F;
@@ -165,6 +168,7 @@ div.menu a:hover {
   /*float: left;*/
   background-color: rgba(255,255,255,0.40);
   padding: 0.4em;
+  padding-top: 0em;
   /*width: 100%;*/
   clear: both;
   /*width: 50%; */
@@ -182,6 +186,10 @@ div.menu a:hover {
   /*vertical-align: middle;*/
 }
 
+.form_divider{
+  padding-top: 0.4em;
+}
+
 .form_row.view_mode.visibility_hidden{
   display: none;
 }
@@ -197,11 +205,11 @@ div.menu a:hover {
   text-align: center;
 }
 
-.dependhidden.view_mode{
+.dependhidden, .dependhidden.view_mode{
   display: none;
 }
 
-.dependvisible.view_mode{
+.dependvisible, .dependvisible.view_mode{
   display: block;
 }
 
@@ -250,7 +258,8 @@ div.menu a:hover {
 }
 
 label {
-  font-weight: bold;
+  /*font-weight: bold;*/
+  font-size: 0.85em;
 }
 
 .published{
@@ -264,7 +273,7 @@ label {
 
 textarea{
   width: 30em;
-  height: 10em;  
+  height: 5em;  
 }
 
 /*.form_question, .form_answer{
@@ -278,6 +287,8 @@ textarea{
   cursor: pointer;
   min-width: 16px;
   min-height: 16px;
+  padding-top: 0.4em;
+  /*padding-bottom: 0.4em;*/
 }
 
 .f2help_contain .f2help{
@@ -301,4 +312,95 @@ textarea{
   background-image: url("../IMG/edit_rte.png");
   background-repeat: no-repeat;
   background-position: left top;
+}
+
+
+.formslist{
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.formslist li{
+  margin: 0px;
+  padding: 0px;  
+  border-top: 1px solid rgba(255, 255, 255, 0);
+  border-bottom: 1px solid rgba(100, 100, 100, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0);
+  border-left: 1px solid rgba(255, 255, 255, 0);
+}
+
+.formdetailsdrawer{
+  background: white;
+}
+
+.formslist li div.formlistheading{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.formslist li div.formlistheading:hover{
+  cursor: pointer;  
+}
+
+
+.formslist li.opened div.formlistheading{
+  background: rgba(100, 100, 100, 0.5);  
+}
+
+.formslist li:hover, .formslist li.opened{
+  border: 1px solid rgba(100, 100, 100, 0.5);  
+  box-shadow: 0 0 2px 2px rgba(100, 100, 100, 0.5);
+}
+
+.formslist li:first-child{
+  border-top: 1px solid rgba(100, 100, 100, 0.5);
+}
+
+ul.formslist li:not(.opened) div.formdetailsdrawer{
+  display: none;
+}
+
+.formlisttable {
+  width: 100%;
+  overflow: scroll;
+}
+
+.formlisttable tbody tr:nth-child(even) td{
+  background: rgba(0,0,0,0.1);
+}
+
+.formlisttable td{
+  text-align: center;
+}
+
+.formlisttable th{
+  /*background: rgba(0,0,0,0.5);;*/
+  /*color: white;*/
+}
+
+.formslist li.opened{
+  border: 1px solid black;
+}
+
+.formresult_timestamp.hide{
+  display: none;
+}
+
+.formresult_timestamp.show{
+  display: block;
+  font-size: 8pt;
+}
+
+.formresult{ 
+  float: left;
+  min-width: 16.666666%;
+  max-width: 16.666666%;
+  /*margin: 0.2em; */
+  /*background: rgba(0,0,255,0.20);*/
+  /*border: 1px solid pink;*/  
+}
+
+.hidden, .hide{
+  display: none;
 }

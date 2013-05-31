@@ -2,7 +2,7 @@
 /**
 * Example of how you might set up a model by extending MY_Model
 */
-class Permission extends MY_Model{
+class Permission extends RetRecord_Model{
 	protected $table = 'permissions';
 	protected $dbfields = array('id', 'permission', 'description');
 
@@ -172,29 +172,14 @@ class Permission extends MY_Model{
 		return false;		
 	}
 
-	//override update to return the actual db record updated
-	function update($data){
-		if($data and (is_array($data) or is_object($data))){
-	    	$data = (object) $data;
-    	}else return false;	  
-	  	if(parent::update($data)){
-	    	return $this->getById($data->id);
-	  	}else{
-	  		return false;
-	  	}
-	}
-	
-	//override insert to return the actual db record inserted
-	function insert($data){
-		if($data and (is_array($data) or is_object($data))){
-	    	$data = (object) $data;
-    	}else return false;
-		if(parent::insert($data)){
-			return $this->getById($data->id);
-		}else{
-		    return false;
-		}
+	/**
+	* Deletes All Permissions from a form for a user
+	* @param string $id Permission id
+	* @param string $username
+	* @param string $form_name
+	*/ 
+	function deleteAllOnUserAndForm($username, $form_name){
+		return $this->db->delete('permissions_users', array('user'=>$username, 'form'=>$form_name));
 	}
 }
-
 ?>

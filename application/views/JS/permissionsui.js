@@ -57,6 +57,7 @@ PermissionsUI.prototype.renderUI = function(){
 	for(var i=0 in this.permission_names){
 		thead+="<th>"+this.permission_names[i];+"</th>";
 	}
+	thead+="<th>Delete</th>";
 	html+=thead+"</tr><tbody id=\""+container+"_permslist\"></tbody><tr>"+thead+"</tr></table>";
 	html+="Add User: <input id=\""+container+"_username\" type=\"text\"><button onclick=\"window.permissionsui['"+handle+"'].addUser();\">Add</button>";
 	$('#'+container).append(html);
@@ -97,8 +98,9 @@ PermissionsUI.prototype.addUser = function(){
 /**
 * Remove a user from the list (not sure if I care to...)
 */
-PermissionsUI.prototype.removeUser = function(id){
-	//todo: make something work for this
+PermissionsUI.prototype.removeUser = function(id, username){
+	doAjax('permissions/removeAllFromUser', {username: username, form: this.form_name}, function(){ void(0); });
+	$('#'+id).hide();
 }
 
 /**
@@ -120,7 +122,7 @@ PermissionsUI.prototype.renderUser = function(username, permissions){
 				if(this.permission_names[i] == perms[j].permission){
 					check = true;
 					break;
-				}				
+				}
 			}			
 			if(check){
 				//render this permission as checked
@@ -130,6 +132,7 @@ PermissionsUI.prototype.renderUser = function(username, permissions){
 				out+="<td><input type=\"checkbox\" value=\""+this.permission_names[i]+"\" data-username=\""+username+"\" onclick=\"window.permissionsui['"+handle+"'].togglePerm(this);\"></td>";
 			}			
 		}
+		out+="<td><button onclick=\"window.permissionsui['"+handle+"'].removeUser('"+id+"', '"+username+"');\">Delete</button></td>";
 		$("#"+this.container_id+"_permslist").append(out);
 	}else{
 		return;

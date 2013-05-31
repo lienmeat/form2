@@ -52,4 +52,14 @@ class Permissions extends MY_Controller{
 		}
 		echo json_encode(array('status'=>'fail'));
 	}
+
+	function removeAllFromUser(){
+		if($_POST['username'] && $_POST['form']){
+			$this->permission->deleteAllOnUserAndForm($_POST['username'], $_POST['form']);					
+			echo json_encode(array('status'=>'success'));
+			return;
+		}
+		echo json_encode(array('status'=>'fail'));
+		return;		
+	}
 }

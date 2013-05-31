@@ -34,7 +34,7 @@ Validation.prototype.__init__= function(){
 			}else{
 				$(this).change(
 					function(event){
-						window.validators[handle].validateInput(event.target);
+						window.validators[handle].validateInput(event.target);						
 					}
 				);
 			}
@@ -44,7 +44,27 @@ Validation.prototype.__init__= function(){
 	);
 
 
-	$('#'+this.form_id).submit(
+	$('#'+this.form_id).eventually('before','submit', {}, 
+		function(event){
+			//way to get around validating form when using the 
+			//remote validation callback after validateForm() calls it.
+			if(window.validators[handle].ignore_validation == true){				
+				return true;
+			}else{
+				var res = window.validators[handle].validateForm();
+				if(res){					
+					$('#'+this.form_id).eventually('trigger','validation_success', {});
+					return true;
+				}else{					
+					$('#'+this.form_id).eventually('trigger','validation_fail', {});
+					return false;
+				}
+				return res;
+			}
+		}
+	);
+
+	/*$('#'+this.form_id).submit(
 		function(){
 			//way to get around validating form when using the 
 			//remote validation callback after validateForm() calls it.
@@ -55,6 +75,7 @@ Validation.prototype.__init__= function(){
 			}			
 		}
 	);
+	*/
 }
 
 Validation.prototype.createHandle = function(){
@@ -257,8 +278,10 @@ Validation.prototype.remoteValidationCallback = function(validations, submit, ca
 	this.fullform = false;
 	if(callback){
 		if(validated){
+			$('#'+this.form_id).eventually('trigger', 'validation_success', {});
 			callback(true);
 		}else{
+			$('#'+this.form_id).eventually('trigger', 'validation_fail', {});
 			callback(false);
 		}
 	}

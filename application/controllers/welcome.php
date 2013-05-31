@@ -23,12 +23,19 @@ class Welcome extends MY_Controller {
 		if($_GET['f']){
 			$form = $this->form->getPublishedWithName($_GET['f']);
 
-			if($form) $this->_redirect(site_url('forms/view/'.$form->name));
-			return;
+			if($form){ 
+				$this->_redirect(site_url('forms/view/'.$form->name));
+				return;
+			}			
 		}
 
-		$forms = $this->form->getAll();
-		$this->load->view('dashboard', array('forms'=>$forms));
+		$creators = $this->form->getAllCreators();
+		$myforms = $this->form->getByUser($this->authorization->username());
+		$this->load->view('dashboard', array('forms'=>$forms, 'myforms'=>$myforms, 'form_creators'=>$creators));
+	}
+
+	function test(){
+		$this->load->view('eventually');
 	}
 }
 

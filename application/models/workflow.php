@@ -2,9 +2,9 @@
 /**
 * Model controls access to Workflow records
 */
-class Workflow extends MY_Model{
+class Workflow extends RetRecord_Model{
 	protected $table = 'workflows';
-	protected $dbfields = array('id', 'question_id', 'formresult_id', 'completed', 'response');
+	protected $dbfields = array('id', 'question_id', 'formresult_id', 'notif_sent', 'completed', 'response', 'log');
 
 
 	/**
@@ -37,29 +37,13 @@ class Workflow extends MY_Model{
 		return $res->result();
 	}
 
-	//override update to return the actual db record updated
-	function update($data){
-		if($data and (is_array($data) or is_object($data))){
-	    $data = (object) $data;
-    }else return false;	  
-	  if(parent::update($data)){
-	    return $this->getById($data->id);
-	  }else{
-	    return false;
-	  }
-	}
-
-	//override insert to return the actual db record inserted
+	//override insert to add uniqid
 	function insert($data){
 		if($data and (is_array($data) or is_object($data))){
 	    	$data = (object) $data;
     	}else return false;
-			$data->id = uniqid('');
-    	if(parent::insert($data)){
-			return $this->getById($data->id);
-		}else{
-		  return false;
-		}
+		$data->id = uniqid('');
+    	return parent::insert($data);			
 	}
 }
 ?>

@@ -7,7 +7,7 @@
 	
 	$this->load->view('header', array('title'=>$form->name, 'banner_menu'=>$menu, 'embedded'=>$embedded_form));
 	
-		
+	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/jquery.eventually.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/dependencies.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/validation.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/tiny_mce.js\"></script>";
@@ -23,7 +23,6 @@
 		mode : "none",
 		theme : "simple"
 	});
-</script>
 </script>
 <div class="form_title_contain edit_mode">
 	<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
@@ -54,7 +53,8 @@ foreach($form->questions as $question){
 		</div>
 		<div class="form_answer">
 			<div class="form_element_contain">
-				<input type="submit" name="submit_fi2" value="Submit">&nbsp;&nbsp;<button onclick="window.print();">Print</button>&nbsp;&nbsp;<button onclick="saveDraft('<?php echo $form->id; ?>');">Save as Draft</button>			</div>
+				<input type="submit" name="submit_fi2" value="Submit">&nbsp;&nbsp;<button onclick="window.print();">Print</button>&nbsp;&nbsp;<button onclick="saveDraft('<?php echo $form->id; ?>');">Save as Draft</button>
+			</div>
 		</div>
 	</li>
 </ul>

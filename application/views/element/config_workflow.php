@@ -34,6 +34,18 @@ $conf = (object) array(
 );
 $this->questionconfig->renderQuestion($conf);
 
+if($question->config->usernames){
+	$usernames = implode("\n", $question->config->usernames);
+}
+$conf = (object) array(
+	'text'=>'Usernames permitted to complete workflow:',
+	'alt'=>'(One per line! Leave blank to permit any username!)',
+	'name'=>'config[usernames]',
+	'type'=>'textarea',
+	'value'=>$usernames,
+);
+$this->questionconfig->renderQuestion($conf);
+
 if($question->config->email_subject){
 	$email_subject = $question->config->email_subject;
 }else{
@@ -53,6 +65,7 @@ if($question->config->email_body){
 }else{
 	$email_body = "A workflow requires your attention!\nPlease follow the instructions on the workflow, after following the link below:";
 }
+
 $conf = (object) array(
 	'text'=>'Body of email:',	
 	'alt'=>'(URL to workflow will always be present at the bottom of all workflow notifications!)',
@@ -93,5 +106,5 @@ $conf = (object) array(
 );
 $this->questionconfig->renderQuestion($conf);
 
-$this->questionconfig->renderDependenciesField($question);
+//$this->questionconfig->renderDependenciesField($question); //meh, this leads to some interesting probs I haven't solved yet.
 ?>

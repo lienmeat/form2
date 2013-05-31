@@ -15,6 +15,17 @@ class Workflows extends MY_Controller{
 	}
 */
 
+	/**
+	* Grab workflow and re-direct to formresult with that workflow so they can do actions on it
+	* @param string $id workflow id
+	*/
+	function view($id){
+		$this->load->model('workflow');
+		$wf = $this->workflow->getById($id);
+		if(!empty($wf)){
+			$this->_redirect(site_url('results/view/'.$wf->formresult_id));
+		}
+	}
 
 	private function _getWorkflowData($form){
 		$this->load->library('workflows');

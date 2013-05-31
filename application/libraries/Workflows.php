@@ -42,16 +42,11 @@ class Workflows{
 					$first_non_completed = false;
 					$this->doWorkflow($wfe, $row);
 				}
-			}
-			/*
-			else{
-				if($first_non_completed && !$row->completed){
-					//run this workflow as it's the first non-completed one!
+			}else{
+				if(!$row->completed){
 					$first_non_completed = false;
-					//$this->doWorkflow($wfe, $row);
 				}
 			}
-			*/
 		}		
 	}
 
@@ -61,8 +56,25 @@ class Workflows{
 	* @param object $workflow Row representing the workflow
 	*/
 	function doWorkflow($question, $workflow){
+		$workflow_id = $workflow->id;
+		$stock_body = "A form response with a workflow requires your attention: ".site_url('workflows/view/'.$workflow_id);
 		//todo: whatever needs to be done to workflows....
-		echo $workflow->id."<br />";
+		if(!empty($question->config->email_addresses) && !$workflow->notif_sent){
+			$this->CI->load->library('email');
+			//email notification
+			$to = implode(", ", $question->config->email_addresses);
+			$message = $question->config->email_body.$stock_body;
+			$subject = $question->config->email_subject;
+			$this->CI->email->from('webservices@wallawalla.edu','FormIt2');
+			$this->CI->email->reply_to('noreply@wallawalla.edu','FormIt2');
+			$this->CI->email->to($to);
+			$this->CI->email->subject("FormIt2 workflow $workflow_id");
+			$this->CI->email->message($message);
+			$this->CI->email->send();			
+			$workflow->notif_sent = 1;
+			$this->wf->update($workflow);
+
+		}
 	}
 
 	/** 
@@ -115,6 +127,60 @@ class Workflows{
 	*/
 	function getWorkflowsForResult($result){
 		return $this->wf->getOnResult($result->id);
+	}
+
+	/**
+	* Set the response on a workflow
+	* @param string $workflow_id
+	* @param string $decision Decision that was made
+	* @param string $comments Comments made with this decision.
+	* @return object|bool workflow row if existing
+	*/
+	function setResponse($workflow_id, $decision, $comments){
+		$timestamp = date('Y-m-d H:i:s');
+		$workflow = $this->wf->getById($workflow_id);		
+		$response = json_encode(array(
+			'decision'=>$decision,
+			'comments'=>$comments,
+			'timestamp'=>$timestamp,
+		));
+		
+		$workflow->response = $response;
+		$workflow->completed = 1;
+		if($workflow->log){
+			$log = json_decode($workflow->log);
+		}else{
+			$log = array();
+		}
+		$log[] = array('timestamp'=>$timestamp, 'event_type'=>'response', 'username'=>$this->CI->authorization->username(), 'response'=>$response);
+		$workflow->log = json_encode($log);
+		return $this->wf->update($workflow);
+	}
+
+	/**
+	* Forward a workflow
+	*/
+	function forward($workflow_id, $email_addresses, $message){
+		$this->CI->load->library('email');
+		$workflow = $this->wf->getById($workflow_id);
+		$to = str_replace("\n", ", ", $email_addresses);
+		$message = "You have been forwarded a form response with a workflow: ".site_url('workflows/view'.$workflow_id)."\n".$message;
+
+		$this->CI->email->from('webservices@wallawalla.edu','FormIt2');
+		$this->CI->email->reply_to('noreply@wallawalla.edu','FormIt2');
+		$this->CI->email->to($to);
+		$this->CI->email->subject("FormIt2 workflow $workflow_id");
+		$this->CI->email->message($message);
+		$this->CI->email->send();
+
+		if($workflow->log){
+			$log = json_decode($workflow->log);
+		}else{
+			$log = array();
+		}
+		$log[] = array('timestamp'=>date('Y-m-d H:i:s'), 'event_type'=>'forward', 'username'=>$this->CI->authorization->username(), 'to'=>$to);
+		$workflow->log = json_encode($log);
+		return $this->wf->update($workflow);
 	}
 }
 

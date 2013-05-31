@@ -98,7 +98,7 @@ class Questions extends MY_Controller{
 		if($question_id && $type){
 			$question = $this->question->getById($question_id);
 
-		}
+		}		
 		if(is_object($question)){
 			$this->load->library('inputs');
 			$this->load->library('Questionconfig');

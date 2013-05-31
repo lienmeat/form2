@@ -44,6 +44,19 @@ class MY_Controller extends CI_Controller{
   }
 
   /**
+  * Shows a message and then goes to a app url
+  * @param string $message
+  * @param string $location Location to redirect to (as an app url path ex: /forms/add)
+  * @param int $duration How long this message shows before redirecting (in seconds. default: 10)
+  * @param string $color Color to display message in (default: black)
+  */
+  protected function _splash($message, $location, $duration=10, $color='black'){
+    $data = array('message'=>$message, 'location'=>$location, 'timeout'=>$duration, 'color'=>$color);
+    echo $this->load->view('splashmessage', $data, true);
+    exit;
+  }
+
+  /**
   * Fails with a message if called
   * @param string $message Message to yell at person
   */

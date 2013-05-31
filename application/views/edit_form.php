@@ -2,7 +2,7 @@
 $menu_items = array(		
 	anchor('forms/manage/'.$form->name, 'Manage Form'),
 	anchor('forms/viewid/'.$form->id, 'View Form'),
-	anchor('forms/results/'.$form->id, 'View Results'), 
+	anchor('forms/results/'.$form->name, 'View Results'), 
 	'<a href="javascript:void(0);" onclick="FormEditor.openEditForm();">Edit form configuration</a>',
 	anchor('forms/publish/'.$form->id, 'Publish'),
 	anchor('forms/delete/'.$form->id, 'Delete'),

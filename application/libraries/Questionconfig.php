@@ -140,9 +140,14 @@ class Questionconfig{
 	}
 
 	function formatWorkflow($question){
-		$question['config']['email_addresses'] = explode("\n",$question['config']['email_addresses']);
+		$question['config']['email_addresses'] = $this->nrToArray($question['config']['email_addresses']);
+		$question['config']['usernames'] = $this->nrToArray($question['config']['usernames']);		
 		$question = $this->formatOptions($question);
-		$question = $this->formatDependenciesField($question);
+		//$question = $this->formatDependenciesField($question);  //removed this option for a while
+		return $question;
+	}
+
+	function formatCheckout($question){
 		return $question;
 	}
 
@@ -186,7 +191,8 @@ class Questionconfig{
 	function renderTextField($question){
 		$question_config =(object) array(
 			'type'=>'textarea',
-			'text'=>'Question Text: ',	
+			'text'=>'Text: ',
+			'alt'=>'(What should this element say?)',	
 			'name'=>'config[text]',	
 			'value'=>$question->config->text,
 			'validation'=>'required',
@@ -269,7 +275,7 @@ class Questionconfig{
 		$dataprovider = $question['config']['dataprovider'];
 		unset($question['config']['dataprovider']);		
 		if(!$dataprovider || empty($dataprovider['method'])){ //only use custom entry if no dataprovider is set
-			$raw_o_arr = explode("\n", $options);
+			$raw_o_arr = $this->nrToArray($options);
 			$option_arr = array();
 			foreach($raw_o_arr as $o){
 				$o_parts = explode(":", $o);
@@ -311,8 +317,7 @@ class Questionconfig{
 	* format the results of the selected field
 	*/
 	function formatSelected($question){
-		$s_arr = explode("\n", $question['config']['selected']);
-		if(!is_array($s_arr)) $s_arr = array();
+		$s_arr = $this->nrToArray($question['config']['selected']);		
 		$question['config']['selected'] = $s_arr;
 		return $question;
 	}
@@ -395,10 +400,24 @@ class Questionconfig{
 	}
 
 	/**
+	* Formats textareas/input that use a line break into an array
+	* @param string $input Text with possible line breaks
+	*/
+	function nrToArray($input){
+		if(!empty($input)){
+			$out = explode("\n", $input);
+		}else{
+			$out = array();
+		}
+		if(!$out or !is_array($out)) $out = array();
+		return $out;
+	}
+
+	/**
 	* Renders a question given it's config
 	* (just convienience so we dont' have to worry about inluding inputs and whatnot...)
 	*/
-	function renderQuestion($question_config){
+	function renderQuestion($question_config){		
 		$this->CI->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 	}
 }

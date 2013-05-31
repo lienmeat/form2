@@ -7,7 +7,7 @@ class Forms extends MY_Controller{
 	function __construct(){
 		parent::__construct();
 		$this->load->model('form');
-	}
+	}	 
 
 	/**
 	* look and search for forms
@@ -99,6 +99,7 @@ class Forms extends MY_Controller{
 		//if we made it here it means we posted and have rights
 		$result = $this->_saveResult($form);
 		//these need to be run always
+		$this->_bindFormSuccess('_addAutoResultTags');
 		$this->_bindFormSuccess('_clearCapturedGetArgs');
 		$this->_bindFormSuccess('_doWorkflows');
 		$this->_bindFormSuccess('_showFormResult');
@@ -108,7 +109,19 @@ class Forms extends MY_Controller{
 		$this->_doOnFormSuccess($form, $result);
 	}
 
-
+	function ajaxSearch(){
+		if(isset($_POST['search'])){
+			if($_POST['search'] == "*" or empty($_POST['search'])){
+				$forms = $this->form->getAll('`name` ASC, `created` DESC');
+			}else{ 
+				$forms = $this->form->search($_POST['search']);
+			}
+			$html = $this->load->view('formlist', array('forms'=>$forms), true);
+			echo json_encode(array('status'=>'success', 'html'=>$html));
+		}else{
+			echo json_encode(array('status'=>'fail'));
+		}
+	}
 
 
 	private function _doUploads($post_data){
@@ -252,7 +265,7 @@ class Forms extends MY_Controller{
 			//unset the saved post so it doesn't warn again
 			unset($_SESSION['f2']['posts'][$form_id]);
 			//run function that handles form posts again
-			$this->postForm($form_id);			
+			$this->postForm($form_id);
 		}elseif($_POST['identconfirm'] == 'No'){
 			//they messed up or something, go back to blank form
 			$this->_redirect(site_url('forms/viewid/'.$form_id));
@@ -321,6 +334,19 @@ class Forms extends MY_Controller{
 	}
 
 	/**
+	* Add any tags we might want to have automatically on certain results
+	*/
+	private function _addAutoResultTags($form){
+		$this->load->model('resulttag');
+
+		//add NEW tag to all submitted results
+		$tags = $this->resulttag->getByTag('NEW');
+		if(!empty($tags)){
+			$this->resulttag->addToResult($tags[0]->id, $form->result->id, 'F2');
+		}
+	}
+
+	/**
 	* Shows user the form result when form is submitted
 	* @param object $form
 	*/
@@ -332,7 +358,7 @@ class Forms extends MY_Controller{
 			$embedded = false;
 		}
 		$this->load->library('workflows');
-		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou, 'embedded_form'=>$embedded));
+		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou, 'embedded_form'=>$embedded, 'hide_management'=>true));
 	}	
 
 	/**
@@ -520,12 +546,26 @@ class Forms extends MY_Controller{
 		}
 		if(!$forms) $forms = array();
 		$this->load->model('result');
+		$this->load->model('resulttag');
 		$formresults = array();
-		foreach($forms as $f){
-			$f->formresults = $this->result->getByForm($f->id);
-			$formresults = array_merge($formresults, $f->formresults);
+		$global_result_tags = array();
+		$form_ids = array();
+		foreach ($forms as $f) {
+			$form_ids[] = $f->id;
+		}		
+		$formresults = $this->result->getOnForms($form_ids);		
+		foreach($formresults as $fr){
+			$fr->resulttags = $this->resulttag->getByResult($fr->id);
+			//array_merge couldn't get me there!  Had to write my own!
+			foreach($fr->resulttags as $rt){
+				if(!in_array($rt, $global_result_tags)){
+					$global_result_tags[] = $rt;
+				}
+			}
 		}
-		$this->load->view('formresults', array('forms'=>$forms, 'formresults'=>$formresults));
+		
+	
+		$this->load->view('formresults', array('forms'=>$forms, 'formresults'=>$formresults, 'resulttags'=>$global_result_tags));		
 	}
 
 	/**
@@ -536,7 +576,7 @@ class Forms extends MY_Controller{
 		$form = $this->form->getById($result->form_id);
 		$form->questions = $this->_getQuestions($form->id);
 		$form->result = $result;
-		$this->load->view('result_form', array('form'=>$form));
+		$this->load->view('result_form', array('form'=>$form, 'hide_management'=>true));
 	}
 
 	/**

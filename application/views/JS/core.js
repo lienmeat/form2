@@ -197,3 +197,14 @@ function getCheckedResultIds(){
   return ids;
 }
 
+function log(something){
+  console.log(something);
+}
+
+function toggleFLDrawer(elem){
+  if($(elem).parent().hasClass('opened')){
+    $(elem).parent().removeClass('opened');
+  }else{
+    $(elem).parent().addClass('opened');
+  }
+}

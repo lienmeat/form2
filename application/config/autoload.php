@@ -112,6 +112,10 @@ $autoload['language'] = array();
 
 $autoload['model'] = array();
 
+//amazingly this is the only way I can figure out how to do this...
+require_once(BASEPATH.'/core/Model.php');
+require_once(str_replace('system/', '', BASEPATH).'application/core/MY_Model.php');
+require_once(str_replace('system/', '', BASEPATH).'application/core/RetRecord_Model.php');
 
 /* End of file autoload.php */
 /* Location: ./application/config/autoload.php */

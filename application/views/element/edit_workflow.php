@@ -2,7 +2,7 @@
 	<?php
 		$this->load->view('question_edit_tools', array('question'=>$question));
 	?>		
-	<div class="form_question_text <?php echo $question->config->name; ?>_fi2"><?php echo "Workflow: ".$question->config->instructions; ?></div>
+	<div class="form_question_text <?php echo $question->config->name; ?>_fi2"><?php echo "Workflow ".$question->id; ?></div>
 	<div class="form_question_alt <?php echo $config->name; ?>_fi2"><?php echo $question->config->alt; ?></div>		
 </div>	
 
