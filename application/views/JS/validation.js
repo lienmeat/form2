@@ -607,161 +607,144 @@ Validation.prototype.alpha = function(value) {
 	return ret;
 }
 
-// /**
-//  * Alpha-numeric
-//  */
-// Validation.prototype.alpha_numeric = function(value) {
-// 	var ret = false;
-// 	var matches = value.match(/^([a-z0-9])+$/i);
-// 	if(matches && matches > 0){
-// 		ret = true;
-// 	}
-// 	if(!ret){
-// 		this.setValidationError('alpha_numeric', "This field can only contain numbers and letters!");
-// 	}
-// 	return ret;
-// }
+/**
+ * Alpha-numeric
+ */
+Validation.prototype.alpha_numeric = function(value) {
+	var ret = false;
+	var matches = value.match(/^([a-z0-9])+$/i);
+	if(matches && matches > 0){
+		ret = true;
+	}
+	if(!ret){
+		this.setValidationError('alpha_numeric', "This field can only contain numbers and letters!");
+	}
+	return ret;
+}
 
-// /**
-//  * Alpha-numeric with underscores and dashes
-//  */
-// Validation.prototype.alpha_dash = function(value) {
-// 	ret = false;
-// 	var matches = value.match(/^([-a-z0-9_-])+$/i);
+/**
+ * Alpha-numeric with underscores and dashes
+ */
+Validation.prototype.alpha_dash = function(value) {
+	ret = false;
+	var matches = value.match(/^([-a-z0-9_-])+$/i);
 	
-// 	if(matches && matches.length > 0){
-// 		ret = true;
-// 	}
+	if(matches && matches.length > 0){
+		ret = true;
+	}
 
-// 	if(!ret){
-// 		this.setValidationError('alpha_dash', "This field can only contain numbers, letters, underscore, and hyphen!");			
-// 	}
-// 	return ret;
-// }
+	if(!ret){
+		this.setValidationError('alpha_dash', "This field can only contain numbers, letters, underscore, and hyphen!");			
+	}
+	return ret;
+}
 
-// /**
-//  * Numeric
-//  */
-// Validation.prototype.numeric = function(value) {
-// 	var ret = false;
-// 	var matches = value.match(/^[\-+]?[0-9]*\.?[0-9]+$/);
-// 	if(matches && matches.length > 0){
-// 		ret = true;
-// 	}
-// 	if(!ret){
-// 		this.setValidationError('numeric', "This field contain a numeric value!");			
-// 	}
-// 	return ret;
-// }
+/**
+ * Numeric
+ */
+Validation.prototype.numeric = function(value) {
+	var ret = false;
+	var matches = value.match(/^[\-+]?[0-9]*\.?[0-9]+$/);
+	if(matches && matches.length > 0){
+		ret = true;
+	}
+	if(!ret){
+		this.setValidationError('numeric', "This field contain a numeric value!");			
+	}
+	return ret;
+}
 
-// /**
-//  * Integer
-//  */
-// Validation.prototype.integer = function(value) {
-// 	var ret = false;
-// 	var matches = value.match(/^[\-+]?[0-9]+$/);
-// 	if(matches && matches.length > 0){
-// 		ret = true;
-// 	}
-// 	if(!ret){
-// 		this.setValidationError('integer', "This field can only contain integers! (0, 1, 2...)");			
-// 	}
-// 	return ret;
-// }
+/**
+ * Integer
+ */
+Validation.prototype.integer = function(value) {
+	var ret = false;
+	var matches = value.match(/^[\-+]?[0-9]+$/);
+	if(matches && matches.length > 0){
+		ret = true;
+	}
+	if(!ret){
+		this.setValidationError('integer', "This field can only contain integers! (0, 1, 2...)");			
+	}
+	return ret;
+}
 
-// /**
-//  * Decimal number
-//  */
-// Validation.prototype.decimal = function(value) {
-// 	var ret = false;
+/**
+ * Decimal number
+ */
+Validation.prototype.decimal = function(value) {
+	var ret = false;
 
-// 	var matches = values.match(/^[\-+]?[0-9]+\.[0-9]+$/);
-// 	if(matches && matches.length > 0){
-// 		ret = true;
-// 	}
-// 	if(!ret){
-// 		this.setValidationError('decimal', "This field must contain a decimal number!");			
-// 	}
-// 	return ret;
-// }
+	var matches = value.match(/^[\-+]?[0-9]+\.[0-9]+$/);
+	if(matches && matches.length > 0){
+		ret = true;
+	}
+	if(!ret){
+		this.setValidationError('decimal', "This field must contain a decimal number!");			
+	}
+	return ret;
+}
 
-// /**
-//  * Greather than
-//  */
-// Validation.prototype.greater_than = function(value, min) {
-// 	var ret = false;
-// 	if {
-// 		var ret = value > min;
-// 	}
+/**
+ * Greather than
+ */
+Validation.prototype.greater_than = function(value, min) {
+	var ret = false;
+	
+	ret = (value > min);	
 
-// 	if(!ret) {
-// 		this.setValidationError('greater_than', "This field must contain a value greater than "+min+"!");
-// 	}
-// 	return ret;
-// }
+	if(!ret) {
+		this.setValidationError('greater_than', "This field must contain a value greater than \""+min+"\"!");
+	}
+	return ret;
+}
 
-// /**
-//  * Less than
-//  */
-// Validation.prototype.less_than = function(value, max) {
-// 	if ( ! is_numeric($str))
-// 	{
-// 		$ret = FALSE;
-// 	}else{
-// 		$ret = $str < $max;
-// 	}
-// 	if(!$ret){
-// 		$this->setValidationMessage('less_than', "This field must contain a value less than $max!");		
-// 	}
-// 	return $ret;
-// }
+/**
+ * Less than
+ */
+Validation.prototype.less_than = function(value, max) {
+	var ret = false;
+	ret = (value < max);
+	
+	if(!ret){
+		this.setValidationError('less_than', "This field must contain a value less than \""+max+"\"!");
+	}
+	return ret;
+}
 
-// // --------------------------------------------------------------------
+/**
+ * Is a Natural number  (0,1,2,3, etc.)
+ */
+Validation.prototype.is_natural = function(value) {
+	var ret = false;
+	var matches = value.match(/^[0-9]+$/);
+	if(matches && matches.length > 0){
+		ret = true;
+	}
+	if(!ret){
+		this.setValidationError('is_natural', "This field must contain a natural number (ex: 0, 1, 2...)!");
+	}
+	return ret;
+}
 
-// /**
-//  * Is a Natural number  (0,1,2,3, etc.)
-//  *
-//  * @access	public
-//  * @param	string
-//  * @return	bool
-//  */
-// public function is_natural($str)
-// {
-// 	$ret = (bool) preg_match( '/^[0-9]+$/', $str);
+/**
+ * Is a Natural number, but not a zero  (1,2,3, etc.)
+ */
+Validation.prototype.is_natural_no_zero = function(value) {
+	var ret = false;
+	var matches = value.match(/^[0-9]+$/);
+	if(matches && matches.length > 0) {
+		ret = true;
+	}
+	if (value == 0) {
+		ret = false;
+	}
 
-// 	if(!$ret){
-// 		$this->setValidationMessage('is_natural', "This field must contain a natural number (ex: 0, 1, 2...)!");
-// 	}
-// 	return $ret;
-// }
-
-// // --------------------------------------------------------------------
-
-// /**
-//  * Is a Natural number, but not a zero  (1,2,3, etc.)
-//  *
-//  * @access	public
-//  * @param	string
-//  * @return	bool
-//  */
-// public function is_natural_no_zero($str)
-// {
-// 	$res = TRUE;
-// 	if ( ! preg_match( '/^[0-9]+$/', $str))
-// 	{
-// 		$ret = FALSE;
-// 	}
-
-// 	if ($str == 0)
-// 	{
-// 		$ret = FALSE;
-// 	}
-
-// 	if(!$ret){
-// 		$this->setValidationMessage('is_natural_no_zero', "This field must contain a natural counting number (ex: 1, 2, 3...)!");		
-// 	}
-// 	return $ret;
-// }
+	if(!ret) {
+		this.setValidationError('is_natural_no_zero', "This field must contain a natural counting number (ex: 1, 2, 3...)!");		
+	}
+	return ret;
+}
 
 
 function trim(value, params){
