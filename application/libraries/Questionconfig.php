@@ -151,6 +151,12 @@ class Questionconfig{
 		return $question;
 	}
 
+	function formatDigisig($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		return $question;
+	}
+
 	/**
 	* Formats "unparsed" attribute string into object
 	* @param string $attributes

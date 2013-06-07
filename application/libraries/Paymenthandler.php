@@ -24,10 +24,9 @@ class Paymenthandler{
 		$this->ci->load->library('simplecurl');
 		$url = $this->epayment_base_url."externalpayment/restPayment";
 		$resp = $this->ci->simplecurl->post($url, $payment_data);
-		//pull the json out of what is returned!
-		$matches = array();
-		$resp = preg_match('/{.*}$/', $resp, $matches);
-		return json_decode($matches[0]);
+		//pull the json out of what is returned!\
+		$this->load->helper('json');		
+		return json_decode(getJSONFromCurl($resp));
 	}
 }
 ?>

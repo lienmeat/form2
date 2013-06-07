@@ -520,23 +520,38 @@ Validation.prototype.regex_match = function(value, params){
 }
 
 Validation.prototype.matches = function(value, field_name){
-		var ret = false;
+	var ret = false;
 
-		var field = $("[name="+field_name+"]").get();
-		field = field[0];
-		var field_value = this.getInputValue(field);
+	var field = $("[name="+field_name+"]").get();
+	field = field[0];
+	var field_value = this.getInputValue(field);
 
-		if( value != field_value ){
-			ret = false;
-		}else{
-			ret = true;	
-		}		
-		if(ret) return ret;
-		else{
-			this.setValidationError('matches', "This field must match the one named "+field_name+"!");
-			return ret;
-		}
+	if( value != field_value ){
+		ret = false;
+	}else{
+		ret = true;	
+	}		
+	if(ret) return ret;
+	else{
+		this.setValidationError('matches', "This field must match the one named "+field_name+"!");
+		return ret;
 	}
+}
+
+Validation.prototype.equals = function(value, toequal){
+	var ret = false;
+
+	if( value != toequal ){
+		ret = false;
+	}else{
+		ret = true;
+	}		
+	if(ret) return ret;
+	else{
+		this.setValidationError('equals', "This field must contain "+toequal+"!");
+		return ret;
+	}
+}
 
 Validation.prototype.min_length = function(value, params){
 	if(value.length < params[0]){
