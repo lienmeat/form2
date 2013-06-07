@@ -7,28 +7,20 @@ $this->load->view('header');
 
 $(document).ready(function(){
 
-	$('#testbut').eventually('on', 'click', {}, function(event){ alert(event); });
-
+	$('#testbut').eventually('on', 'click', {}, 
+		function(event){ 
+			alert(event); 
+		}
+	);
 	
-	$('#testbut').eventually('before', 'click', {'testing_before': 'ok'}, function(event){
-		alert('beforebuttonclick');
-		//event.stopImmediatePropagation();
-		//event.stopPropagation();
-		//return false;
-	});
-	/*
-	eventually.before('click', '#testbut', {'testing_before2': 'ok'}, function(event){ 
-		alert('beforebuttonclick2');
-		//event.stopImmediatePropagation();
-		//event.stopPropagation();		
-		//return false;
-	});
-
-	eventually.on('click', '#testbut', {'testing': 'ok'}, function(event){ 
-		alert('onbuttonclick');
-	} );
-	*/
-
+	$('#testbut').eventually('before', 'click', {'testing_before': 'ok'},
+		function(event){
+			alert('beforebuttonclick');
+			//event.stopImmediatePropagation();
+			//event.stopPropagation();
+			//return false;
+		}
+	);	
 
 	$('#testbut').eventually('after', 'click', {'testing_after': 'ok'}, 
 		function(event){
@@ -39,32 +31,27 @@ $(document).ready(function(){
 			}else{
 				alert('fail');
 			}
-		});		 
-	});
-	
-	// eventually.on('BOOM', window, {'boom': 'ok'}, function(event){ 
-	// 	alert('onBOOM fired');				
-	// });
+		}
+	);	
 
-	$(window).eventually('before', 'BOOM', {'boom': 'ok'}, function(event){ 
-		alert('beforeBOOM fired');
-		//event.stopImmediatePropagation();
-		return false;
-	});
-	/*
-	eventually.before('BOOM', window, {'boom': 'ok'}, function(event){ 
-		alert('beforeBOOM caught in second listener!');				
-	});
-	*/
-	$(window).eventually('after', 'BOOM', {'boom': 'ok'}, function(event){ 
-		alert('afterBOOM fired');
-	});
+	$(window).eventually('before', 'BOOM', {'boom': 'ok'}, 
+		function(event){ 
+			alert('beforeBOOM fired');
+			//event.stopImmediatePropagation();
+			return false;
+		}
+	);
+		
+	$(window).eventually('after', 'BOOM', {'boom': 'ok'}, 
+		function(event){ 
+			alert('afterBOOM fired');
+		}
+	);
+});
 </script>
 <div id="testdiv1" class="testclass"></div>
 <div id="testdiv2" class="testclass"></div>
 <button id="testbut">test</button>
-
-
 
 <?php
 $this->load->view('footer');

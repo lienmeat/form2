@@ -404,3 +404,37 @@ ul.formslist li:not(.opened) div.formdetailsdrawer{
 .hidden, .hide{
   display: none;
 }
+
+
+
+.required{
+  /*background: rgb(143, 47, 47);*/
+}
+
+/*input[type="checkbox"] {
+  display: none;
+}
+
+input[type=checkbox] + label { 
+  padding-left:20px;
+  height:15px;
+  display:inline-block;
+  line-height:15px;
+  background-repeat:no-repeat;
+  background-position: 0 0;
+  font-size:15px;
+  vertical-align:middle;
+  cursor:pointer;
+}
+
+input[type=checkbox] + label{
+  background-image:url('http://csscheckbox.com/checkboxes/chrome-style.png');
+}
+
+input[type=checkbox]:checked + label {
+  background-position: 0 -15px;
+}*/
+
+/*input[type="checkbox"].required + label {
+  background: red;
+}*/

@@ -456,7 +456,7 @@ class Radio_Input extends Input_Input{
 		if($this->isSelected($this->getValue()) || $this->isSelected($this->getLabel())){
 			$this->setAttribute('checked', 'checked');
 		}
-		return "<div class=\"input_multiple\"><input ".$this->attributesToString()."/>".$this->getLabel()."</div>";
+		return "<div class=\"input_multiple\"><input ".$this->attributesToString()."><label>".$this->getLabel()."</label></div>";
 	}
 
 	function setLabel($label){
@@ -533,7 +533,7 @@ class Checkbox_Input extends Input_Input implements iSelectable{
 		if($this->isSelected($this->getValue()) || $this->isSelected($this->getLabel())){
 			$this->setAttribute('checked', 'checked');
 		}
-		return "<div class=\"input_multiple\"><input ".$this->attributesToString()."/>".$this->getLabel()."</div>";
+		return "<div class=\"input_multiple\"><input ".$this->attributesToString()."><label>".$this->getLabel()."</label></div>";
 	}
 
 	function setSelected($selected=null){

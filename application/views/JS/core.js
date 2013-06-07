@@ -27,8 +27,8 @@ function doAjax(path, data, callBackSuccess, callBackFail){
   var path = path || '';
   var data = data || {};
 
-  var defaultAjaxSuccessCallback = function(responce, status, error){ alert('NO CALLBACK FOR AJAX SUCCESS METHOD WAS DEFINED!'); };
-  var defaultAjaxFailCallback = function(responce, status, error){ alert('Unable to talk to server via ajax!\nerror: '+error); };
+  var defaultAjaxSuccessCallback = function(response, status, error){ alert('NO CALLBACK FOR AJAX SUCCESS METHOD WAS DEFINED!'); };
+  var defaultAjaxFailCallback = function(response, status, error){ alert('Unable to talk to server via ajax!\nerror: '+error); };
 
   var callBackSuccess = callBackSuccess || defaultAjaxSuccessCallback;
   var callBackFail = callBackFail || defaultAjaxFailCallback;
@@ -38,17 +38,17 @@ function doAjax(path, data, callBackSuccess, callBackFail){
     data: data,
     dataType: 'json',
     type: 'POST',
-    success: function(responce, status, error){ ajaxDone(responce, status, error, callBackSuccess); },
-    error: function(responce, status, error){ ajaxDone(responce, status, error, callBackFail); },
+    success: function(response, status, error){ ajaxDone(response, status, error, callBackSuccess); },
+    error: function(response, status, error){ ajaxDone(response, status, error, callBackFail); },
   });
 }
 
 
-function ajaxDone(responce, status, error, callback){  
-  if(responce && responce.loggedout){
+function ajaxDone(response, status, error, callback){  
+  if(response && response.loggedout){
     notifyLoggedOut();
   }else{
-    callback(responce);
+    callback(response);
   }
 }
 

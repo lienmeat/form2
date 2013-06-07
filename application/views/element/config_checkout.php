@@ -81,13 +81,28 @@ if($question->config->payment_methods){
 $conf = (object) array(
 	'text'=>'Payment Methods:',
 	'alt'=>'(How will the person be able to pay?)',
-	'type'=>'checkbox',	
-	'name'=>'config[payment_methods]',
+	//comment out for ec & cc
+	'type'=>'hidden',
+	// uncomment for ec & cc
+	//'type'=>'checkbox',
+	//'name'=>'config[payment_methods][]',
+	//comment out for ec & cc	
+	'name'=>'config[payment_methods][]',
+	/*  //uncomment for ec & cc 
 	'validation'=>'required',
 	'options'=>(object) array('Credit Card'=>'creditcard', 'e-Check'=>'echeck'),
 	'selected'=>$selected,
+	*/
+
+	//comment out for ec & cc
+	'value'=>'creditcard',
 );
-$this->questionconfig->renderQuestion($conf);
+//uncomment for ec & cc
+//$this->questionconfig->renderQuestion($conf);
+
+//comment out for ec & cc
+$this->inputs->setConfig($conf);
+echo $this->inputs;
 
 //cupon_codes
 //textarea to define what codes exist/discount amounts //render as textarea

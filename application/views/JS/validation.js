@@ -10,7 +10,8 @@ function Validation(form_id){
 	this.fullform = false;
 	this.form_id = form_id;	
 	this.validation_errors = [];
-	this.ignore_validation = false;
+	//this.ignore_validation = false;
+	this.is_validated = false;
 	this.createHandle();
 	this.__init__();
 }
@@ -24,6 +25,11 @@ Validation.prototype.__init__= function(){
 
 	$('#'+this.form_id+' [validation]').each(
 		function(i){
+			var validation = $(this).attr('validation');
+			if(validation && validation.indexOf('required') >= 0){
+				$(this).addClass('required');
+			}
+
 			//bind validateInput to change event on each input that matched
 			if($(this).attr('type') != 'checkbox' && $(this).attr('type') != 'radio'){
 				$(this).blur(
@@ -48,7 +54,8 @@ Validation.prototype.__init__= function(){
 		function(event){
 			//way to get around validating form when using the 
 			//remote validation callback after validateForm() calls it.
-			if(window.validators[handle].ignore_validation == true){				
+			if(window.validators[handle].is_validated === true){
+				//console.log(window.validators);				
 				return true;
 			}else{
 				var res = window.validators[handle].validateForm();
@@ -122,16 +129,20 @@ Validation.prototype.validateForm = function(callback){
 	}
 	if(validated && remotevalidations.length == 0){
 		this.fullform = false;
-		this.enableSubmitButton();
+		this.enableSubmitButton();		
+		this.is_validated = true;
 		callback(true);
 		return true;
 	}else if(validated && remotevalidations.length > 0){ //we have remote validations to do
 		this.doRemoteValidations(remotevalidations, true, callback);
+		this.is_validated = true; //so far we are, remote validations could change this!
 		return false;
 	}else{ //we failed a validation
+		this.is_validated = false;
 		this.doRemoteValidations(remotevalidations);
 		this.enableSubmitButton();
 		callback(false);
+		alert('The form is not filled out correctly!  Please look at the form for error bubbles and correct the problems.');
 		return false;
 	}
 }
@@ -140,6 +151,8 @@ Validation.prototype.validateForm = function(callback){
 *	Validates an individual input for validity
 */
 Validation.prototype.validateInput = function(input){
+	//any time this is triggered, the form obviously is NOT validated completely (because a change happened)
+	this.is_validated = false;
 	var name = $(input).attr('name');
 	var hidden_fields = $('#dependhiddeninputs_'+this.form_id).val()
 	if(hidden_fields && hidden_fields.length > 0) hidden_fields = hidden_fields.split(',');
@@ -277,27 +290,16 @@ Validation.prototype.remoteValidationCallback = function(validations, submit, ca
 	this.enableSubmitButton();
 	this.fullform = false;
 	if(callback){
-		if(validated){
+		if(validated){			
 			$('#'+this.form_id).eventually('trigger', 'validation_success', {});
 			callback(true);
 		}else{
+			this.is_validated = false;
 			$('#'+this.form_id).eventually('trigger', 'validation_fail', {});
+			alert('The form is not filled out correctly!  Please look at the form for error bubbles and correct the problems.');
 			callback(false);
 		}
-	}
-
-	/*
-	if(submit){
-		//force this off so if there is an onchange that
-		//needs a remote validation, it will do it, instead of
-		//returning the validations!
-		this.fullform = false;
-		if(!validated){			
-			
-		}
-	}
-	*/
-	//this.enableSubmitButton();	
+	}	
 }
 
 /**
@@ -481,9 +483,9 @@ Validation.prototype.getQuestionClassFromElem = function(elem){
 
 Validation.prototype.submitForm = function(submit){
 	if(submit == true){		
-		this.ignore_validation = true;
+		//this.ignore_validation = true;
 		$('#'+this.form_id).submit();
-		console.log("should have submitted: "+submit+" form_id: "+this.form_id);		
+		//console.log("should have submitted: "+submit+" form_id: "+this.form_id);
 	}
 }
 
@@ -497,6 +499,44 @@ Validation.prototype.required = function(value){
 		return false;
 	}
 }
+
+Validation.prototype.regex_match = function(value, params){
+	var ret = true;
+	
+	if(params){		
+		if(params.length > 1){
+			var regex = new RegExp(params[0], params[1]);
+		}else{
+			var regex = new RegExp(params[0]);
+		}
+	}
+
+	var matches = value.match(regex);
+	if( !matches || matches.length < 1) {
+		ret = false;
+		this.setValidationError('regex_match', "This field must match the regular expression: "+params[0]+"!");
+	}		
+	return ret;
+}
+
+Validation.prototype.matches = function(value, field_name){
+		var ret = false;
+
+		var field = $("[name="+field_name+"]").get();
+		field = field[0];
+		var field_value = this.getInputValue(field);
+
+		if( value != field_value ){
+			ret = false;
+		}else{
+			ret = true;	
+		}		
+		if(ret) return ret;
+		else{
+			this.setValidationError('matches', "This field must match the one named "+field_name+"!");
+			return ret;
+		}
+	}
 
 Validation.prototype.min_length = function(value, params){
 	if(value.length < params[0]){
@@ -521,6 +561,193 @@ Validation.prototype.exact_length = function(value, params){
 	}
 	return true;
 }
+
+
+Validation.prototype.valid_email = function(value){
+	var ret = false;
+
+	var matches = value.match(/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i);
+	if(!matches || matches.length < 1){
+		ret = false;
+		this.setValidationError('valid_email', "This email address does not appear to be valid!");
+	}else{
+		ret = true;
+	}
+	return ret;
+}
+
+/**
+ * Alpha
+ */
+Validation.prototype.alpha = function(value) {
+	var ret = false;
+	var matches = value.match(/^([a-z])+$/i);
+	if(matches && matches.length > 0){
+		ret = true;
+	}
+
+	if(!ret){
+		this.setValidationError('alpha', "This field can only contain letters (a-z)!");
+	}
+	return ret;
+}
+
+// /**
+//  * Alpha-numeric
+//  */
+// Validation.prototype.alpha_numeric = function(value) {
+// 	var ret = false;
+// 	var matches = value.match(/^([a-z0-9])+$/i);
+// 	if(matches && matches > 0){
+// 		ret = true;
+// 	}
+// 	if(!ret){
+// 		this.setValidationError('alpha_numeric', "This field can only contain numbers and letters!");
+// 	}
+// 	return ret;
+// }
+
+// /**
+//  * Alpha-numeric with underscores and dashes
+//  */
+// Validation.prototype.alpha_dash = function(value) {
+// 	ret = false;
+// 	var matches = value.match(/^([-a-z0-9_-])+$/i);
+	
+// 	if(matches && matches.length > 0){
+// 		ret = true;
+// 	}
+
+// 	if(!ret){
+// 		this.setValidationError('alpha_dash', "This field can only contain numbers, letters, underscore, and hyphen!");			
+// 	}
+// 	return ret;
+// }
+
+// /**
+//  * Numeric
+//  */
+// Validation.prototype.numeric = function(value) {
+// 	var ret = false;
+// 	var matches = value.match(/^[\-+]?[0-9]*\.?[0-9]+$/);
+// 	if(matches && matches.length > 0){
+// 		ret = true;
+// 	}
+// 	if(!ret){
+// 		this.setValidationError('numeric', "This field contain a numeric value!");			
+// 	}
+// 	return ret;
+// }
+
+// /**
+//  * Integer
+//  */
+// Validation.prototype.integer = function(value) {
+// 	var ret = false;
+// 	var matches = value.match(/^[\-+]?[0-9]+$/);
+// 	if(matches && matches.length > 0){
+// 		ret = true;
+// 	}
+// 	if(!ret){
+// 		this.setValidationError('integer', "This field can only contain integers! (0, 1, 2...)");			
+// 	}
+// 	return ret;
+// }
+
+// /**
+//  * Decimal number
+//  */
+// Validation.prototype.decimal = function(value) {
+// 	var ret = false;
+
+// 	var matches = values.match(/^[\-+]?[0-9]+\.[0-9]+$/);
+// 	if(matches && matches.length > 0){
+// 		ret = true;
+// 	}
+// 	if(!ret){
+// 		this.setValidationError('decimal', "This field must contain a decimal number!");			
+// 	}
+// 	return ret;
+// }
+
+// /**
+//  * Greather than
+//  */
+// Validation.prototype.greater_than = function(value, min) {
+// 	var ret = false;
+// 	if {
+// 		var ret = value > min;
+// 	}
+
+// 	if(!ret) {
+// 		this.setValidationError('greater_than', "This field must contain a value greater than "+min+"!");
+// 	}
+// 	return ret;
+// }
+
+// /**
+//  * Less than
+//  */
+// Validation.prototype.less_than = function(value, max) {
+// 	if ( ! is_numeric($str))
+// 	{
+// 		$ret = FALSE;
+// 	}else{
+// 		$ret = $str < $max;
+// 	}
+// 	if(!$ret){
+// 		$this->setValidationMessage('less_than', "This field must contain a value less than $max!");		
+// 	}
+// 	return $ret;
+// }
+
+// // --------------------------------------------------------------------
+
+// /**
+//  * Is a Natural number  (0,1,2,3, etc.)
+//  *
+//  * @access	public
+//  * @param	string
+//  * @return	bool
+//  */
+// public function is_natural($str)
+// {
+// 	$ret = (bool) preg_match( '/^[0-9]+$/', $str);
+
+// 	if(!$ret){
+// 		$this->setValidationMessage('is_natural', "This field must contain a natural number (ex: 0, 1, 2...)!");
+// 	}
+// 	return $ret;
+// }
+
+// // --------------------------------------------------------------------
+
+// /**
+//  * Is a Natural number, but not a zero  (1,2,3, etc.)
+//  *
+//  * @access	public
+//  * @param	string
+//  * @return	bool
+//  */
+// public function is_natural_no_zero($str)
+// {
+// 	$res = TRUE;
+// 	if ( ! preg_match( '/^[0-9]+$/', $str))
+// 	{
+// 		$ret = FALSE;
+// 	}
+
+// 	if ($str == 0)
+// 	{
+// 		$ret = FALSE;
+// 	}
+
+// 	if(!$ret){
+// 		$this->setValidationMessage('is_natural_no_zero', "This field must contain a natural counting number (ex: 1, 2, 3...)!");		
+// 	}
+// 	return $ret;
+// }
+
 
 function trim(value, params){
 	return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');

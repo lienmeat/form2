@@ -46,6 +46,9 @@ class Forms extends MY_Controller{
 	private function _view($form, $embedded=false){
 		//get get args and register them properly so we can know what is readonly or force-filled
 		$this->_captureGetArgs();
+
+		$_SESSION['f2']['form_token'] = uniqid('token',true);
+
 		//check rights to view this form version (if unpublished)
 		if(!$form->published &&
 		 ( !$this->authorization->can('edit', $form->name)
@@ -72,7 +75,7 @@ class Forms extends MY_Controller{
 	}
 
 	function postForm($id){
-		if(!empty($_POST) && $_POST['submit_fi2'] == "Submit"){
+		if(!empty($_POST) && $_POST['f2token'] == $_SESSION['f2']['form_token']){
 			//something was actually posted, get the form
 			$form = $this->form->getById($id);
 
@@ -304,7 +307,19 @@ class Forms extends MY_Controller{
 				unset($post[$name]);
 			}
 		}
+		$post = $this->_obscurePaymentData($post);
 		return $post;		
+	}
+
+	private function _obscurePaymentData($post_data){
+		if($post_data['card_accountNumber']){
+			$post_data['card_accountNumber'] = '************'.substr($post_data['card_accountNumber'], (strlen($post_data['card_accountNumber']) - 4));
+			unset($post_data['card_cvNumber']);
+		}elseif($post_data['Account_Number']){
+			$post_data['Account_Number'] = '************'.substr($post_data['Account_Number'], (strlen($post_data['Account_Number']) - 4));
+			unset($post_data['Routing_Number']);
+		}
+		return $post_data;
 	}
 
 	/**
@@ -588,7 +603,7 @@ class Forms extends MY_Controller{
 			$this->load->model('draft');
 			$data = array(
 				'form_id'=>$id,
-				'post'=>json_encode($_POST['formdata']),
+				'post'=>json_encode($post = $this->_obscurePaymentData($_POST['formdata'])),
 				'readonlys'=>json_encode($this->prefill->getReadonlys()),
 				);			
 			$draft = $this->draft->insert($data);

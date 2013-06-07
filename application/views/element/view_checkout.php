@@ -5,14 +5,15 @@
 
 <div class="form_answer view_mode <?php echo $question->config->name; ?>_fi2" id="<?php echo $question->id; ?>_answer">
 	<div class="form_element_contain  view_mode <?php echo $question->config->name; ?>_fi2">
-	<!--<script type="text/javascript" src="<?php echo base_url(); ?>application/views/JS/jquery.f2payment.js"></script>
-		<script type="text/javascript">
-			$(document).ready(function(){
-				$("#<?php echo $question->id; ?>_question").f2payment();
-			});
-		</script>
-	-->
+	<script type="text/javascript" src="<?php echo base_url(); ?>application/views/JS/f2payment.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#<?php echo $form->id; ?>").f2payment();
+		});
+	</script>
+	
 		<?php
+
 			$conf = (object) array(
 				'type'=>'hidden',
 				'name'=>'Payment_Type',
@@ -45,8 +46,10 @@
 			$this->inputs->setConfig($conf);
 			if($question->config->amount_editable == 'no'){
 				$this->inputs->setAttribute('readonly', 'readonly');
+				//$this->inputs->setAttribute('disabled', 'disabled');
 			}
-			echo "<div><label>Amount:</label>".$this->inputs."</div>";
+			$this->inputs->setAttribute('validation', 'required|decimal|greater_than[1.00]');			
+			echo "<div><label for=\"Payment_Amount\">Amount:</label>".$this->inputs."</div>";
 
 			if(count($question->config->payment_methods) > 1){
 				$radios = '';
@@ -68,6 +71,7 @@
 						'label'=>$label,
 					);
 					$this->inputs->setConfig($conf);
+					$this->inputs->setAttribute('validation', 'required');
 					$radios.="<div class=\"input_multiple\">".$this->inputs."</div>";
 				}
 				echo "<div><label>I will pay via:</label>".$radios."</div>";
@@ -82,16 +86,6 @@
 			}
 
 			$this->load->view('payment_info', array('payment_methods'=>$question->config->payment_methods));
-			
-
-		/*
-		$this->inputs->setConfig($question->config);
-		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
-		$this->inputs->setAttribute('id', $question->id."_input0");
-		$this->inputs->setAttribute('validation', $question->config->validation);
-		echo $this->inputs;
-		*/
-		//echo "<pre>".print_r($question->config, true)."</pre>";
 		?>
 	</div>
 </div>

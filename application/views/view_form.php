@@ -30,7 +30,8 @@
 <!-- form header common to all forms -->
 <form name="<?php echo $form->name; ?>" id="<?php echo $form->id; ?>" method="POST"  action="<?php echo site_url('forms/postForm/'.$form->id); ?>" enctype="multipart/form-data">
 
-<?php
+	<input type="hidden" name="f2token" value="<?php echo $_SESSION['f2']['form_token'];?>">
+<?php	
 	if($embedded_form){
 		echo "<input type=\"hidden\" name=\"embedded_form\" value=\"true\">";
 	}

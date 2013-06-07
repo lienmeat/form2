@@ -9,7 +9,7 @@
 <div class="form_answer edit_mode <?php echo $question->config->name; ?>_fi2" id="<?php echo $question->id; ?>_answer">
 	<div class="form_element_contain edit_mode <?php echo $question->config->name; ?>_fi2">		
 		<?php
-		echo "<pre>".print_r($question->config, true)."</pre>";
+		//echo "<pre>".print_r($question->config, true)."</pre>";
 		/* Maybe show the settings for this workflow in edit mode?  Not sure...
 		$this->inputs->setConfig($question->config);
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
