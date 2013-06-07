@@ -1,1 +1,1 @@
-jquery-eventually/jquery.eventually.js
+jquery-eventually1.0.6/jquery.eventually.js
