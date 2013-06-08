@@ -31,18 +31,6 @@ if($mode != 'edit'){
 $this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));		
 
 
-/*  Replaced by a more complex/sophisticated control
-$question_config =(object) array(			
-	'text'=>'Editors: (Comma separated usernames of people who can edit this form)',
-	'alt'=>'(Do not put your own username here! You automatically have rights!)',
-	'type'=>'text',
-	'name'=>'config[editors]',
-	'value'=>$form->config->editors,	
-);
-
-$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
-*/
-
 
 $question_config =(object) array(
 	'text'=>'URL of special receiving script:',
@@ -112,5 +100,27 @@ $question_config =(object) array(
 	'dependencies'=>'config[login_required]=Y&&config[ad_groups][]!=all*',
 	'value'=>$form->config->viewers,
 );
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+
+$question_config =(object) array(
+	'text'=>'Forward form response data to a url when completed:',
+	'alt'=>'(Optional advanced functionality! Data sent as POST, via Php\'s cURL.  Enables using formit2 forms with other applications.)',
+	'type'=>'text',
+	'name'=>'config[forward_to]',
+	'value'=>$form->config->forward_to,
+	'attributes'=>(object) array('size'=>'100'),
+);
+
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+
+$question_config =(object) array(
+	'text'=>'Redirect to a url when completed, instead of showing usual "thank you" message:',
+	'alt'=>'(Optional advanced functionality! Form result data will be stored in $_SESSION[f2][lastresult].)',
+	'type'=>'text',
+	'name'=>'config[redirect_to]',
+	'value'=>$form->config->redirect_to,
+	'attributes'=>(object) array('size'=>'100'),
+);
+
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 ?>

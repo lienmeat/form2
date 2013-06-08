@@ -50,11 +50,16 @@ class Forms extends MY_Controller{
 		$_SESSION['f2']['form_token'] = uniqid('token',true);
 
 		//check rights to view this form version (if unpublished)
-		if(!$form->published &&
-		 ( !$this->authorization->can('edit', $form->name)
-		 	&& !$this->authorization->can('admin', $form->name) )
-		){
-			$this->_failAuthResp('You must have edit or admin permissions on a form to view it\'s non-published versions!');
+		if(!$form->published) {
+			
+			//You will not make it past here if the person is not logged in...
+			$this->authorization->forceLogin();
+
+			//otherwise, they may be allowed to view this form, if they logged in
+			if( !$this->authorization->can('edit', $form->name) 
+				&& !$this->authorization->can('admin', $form->name) ){
+				$this->_failAuthResp('You must have edit or admin permissions on a form to view it\'s non-published versions!');
+			}
 		}
 
 		//check that this person has the right qualifications according to the form view settings itself
@@ -105,6 +110,8 @@ class Forms extends MY_Controller{
 		$this->_bindFormSuccess('_addAutoResultTags');
 		$this->_bindFormSuccess('_clearCapturedGetArgs');
 		$this->_bindFormSuccess('_doWorkflows');
+		$this->_bindFormSuccess('_forwardResult');
+		$this->_bindFormSuccess('_doRedirect');
 		$this->_bindFormSuccess('_showFormResult');
 
 		//provides a way of hijacking success behavior in other funcitons
@@ -282,8 +289,6 @@ class Forms extends MY_Controller{
 	* Saves form resutls to database
 	*/
 	private function _saveResult($form){
-		//todo: decided if we should save based on form config.
-		// It might be that the form is ONLY to be sent to a remote addr, not saved.
 		$this->load->model('result');
 		$post = $this->_filterPost();		
 		$result->post = json_encode($post);
@@ -362,6 +367,43 @@ class Forms extends MY_Controller{
 	}
 
 	/**
+	*	Forwards form result to a URL via POST (cURL)
+	* @param object $form
+	*/
+	private function _forwardResult($form){
+		if(!empty($form->config->forward_to)){
+			$this->load->library('simplecurl');
+			//minimize duplicate data, but make everything available
+			//in the most obvious fashion		
+			$data['result'] = $form->result;
+			unset($form->result);
+			$data['form'] = $form;
+			try{
+				$this->simplecurl->post($form->config->forward_to, $data);
+			}catch(Exception $e){
+				//oh well, their URL is probably wrong...Silly them.
+			}
+		}
+	}
+
+	/**
+	*	Redirects to a URL, storing data in session
+	* @param object $form
+	*/
+	private function _doRedirect($form){
+		if(!empty($form->config->redirect_to)){			
+			//minimize duplicate data, but make everything available
+			//in the most obvious fashion
+			$_SESSION['f2']['lastresult'] = $form->result;
+			unset($form->result);
+			$_SESSION['f2']['lastform'] = $form;
+			header('location: '.$form->config->redirect_to);
+			exit;
+			die("Should have location: ".$form->config->redirect_to);
+		}
+	}	
+
+	/**
 	* Shows user the form result when form is submitted
 	* @param object $form
 	*/
@@ -372,7 +414,7 @@ class Forms extends MY_Controller{
 		}else{
 			$embedded = false;
 		}
-		$this->load->library('workflows');
+		//$this->load->library('workflows');
 		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou, 'embedded_form'=>$embedded, 'hide_management'=>true));
 	}	
 
@@ -395,8 +437,7 @@ class Forms extends MY_Controller{
 	/**
 	* Edit an existing form
 	*/
-	function edit($name_or_id=false){
-		//todo: make sure user has permissions
+	function edit($name_or_id=false){		
 		$this->authorization->forceLogin();
 		$form = $this->form->getById($name_or_id);		
 		if(!$form){
