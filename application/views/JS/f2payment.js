@@ -166,7 +166,7 @@
 	Plugin.prototype.paymentDone = function(resp, payment_data){
 		if(resp && resp.status && resp.status == 'success'){
 			this.element.payment_complete = true;
-			$(this.element).eventually('trigger', 'payment_success', {'payment_data': payment_data, 'processor_response': resp});
+			$(this.element).eventually('trigger', 'payment_success', {'payment_data': payment_data, 'processor_response': resp});			
 			$(this.element).submit();  //re-submit this form
 		}else{
 			$(this.element).eventually('trigger', 'payment_failure', {'payment_data': payment_data, 'processor_response': resp});

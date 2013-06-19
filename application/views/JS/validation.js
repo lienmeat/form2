@@ -137,13 +137,13 @@ Validation.prototype.validateForm = function(callback){
 		this.enableSubmitButton();		
 		this.is_validated = true;
 		this.is_currently_valid = true;
-		callback(true);
+		//callback(true);
 		return true;
 	}else if(validated && remotevalidations.length > 0){ //we have remote validations to do
 		this.cur_event.stopImmediatePropagation();
 		this.is_currently_valid = true;
 		this.is_validated = false; //so far we are, remote validations could change this!
-		this.doRemoteValidations(remotevalidations, true, callback);		
+		this.doRemoteValidations(remotevalidations, true, callback);
 		return false;
 	}else{ //we failed a validation
 		this.cur_event.stopImmediatePropagation();
