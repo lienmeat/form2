@@ -11,7 +11,11 @@ function Validation(form_id){
 	this.form_id = form_id;	
 	this.validation_errors = [];
 	//this.ignore_validation = false;
+	//if the form is validated
 	this.is_validated = false;
+	//if the form is validated SO FAR (used to say if it was valid BEFORE remote
+	//validations)
+	this.is_currently_valid = false;
 	this.createHandle();
 	this.__init__();
 }
@@ -52,6 +56,7 @@ Validation.prototype.__init__= function(){
 
 	$('#'+this.form_id).eventually('before','submit', {}, 
 		function(event){
+			window.validators[handle].cur_event = event;
 			//way to get around validating form when using the 
 			//remote validation callback after validateForm() calls it.
 			if(window.validators[handle].is_validated === true){
@@ -98,14 +103,14 @@ Validation.prototype.getHandle = function(){
 }
 
 Validation.prototype.disableSubmitButton = function(){	
-	$('#'+this.form_id+" :submit").each(function(i, input){		
+	$('#'+this.form_id+" > input[type=submit]").each(function(i, input){		
 		$(input).val('...WORKING...');
 		$(input).attr('disabled', 'disabled');
 	});
 }
 
 Validation.prototype.enableSubmitButton = function(){
-	$('#'+this.form_id+" :submit").each(function(i, input){
+	$('#'+this.form_id+" > input[type=submit]").each(function(i, input){
 		$(input).val('Submit');
 		$(input).attr('disabled', false);
 	});	
@@ -131,13 +136,18 @@ Validation.prototype.validateForm = function(callback){
 		this.fullform = false;
 		this.enableSubmitButton();		
 		this.is_validated = true;
+		this.is_currently_valid = true;
 		callback(true);
 		return true;
 	}else if(validated && remotevalidations.length > 0){ //we have remote validations to do
-		this.doRemoteValidations(remotevalidations, true, callback);
-		this.is_validated = true; //so far we are, remote validations could change this!
+		this.cur_event.stopImmediatePropagation();
+		this.is_currently_valid = true;
+		this.is_validated = false; //so far we are, remote validations could change this!
+		this.doRemoteValidations(remotevalidations, true, callback);		
 		return false;
 	}else{ //we failed a validation
+		this.cur_event.stopImmediatePropagation();
+		this.is_currently_valid = false;
 		this.is_validated = false;
 		this.doRemoteValidations(remotevalidations);
 		this.enableSubmitButton();
@@ -246,7 +256,7 @@ Validation.prototype.validateInput = function(input){
 		if(validated){
 			this.hideError(input);
 			return remotevalidations;
-		}else{
+		}else{			
 			return false;
 		}
 	}
@@ -262,8 +272,7 @@ Validation.prototype.doRemoteValidations = function(validations, submit, callbac
 		if(validations[i].function && validations[i].function.length > 0){
 			vals.push(validations[i]);
 		}
-	}
-
+	}		
 	if(validations.length > 0){
 		doAjax('validate/', {validations: vals}, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit, callback); }, function(resp){ window.validators[handle].remoteValidationCallback(resp, submit, callback); });
 		return true;
@@ -290,10 +299,12 @@ Validation.prototype.remoteValidationCallback = function(validations, submit, ca
 	this.enableSubmitButton();
 	this.fullform = false;
 	if(callback){
-		if(validated){			
+		if(validated && this.is_currently_valid){
+			this.is_validated = true;
 			$('#'+this.form_id).eventually('trigger', 'validation_success', {});
 			callback(true);
 		}else{
+			this.is_currently_valid = false;
 			this.is_validated = false;
 			$('#'+this.form_id).eventually('trigger', 'validation_fail', {});
 			alert('The form is not filled out correctly!  Please look at the form for error bubbles and correct the problems.');

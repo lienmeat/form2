@@ -2,7 +2,7 @@
 
 class Payments extends MY_Controller {
 
-	public function pay(){
+	public function pay(){		
 		if(!empty($_POST) && $_POST['f2token'] == $_SESSION['f2']['form_token']){
 			switch($_POST['payment_method']){
 				case "creditcard":

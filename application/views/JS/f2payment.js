@@ -86,6 +86,7 @@
 	Plugin.prototype.bindEvents = function(){
 		var elem = this.element;		
 		$(elem).eventually('on', 'submit', {}, function(e){ $(elem).f2payment('pay', e); });
+		//$(elem).eventually('after', 'submit', {}, function(e){ /*console.log(e);*/ });
 
 		//probably have to handle checkout items too!
 
@@ -100,6 +101,7 @@
 		if(!elem.payment_complete){
 			//make sure submit event stops!
 			event.stopImmediatePropagation();
+			console.log(event);
 			var payment_details = this.getPaymentData();    
 			if(payment_details){
 				switch(payment_details.payment_method){
@@ -163,7 +165,7 @@
 
 	Plugin.prototype.paymentDone = function(resp, payment_data){
 		if(resp && resp.status && resp.status == 'success'){
-			this.element.payment_complete = true;			
+			this.element.payment_complete = true;
 			$(this.element).eventually('trigger', 'payment_success', {'payment_data': payment_data, 'processor_response': resp});
 			$(this.element).submit();  //re-submit this form
 		}else{
