@@ -6,16 +6,17 @@ class Payments extends MY_Controller {
 		if(!empty($_POST) && $_POST['f2token'] == $_SESSION['f2']['form_token']){
 			switch($_POST['payment_method']){
 				case "creditcard":
-					echo $this->_wwucc();
+					echo $this->_wwucc($_POST);
 					break;
 			}
+		}else{
+			echo json_encode(array('status'=>'fail'));
 		}
 	}
 
-	private function _wwucc(){
+	private function _wwucc($data){
 		$this->load->library('Paymenthandler');
-		$result = $this->paymenthandler->wwucc($_POST);
-
+		$result = $this->paymenthandler->wwucc($data);
 		
 		if($result->status == 'success'){
 			return json_encode(array('status'=>'success'));
