@@ -62,8 +62,11 @@ Validation.prototype.__init__= function(){
 			if(window.validators[handle].is_validated === true){
 				//console.log(window.validators);				
 				return true;
-			}else{
-				var res = window.validators[handle].validateForm();
+			}else{				
+				var res = window.validators[handle].validateForm(
+					function(ret){ window.validators[handle].submitForm(ret); },
+					true
+				);
 				if(res){					
 					$('#'+this.form_id).eventually('trigger','validation_success', {});
 					return true;
@@ -116,9 +119,10 @@ Validation.prototype.enableSubmitButton = function(){
 	});	
 }
 
-Validation.prototype.validateForm = function(callback){
+Validation.prototype.validateForm = function(callback, submitted){	
+	var sumbitted = submitted || false;
 	var handle = this.getHandle();
-	var callback = callback || function(ret){ window.validators[handle].submitForm(ret); };
+	var callback = callback || function(){ return; };
 	this.disableSubmitButton();
 	this.fullform = true;
 	var inputs = $('#'+this.form_id+' [validation]').get();	
@@ -137,16 +141,22 @@ Validation.prototype.validateForm = function(callback){
 		this.enableSubmitButton();		
 		this.is_validated = true;
 		this.is_currently_valid = true;
-		//callback(true);
+		if(!submitted){
+			callback(true);
+		}
 		return true;
 	}else if(validated && remotevalidations.length > 0){ //we have remote validations to do
-		this.cur_event.stopImmediatePropagation();
+		if(this.cur_event){
+			this.cur_event.stopImmediatePropagation();
+		}
 		this.is_currently_valid = true;
 		this.is_validated = false; //so far we are, remote validations could change this!
 		this.doRemoteValidations(remotevalidations, true, callback);
 		return false;
 	}else{ //we failed a validation
-		this.cur_event.stopImmediatePropagation();
+		if(this.cur_event){
+			this.cur_event.stopImmediatePropagation();
+		}
 		this.is_currently_valid = false;
 		this.is_validated = false;
 		this.doRemoteValidations(remotevalidations);
