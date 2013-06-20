@@ -33,10 +33,6 @@ class Welcome extends MY_Controller {
 		$myforms = $this->form->getByUser($this->authorization->username());
 		$this->load->view('dashboard', array('forms'=>$forms, 'myforms'=>$myforms, 'form_creators'=>$creators));
 	}
-
-	function test(){
-		$this->load->view('eventually');
-	}
 }
 
 /* End of file welcome.php */
