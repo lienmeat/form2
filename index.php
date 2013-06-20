@@ -57,7 +57,6 @@ if (defined('ENVIRONMENT'))
  *
  */
 	$system_path = 'system';
-	$stupidvar = 'stupid';
 
 /*
  *---------------------------------------------------------------
