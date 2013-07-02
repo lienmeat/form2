@@ -21,6 +21,7 @@ echo "</style>";
 <div id="form_view_contain">	
 	<div class="form_title_contain edit_mode">
 		<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>
+		<p>You can link to the published version of this form with the following URL: <br /><input readonly size="100" value="<?php echo base_url().$form->name; ?>"></p>
 	</div>
 	<form id="form_questions_form">
 	<div id="add_question_tool_contain">

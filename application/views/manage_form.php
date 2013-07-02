@@ -27,6 +27,9 @@ $(document).ready(
 	}
 );
 </script>
+<p>You can link to the published version of this form with the following URL: <br /><input readonly size="100" value="<?php echo base_url().$forms[0]->name; ?>"></p>
+
+<p>If you wish, you can <?php echo anchor("forms/rename/".$forms[0]->name, 'change the name of the form'); ?>.</a></p>
 
 <div id="form_versions_contain" class="section">
 	<div id="form_versions_heading" class="section_heading">Versions:</div>
