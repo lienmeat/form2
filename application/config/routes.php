@@ -39,10 +39,12 @@
 */
 
 $route['default_controller'] = "welcome";
+$route['dashboard'] = "welcome";
+$route['([a-z]+)/([a-z]+)/(:any)'] = "$1/$2/$3";
+$route['([a-z]+)/([a-z]+)'] = "$1/$2";
+$route['([a-z]+)'] = "$1";
+$route['([a-zA-Z0-9-]+)'] = "forms/view/$1";
 $route['404_override'] = '';
-//$route['(:any)'] = '';
-
-
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

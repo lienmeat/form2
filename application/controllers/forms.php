@@ -20,7 +20,7 @@ class Forms extends MY_Controller{
 	/**
 	* view a form by name (must be published)
 	*/
-	function view($name){
+	function view($name){		
 		$form = $this->form->getPublishedWithName($name);
 		if($form){
 			$this->_view($form);
@@ -574,6 +574,25 @@ class Forms extends MY_Controller{
 			echo json_encode(array('status'=>'success', 'form'=>$form, 'html'=>array('form_config_form'=>$html)));
 		}else{//othwise notify of fail
 			echo json_encode(array('status'=>'fail'));
+		}
+	}
+
+	function rename($form_name){
+		$this->authorization->forceLogin();
+		$forms = $this->form->getByName($form_name);
+		$form = $forms[0];
+		if($form->creator != $this->authorization->username() && !$this->authorization->can('edit', $form) && !$this->authorization->can('admin', $form)){
+			$this->_failAuthResp('You do not have sufficient rights to rename this form!  You must be the creator of this form, or have edit or admin permissions on this form!');
+			return;
+		}
+
+		if($_POST['renameconfirm'] == 'yes'){
+			$this->form->rename($form_name, $_POST['new_form_name']);
+			$this->load->view('redirect', array('location'=>'forms/view/'.$_POST['new_form_name'], 'message'=>'Forms renamed successfully!'));
+			return;
+		}else{
+			$this->load->view('rename_form', array('form'=>$form));
+			return;
 		}
 	}
 

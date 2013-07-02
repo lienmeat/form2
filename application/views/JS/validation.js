@@ -260,7 +260,7 @@ Validation.prototype.validateInput = function(input){
 	if(!fullform){
 		if(validated){			
 			this.hideError(input); //get rid of error message if one exists
-			this.doRemoteValidations(remotevalidations);
+			this.doRemoteValidations(remotevalidations);			
 		}
 	}else{ //if fullform, aggregate remote validations, and lock form from submitting
 		if(validated){
@@ -275,7 +275,7 @@ Validation.prototype.validateInput = function(input){
 Validation.prototype.doRemoteValidations = function(validations, submit, callback){	
 	var submit = submit || false;
 	var validations = validations || [];
-	var callback = callback || function(){};	
+	var callback = callback || function(){ void(0); };	
 	var handle = this.getHandle();
 	var vals = [];
 	for(i in validations){
@@ -317,7 +317,7 @@ Validation.prototype.remoteValidationCallback = function(validations, submit, ca
 			this.is_currently_valid = false;
 			this.is_validated = false;
 			$('#'+this.form_id).eventually('trigger', 'validation_fail', {});
-			alert('The form is not filled out correctly!  Please look at the form for error bubbles and correct the problems.');
+			if(submit) { alert('The form is not filled out correctly!  Please look at the form for error bubbles and correct the problems.'); }
 			callback(false);
 		}
 	}	
@@ -469,7 +469,10 @@ Validation.prototype.hideError = function(input){
 
 Validation.prototype.getNotif = function(input){
 	//var input_id = $(input).attr('id');
-	var input_name = $(input).attr('name').replace(/\[/g, '--').replace(/\]/g, '--');
+	var input_name = $(input).attr('name');
+	if(input_name){
+		input_name = input_name.replace(/\[/g, '--').replace(/\]/g, '--');
+	}
 	var notif_id = input_name+'_err';
 	var notif = $('#'+notif_id).get(0);
 	if(!notif){

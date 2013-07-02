@@ -182,5 +182,12 @@ class Form extends RetRecord_Model{
 		}
 		return $tmp;
 	}
+
+	function rename($from, $to){
+		$this->db->update('forms', array('name'=>$to), array('name'=>$from));
+		$this->db->update('forms_formtags', array('form'=>$to), array('form'=>$from));
+		$this->db->update('permissions_users', array('form'=>$to), array('form'=>$from));
+		$this->db->update('forms_roles', array('form'=>$to), array('form'=>$from));		
+	}
 }
 ?>
