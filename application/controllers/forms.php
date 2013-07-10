@@ -107,12 +107,14 @@ class Forms extends MY_Controller{
 		//if we made it here it means we posted and have rights
 		$result = $this->_saveResult($form);
 		//these need to be run always
-		$this->_bindFormSuccess('_addAutoResultTags');
-		$this->_bindFormSuccess('_clearCapturedGetArgs');
+		$this->_bindFormSuccess('_doNotify');
+		$this->_bindFormSuccess('_addAutoResultTags');		
+		$this->_bindFormSuccess('_clearCapturedGetArgs');		
 		$this->_bindFormSuccess('_doWorkflows');
 		$this->_bindFormSuccess('_forwardResult');
 		$this->_bindFormSuccess('_doRedirect');
 		$this->_bindFormSuccess('_showFormResult');
+
 
 		//provides a way of hijacking success behavior in other funcitons
 		//as we go.
@@ -416,6 +418,29 @@ class Forms extends MY_Controller{
 		}
 		//$this->load->library('workflows');
 		$this->load->view('result_form', array('form'=>$form, 'topmessage'=>$form->config->thankyou, 'embedded_form'=>$embedded, 'hide_management'=>true));
+	}
+
+	private function _doNotify($form){
+		if(!empty($form->config->notify)){
+			$this->load->library('email');
+			$this->email->to(str_replace("\n", ', ', $form->config->notify));
+			$now = date('Y-m-d H:i:s');
+			$this->email->from('webservices@wallawalla.edu','FormIt2');
+			$this->email->reply_to('noreply@wallawalla.edu','FormIt2'); 
+			$subject = $form->name." submitted $now";
+			if($this->authorization->username()){
+				$subject.=" by ".$this->authorization->username();
+				$message = $form->name." was submitted by ".$this->authorization->username().".\n";				
+			}else{
+				$message = $form->name." was submitted @ $now.\n";
+			}
+			$message.="You can view the submitted form here:\n";
+			$message.=site_url('results/view/'.$form->result->id);
+			$this->email->subject($subject);
+			$this->email->message($message);
+			$this->email->send();
+		}
+		
 	}	
 
 	/**
