@@ -37,13 +37,14 @@
 | in the URL cannot be matched to a valid route.
 |
 */
-
 $route['default_controller'] = "welcome";
 $route['dashboard'] = "welcome";
 $route['([a-z]+)/([a-z]+)/(:any)'] = "$1/$2/$3";
 $route['([a-z]+)/([a-z]+)'] = "$1/$2";
-$route['([a-z]+)'] = "$1";
+//declair the names of controlers that the short form view route shouldn't catch
+$route['(forms|admin|results|workflows|helps|payments|permissions|questions|resulttags|roles|validate|welcome)'] = "$1";
 $route['([a-zA-Z0-9-]+)'] = "forms/view/$1";
+
 $route['404_override'] = '';
 
 /* End of file routes.php */
