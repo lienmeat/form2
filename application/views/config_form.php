@@ -103,6 +103,16 @@ $question_config =(object) array(
 $this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 $question_config =(object) array(
+	'text'=>'Notify these people when a form is submitted:',
+	'alt'=>'(Will notify any listed email addresses when this form is submitted.  One email address per line!)',
+	'type'=>'textarea',
+	'name'=>'config[notify]',
+	'value'=>$form->config->notify,	
+);
+
+$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+
+$question_config =(object) array(
 	'text'=>'Forward form response data to a url when completed:',
 	'alt'=>'(Optional advanced functionality! Data sent as POST, via Php\'s cURL.  Enables using formit2 forms with other applications.)',
 	'type'=>'text',
