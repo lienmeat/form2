@@ -22,7 +22,7 @@ class Questionconfig{
 		$question = $this->formatValidationField($question);
 		$question = $this->formatDependenciesField($question);
 		return $question;
-	}
+	}	
 
 	/**
 	* Formats a textarea question into what should be saved to db
@@ -152,6 +152,17 @@ class Questionconfig{
 	}
 
 	function formatDigisig($question){
+		$question = $this->formatNameField($question);
+		$question = $this->formatDependenciesField($question);
+		return $question;
+	}
+
+	/**
+	* Formats a date question into what should be saved to db
+	* @param array $question
+	* @return array
+	*/
+	function formatDate($question){
 		$question = $this->formatNameField($question);
 		$question = $this->formatDependenciesField($question);
 		return $question;
