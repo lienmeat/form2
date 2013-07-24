@@ -80,7 +80,8 @@ class Forms extends MY_Controller{
 	}
 
 	function postForm($id){
-		if(!empty($_POST) && $_POST['f2token'] == $_SESSION['f2']['form_token']){
+		$post = $this->input->post(NULL, true);
+		if(!empty($post) && $post['f2token'] == $_SESSION['f2']['form_token']){
 			//something was actually posted, get the form
 			$form = $this->form->getById($id);
 
@@ -103,7 +104,7 @@ class Forms extends MY_Controller{
 
 		$this->_checkUniquePost($id);
 
-		$_POST = $this->_doUploads($_POST); //if there were uploads, we have to handle them first
+		$post = $this->_doUploads($post); //if there were uploads, we have to handle them first
 		//if we made it here it means we posted and have rights
 		$result = $this->_saveResult($form);
 		//these need to be run always
@@ -120,11 +121,12 @@ class Forms extends MY_Controller{
 	}
 
 	function ajaxSearch(){
-		if(isset($_POST['search'])){
-			if($_POST['search'] == "*" or empty($_POST['search'])){
+		$post = $this->input->post(NULL, true);
+		if(isset($post['search'])){
+			if($post['search'] == "*" or empty($post['search'])){
 				$forms = $this->form->getAll('`name` ASC, `created` DESC');
 			}else{ 
-				$forms = $this->form->search($_POST['search']);
+				$forms = $this->form->search($post['search']);
 			}
 			$html = $this->load->view('formlist', array('forms'=>$forms), true);
 			echo json_encode(array('status'=>'success', 'html'=>$html));
@@ -253,30 +255,32 @@ class Forms extends MY_Controller{
 	* tries to make sure this isn't a dupicate post
 	*/
 	private function _checkUniquePost($form_id){
+		$post = $this->input->post(NULL, true);
 		if($_SESSION['f2']['posts'][$form_id]){
-			if($_SESSION['f2']['posts'][$form_id] == $_POST){
+			if($_SESSION['f2']['posts'][$form_id] == $post){
 				$this->_redirect(site_url('forms/indenticalPost/'.$form_id));
 			}
 		}
-		$_SESSION['f2']['posts'][$form_id] = $_POST;		
+		$_SESSION['f2']['posts'][$form_id] = $post;
 	}
 
 	function indenticalPost($form_id){
+		$post = $this->input->post(NULL, true);
 		//catch case where someone might hit refresh on the identicalPost page!
 		if($_SESSION['f2']['postconfirm'][$form_id]){
 			unset($_SESSION['f2']['postconfirm'][$form_id]);
 			$this->_redirect(base_url());
 		}
 
-		if($_POST['identconfirm'] == 'Yes'){
+		if($post['identconfirm'] == 'Yes'){
 			$_SESSION['f2']['postconfirm'][$form_id] = true;
 			//set post to what was posted
-			$_POST = $_SESSION['f2']['posts'][$form_id];
+			$post = $_SESSION['f2']['posts'][$form_id];
 			//unset the saved post so it doesn't warn again
 			unset($_SESSION['f2']['posts'][$form_id]);
 			//run function that handles form posts again
 			$this->postForm($form_id);
-		}elseif($_POST['identconfirm'] == 'No'){
+		}elseif($post['identconfirm'] == 'No'){
 			//they messed up or something, go back to blank form
 			$this->_redirect(site_url('forms/viewid/'.$form_id));
 		}else{
@@ -304,7 +308,7 @@ class Forms extends MY_Controller{
 	* Filters post data so that stuff we don't want doesn't show up in results
 	*/
 	private function _filterPost(){
-		$post = $_POST;
+		$post = $this->input->post(NULL, true);
 		$input_names = explode(',',$post['dependhiddeninputs']);
 		if(is_array($input_names)){
 			foreach($input_names as $name){
@@ -409,7 +413,7 @@ class Forms extends MY_Controller{
 	*/
 	private function _showFormResult($form){		
 		//todo: detect when it shouldn't run!  ex: pass to external script instead...
-		if($_POST['embedded_form'] == 'true'){
+		if($this->input->post('embedded_form') == 'true'){
 			$embedded = true;
 		}else{
 			$embedded = false;
@@ -422,12 +426,13 @@ class Forms extends MY_Controller{
 	* Make a new form
 	*/
 	function add(){
-		$this->authorization->forceLogin();		
-		if(empty($_POST)){ //todo: server-side validation!
+		$this->authorization->forceLogin();
+		$post = $this->input->post();
+		if(empty($post)){ //todo: server-side validation!
 			//ask user to create the form
 			$this->load->view('add_form');			
 		}else{
-			$form = array_merge($_POST, array('creator'=>$this->authorization->username()));
+			$form = array_merge($post, array('creator'=>$this->authorization->username()));
 			$form = $this->_saveForm($form);
 			$this->_redirect(site_url('forms/edit/'.$form->id));
 			//print_r($form);
@@ -489,7 +494,7 @@ class Forms extends MY_Controller{
 			return;
 		}
 
-		if($_POST['deleteconfirm'] == 'yes'){
+		if($this->input->post('deleteconfirm') == 'yes') {
 			$this->form->delete($form->id);
 			$this->load->model('question');
 			$this->question->deleteByForm($form->id);
@@ -513,7 +518,7 @@ class Forms extends MY_Controller{
 			return;
 		}
 
-		if($_POST['publishconfirm'] == 'yes'){
+		if($this->input->post('publishconfirm') == 'yes'){
 			$this->form->publish($form->id);
 			$this->load->view('redirect', array('location'=>'forms/view/'.$form->name, 'message'=>'Form id:'.$form->id.' published successfully!'));
 			return;
@@ -562,8 +567,10 @@ class Forms extends MY_Controller{
 			return;
 		}
 
-		if(!empty($_POST) and $id){
-			$form = $_POST;
+		$post = $this->input->post();
+
+		if(!empty($post) and $id){
+			$form = $post;
 			$form['id'] = $id;	
 			$form = $this->form->update($form);
 		}		
@@ -586,9 +593,9 @@ class Forms extends MY_Controller{
 			return;
 		}
 
-		if($_POST['renameconfirm'] == 'yes'){
-			$this->form->rename($form_name, $_POST['new_form_name']);
-			$this->load->view('redirect', array('location'=>'forms/view/'.$_POST['new_form_name'], 'message'=>'Forms renamed successfully!'));
+		if($this->input->post('renameconfirm') == 'yes'){
+			$this->form->rename($form_name, $this->form->input('new_form_name') );
+			$this->load->view('redirect', array('location'=>'forms/view/'.$this->input->post('new_form_name'), 'message'=>'Forms renamed successfully!'));
 			return;
 		}else{
 			$this->load->view('rename_form', array('form'=>$form));
@@ -659,11 +666,12 @@ class Forms extends MY_Controller{
 	* @param string $id What form the draft is from
 	*/
 	function saveDraft($id){
-		if(!empty($_POST)){
+		$post = $this->input->post(NULL, true);
+		if(!empty($post)){
 			$this->load->model('draft');
 			$data = array(
 				'form_id'=>$id,
-				'post'=>json_encode($post = $this->_obscurePaymentData($_POST['formdata'])),
+				'post'=>json_encode($this->_obscurePaymentData($post['formdata'])),
 				'readonlys'=>json_encode($this->prefill->getReadonlys()),
 				);			
 			$draft = $this->draft->insert($data);

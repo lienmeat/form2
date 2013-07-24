@@ -141,7 +141,7 @@ class Questionconfig{
 
 	function formatWorkflow($question){
 		$question['config']['email_addresses'] = $this->nrToArray($question['config']['email_addresses']);
-		$question['config']['usernames'] = $this->nrToArray($question['config']['usernames']);		
+		$question['config']['usernames'] = $this->nrToArray($question['config']['usernames']);
 		$question = $this->formatOptions($question);
 		//$question = $this->formatDependenciesField($question);  //removed this option for a while
 		return $question;
@@ -164,6 +164,19 @@ class Questionconfig{
 	*/
 	function formatDate($question){
 		$question = $this->formatNameField($question);
+		$question['config']['disabled_days'] = $this->nrToArray($question['config']['disabled_days']);
+		$question = $this->formatRequiredField($question);
+		$question = $this->formatDependenciesField($question);
+		return $question;
+	}
+
+	/**
+	* Formats a rawhtml question into what should be saved to db
+	* @param array $question
+	* @return array
+	*/
+	function formatRawhtml($question){
+		$question = $this->formatNameField($question);		
 		$question = $this->formatDependenciesField($question);
 		return $question;
 	}
