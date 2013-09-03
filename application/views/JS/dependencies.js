@@ -227,34 +227,36 @@ Dependencies.prototype.testRule = function(rule){
 	var value = this.getInputValue(rule.fieldname);
 	var pass = true;
 	var val = rule.value;
-	var regex = new RegExp("^" + val.replace("*", ".*") + "$");
-	switch(rule.operator){
-		case "!=":
-			//test !=			
-			var res = value.match(regex);			
-			if(res) pass = false;
-			break;
-		case "=":
-			//test =
-			var res = value.match(regex);
-			if(!res || res.length <= 0) pass = false;
-			break;
-		case "<=":
-			//test <=
-			pass = (value <= val);
-			break;
-		case "<":
-			//test <
-			pass = (value < val);
-			break;
-		case ">=":
-			//test >=
-			pass = (value >= val);
-			break;
-		case ">":
-			//test >
-			pass = (value > val);
-			break;
+	if(val){
+		var regex = new RegExp("^" + val.replace("*", ".*") + "$");
+		switch(rule.operator){
+			case "!=":
+				//test !=			
+				var res = value.match(regex);			
+				if(res) pass = false;
+				break;
+			case "=":
+				//test =
+				var res = value.match(regex);
+				if(!res || res.length <= 0) pass = false;
+				break;
+			case "<=":
+				//test <=
+				pass = (value <= val);
+				break;
+			case "<":
+				//test <
+				pass = (value < val);
+				break;
+			case ">=":
+				//test >=
+				pass = (value >= val);
+				break;
+			case ">":
+				//test >
+				pass = (value > val);
+				break;
+		}
 	}
 	return pass;
 }
