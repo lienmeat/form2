@@ -1,4 +1,4 @@
-<script type="text/javascript" src="<?php echo base_url(); ?>application/views/JS/jquery.js"></script>
+<!--<script type="text/javascript" src="<?php echo base_url(); ?>application/views/JS/jquery.js"></script>-->
 
 <script type="text/javascript" src="<?php echo base_url(); ?>application/views/JS/core.js"></script>
 
