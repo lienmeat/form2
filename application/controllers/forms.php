@@ -452,12 +452,15 @@ class Forms extends MY_Controller{
 	*/
 	function add(){
 		$this->authorization->forceLogin();
+		if(!$this->authorization->is('formcreator')){
+			$this->_failAuthResp('You must have the "formcreator" role to create new forms!  Access Denied!');
+		}
 		$post = $this->input->post();
 		if(empty($post)){ //todo: server-side validation!
 			//ask user to create the form
 			$this->load->view('add_form');			
 		}else{
-			$form = array_merge($post, array('creator'=>$this->authorization->username()));
+			$form = $post;
 			$form = $this->_saveForm($form);
 			$this->_redirect(site_url('forms/edit/'.$form->id));
 			//print_r($form);

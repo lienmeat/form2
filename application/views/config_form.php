@@ -28,28 +28,42 @@ if($mode != 'edit'){
 	$question_config->attributes->disabled = 'disabled';
 }
 
-$this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));		
+$this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
 
+if($this->authorization->is('superadmin') or $this->authorization->is('formcreator')){
+	$question_config =(object) array(			
+		'text'=>'Owner: ',
+		'alt'=>'Determines what user has rights admin rights on this form. (user lowercase!)',
+		'name'=>'creator',
+		'type'=>'text',
+		'validation' => 'required',
+	);
+	if($form->creator){
+		$question_config->value = $form->creator;
+	}
 
-$question_config =(object) array(
-	'text'=>'URL of special receiving script:',
-	'alt'=>'(Use this ONLY if processing needs to happen outside of the form application)',
-	'type'=>'text',
-	'name'=>'config[processing_url]',
-	'value'=>$form->config->processing_url
-);
+	$this->load->view('question/view_question', array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
+}		
+
+// $question_config =(object) array(
+// 	'text'=>'URL of special receiving script:',
+// 	'alt'=>'(Use this ONLY if processing needs to happen outside of the form application)',
+// 	'type'=>'text',
+// 	'name'=>'config[processing_url]',
+// 	'value'=>$form->config->processing_url
+// );
 
 //todo: make this feature work
 //$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
 
-$question_config =(object) array(			
-	'text'=>'URL of script to forward the results to after the form is successfully submitted and saved.',
-	'alt'=>'(optional, and not compatible with the receiving script)',
-	'type'=>'text',
-	'name'=>'config[forward_results_url]',
-	'value'=>$form->config->processing_url,
-);
+// $question_config =(object) array(			
+// 	'text'=>'URL of script to forward the results to after the form is successfully submitted and saved.',
+// 	'alt'=>'(optional, and not compatible with the receiving script)',
+// 	'type'=>'text',
+// 	'name'=>'config[forward_results_url]',
+// 	'value'=>$form->config->processing_url,
+// );
 
 //todo: make this feature work
 //$this->load->view('question/view_question',array('question'=>(object) array('id'=>uniqid(''), 'config'=>$question_config)));
