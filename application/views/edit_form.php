@@ -45,7 +45,7 @@ echo "</style>";
 </div>
 
 <div id="form_config_editor">
-	<form name="form_config" method="POST" id="form_config_form">
+	<form method="POST" id="form_config_form">
 		<ul id="form_config_contain" class="form_contain">		
 			<?php
 				$this->load->view('config_form', array('form'=>$form, 'mode'=>'edit'));

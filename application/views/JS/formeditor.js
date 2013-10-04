@@ -19,7 +19,6 @@ var FormEditor = function(){
 */
 FormEditor.__init__ = function(){
 	this.form_id = form_id;
-	this.initModals();
 	this.initSortable();
 	FormEditor.form_questions_dependencies = new Dependencies('form_questions_form');
 	//not needed yet...but maybe someday.
@@ -29,6 +28,7 @@ FormEditor.__init__ = function(){
 	FormEditor.form_questions_validator = new Validation('form_questions_form');
 	FormEditor.form_config_valalidator = new Validation('form_config_form');
 	FormEditor.question_config_validator = new Validation('question_config_form');
+	this.initModals();
 }
 
 /**
