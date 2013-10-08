@@ -452,7 +452,7 @@ class Forms extends MY_Controller{
 	*/
 	function add(){
 		$this->authorization->forceLogin();
-		if(!$this->authorization->is('formcreator')){
+		if(!$this->authorization->is('formcreator') && !$this->authorization->is('superadmin')){
 			$this->_failAuthResp('You must have the "formcreator" role to create new forms!  Access Denied!');
 		}
 		$post = $this->input->post();
