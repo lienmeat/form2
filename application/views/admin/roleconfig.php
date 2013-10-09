@@ -16,6 +16,27 @@ $this->load->view('header', array('title'=>$form->name, 'banner_menu'=>$menu));
 .assoclist {
 	list-style: none;
 }
+
+#role_list, #permission_list {
+	display: none;
+}
+
+fieldset{
+	padding: 5px;
+	background: silver;
+	border: 2px solid darkgrey;
+
+}
+
+legend{
+	background: silver;
+	color: black;
+	border-top: 2px solid darkgrey;
+	border-radius: 5px;
+	padding: 0 5px 0 5px; 
+}
+
+
 </style>
 
 <script type="text/javascript" src="<?php echo base_url();?>application/views/JS/jquery.autoSuggest.js"></script> 
@@ -260,9 +281,19 @@ function clearAutoComplete(id){
 }
 
 </script>
-<div style="width: 100%;">
-	<div style="">
+<div style="width: 100%;">		
+	<div>
 		<div style="float: left; width: 300px;">
+			<div>
+				<a href="javascript:void(0);" onclick="$('#role_list').toggle();">Toggle Role List</a>
+				<ul id="role_list">
+				<?php
+					foreach ($roles as $role) {
+						echo "<li><b>$role->role</b> - $role->description</li>";
+					}
+				?>
+				</ul>
+			</div>
 			<label>Search for a role to manage:</label>
 			<input id="rolesuggest"/>
 			<div id="roledescription_contain" style="display: none;">
@@ -272,7 +303,7 @@ function clearAutoComplete(id){
 		</div>
 		<div style="float: left; margin-left: 20px;">
 			<label>Or add a new role:</label><br />
-			Name: <input id="addrole_txt"/><br />Description: <textarea id="addroledescription_txt"></textarea>
+			Role Name: (the format "departmentname.role" is recommended<br /> for grouping a department's forms under a set of permissions)<br /> <input id="addrole_txt"/><br />Description:<br /> <textarea id="addroledescription_txt"></textarea><br />
 			<button id="addrole_but" onclick="addRole();">Add</button>
 		</div>
 		<div class="clear"></div>
@@ -281,33 +312,52 @@ function clearAutoComplete(id){
 	<div style="width: 300px;">
 		<div id="rolemanagetools_contain">
 			<div id="permslist_contain">
-				<div style="border: 1px solid black;">
-					Permissions assigned to this role:
-					<ul id="rolepermissionslist" class="assoclist">								
-					</ul>
-				</div>
-				Add permissions to this role:
-				<input id="addpermissiontorole"/><button onclick="addPermissionsToRole();">Add</button>
+				<fieldset>
+					<legend>Permissions</legend>
+					<div style="border-bottom: 1px solid black;">
+						Permissions assigned to this role:
+						<ul id="rolepermissionslist" class="assoclist">								
+						</ul>
+					</div>
+					Add permissions to this role:
+					<div>
+						<a href="javascript:void(0);" onclick="$('#permission_list').toggle();">Toggle Permission List</a>
+						<ul id="permission_list">
+							<?php
+								foreach ($permissions as $p) {
+									echo "<li><b>$p->permission</b> - $p->description</li>";
+								}
+							?>
+						</ul>
+					</div>
+					<input id="addpermissiontorole"/><button onclick="addPermissionsToRole();">Add</button>
+				</fieldset>	
 			</div>
 			<br />
-			<div id="formslist_contain">	
-				<div style="border: 1px solid black;">
-					Forms with this role:
-					<ul id="roleformslist" class="assoclist">				
-					</ul>
-				</div>
-				Add this role to these forms:
-				<input id="addformtorole"/><button onclick="addFormsToRole();">Add</button>
+			<div id="formslist_contain">
+				<fieldset>
+					<legend>Forms</legend>	
+					<div style="border-bottom: 1px solid black;">
+						Forms with this role:
+						<ul id="roleformslist" class="assoclist">				
+						</ul>
+					</div>
+					Add this role to these forms:
+					<input id="addformtorole"/><button onclick="addFormsToRole();">Add</button>
+				</fieldset>
 			</div>
 			<br />
 			<div id="userslist_contain">
-				<div style="border: 1px solid black;">
-					Users with this role:
-					<ul id="roleuserslist" class="assoclist">
-					</ul>
-				</div>
-				Add usernames to this role (comma-separated!):
-				<input id="addusertorole"/><button onclick="addUsersToRole();">Add</button>
+				<fieldset>
+					<legend>Users</legend>
+					<div style="border-bottom: 1px solid black;">
+						Users with this role:
+						<ul id="roleuserslist" class="assoclist">
+						</ul>
+					</div>
+					Add usernames to this role (comma-separated!):
+					<input id="addusertorole"/><button onclick="addUsersToRole();">Add</button>
+				</fieldset>
 			</div>
 		</div>
 	</div>

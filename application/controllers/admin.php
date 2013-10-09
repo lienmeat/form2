@@ -14,6 +14,10 @@ class Admin extends MY_Controller{
 
 	function roles(){
 		//do stuff to get whatever is needed
+		$this->load->model('role');
+		$data['roles'] = $this->role->getAll('role ASC');
+		$this->load->model('permission');
+		$data['permissions'] = $this->permission->getAll('permission ASC');		
 		$this->load->view('admin/roleconfig', $data);
 	}
 
@@ -168,6 +172,7 @@ class Admin extends MY_Controller{
 	* Rejects anyone without superadmin role!
 	*/
 	private function _auth(){
+		$this->authorization->forceLogin();
 		if(!$this->authorization->is('superadmin')){
 			$this->_failAuthResp("You must have global role \"superadmin\" to access this page!  NO ACCESS for user: ".$this->authorization->username()."!");
 		}
