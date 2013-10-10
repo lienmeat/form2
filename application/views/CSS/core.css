@@ -307,7 +307,7 @@ textarea{
 }
 
 .rtebutton {
-  display: none;
+  /*display: none;*/
   padding-left: 18px;
   background-image: url("../IMG/edit_rte.png");
   background-repeat: no-repeat;

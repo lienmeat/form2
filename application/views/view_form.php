@@ -10,19 +10,23 @@
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/jquery.eventually.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/dependencies.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/validation.js\"></script>";
-	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/tiny_mce.js\"></script>";
+	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/jquery.tinymce.js\"></script>";
+	//echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/tiny_mce_popup.js\"></script>";
 	echo "<link rel=\"stylesheet\" href=\"".base_url()."/application/views/JS/tiny_mce/themes/simple/skins/default/ui.css\">";
 ?>
 <script type="text/javascript">
 	$(document).ready(function(){
 		var form_deps = new Dependencies('<?php echo $form->id; ?>');
 		var form_val = new Validation('<?php echo $form->id; ?>');
+		$(document).tinymce({
+			script_url : '<?php echo base_url();?>/application/views/JS/tiny_mce/tiny_mce.js',
+			mode : "none",
+			theme : "advanced",			
+			plugins : "autosave"
+		});
 	});
 	
-	tinyMCE.init({
-		mode : "none",
-		theme : "simple"
-	});
+	
 </script>
 <div class="form_title_contain edit_mode">
 	<h2 id="form_title"><?php echo $form->title." ($form->name)"; ?></h2>

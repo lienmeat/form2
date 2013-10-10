@@ -13,7 +13,7 @@
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
 		$this->inputs->setAttribute('id', $question->id."_input0");
 		$this->inputs->setAttribute('validation', $question->config->validation);
-		echo $this->inputs;
+		echo $this->inputs."<span class=\"icon rtebutton\" onclick=\"openRTE('".$question->id."_input0', this);\">Toggle RTE</span>";
 		?>
 	</div>
 </div>

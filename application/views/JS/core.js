@@ -176,6 +176,7 @@ function saveDraftDone(resp){
 
 function openRTE(textarea_id, clicked_elem){
   if(clicked_elem){
+    tinyMCE.execCommand("mceRemoveControl", true, textarea_id);
     $(clicked_elem).attr('onclick', "closeRTE('"+textarea_id+"', this);");
   }
   tinyMCE.execCommand("mceAddControl", true, textarea_id);
