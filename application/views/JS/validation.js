@@ -32,6 +32,12 @@ Validation.prototype.__init__= function(){
 			var validation = $(this).attr('validation');
 			if(validation && validation.indexOf('required') >= 0){
 				$(this).addClass('required');
+
+				//deal with required asterisk possibly already being added
+				var html = $(this).parent().html();
+				if(html.indexOf("<span class=\"req\">*</span>") == -1){
+					$(this).parent().prepend("<span class=\"req\">*</span>");
+				}
 			}
 
 			//bind validateInput to change event on each input that matched

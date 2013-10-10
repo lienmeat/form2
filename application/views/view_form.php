@@ -10,8 +10,7 @@
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/jquery.eventually.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/dependencies.js\"></script>";
 	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/validation.js\"></script>";
-	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/jquery.tinymce.js\"></script>";
-	//echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/tiny_mce_popup.js\"></script>";
+	echo "<script type=\"text/javascript\" src=\"".base_url()."/application/views/JS/tiny_mce/jquery.tinymce.js\"></script>";	
 	echo "<link rel=\"stylesheet\" href=\"".base_url()."/application/views/JS/tiny_mce/themes/simple/skins/default/ui.css\">";
 ?>
 <script type="text/javascript">

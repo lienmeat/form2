@@ -411,6 +411,11 @@ ul.formslist li:not(.opened) div.formdetailsdrawer{
   /*background: rgb(143, 47, 47);*/
 }
 
+.req{
+  font-weight: bold;
+  color: rgb(143, 47, 47);
+}
+
 /*input[type="checkbox"] {
   display: none;
 }
