@@ -388,7 +388,11 @@ Validation.prototype.checkFunction = function(func, params, input){
 		}		
 	}else if(typeof this[func] == 'function'){
 		//defined inside this class
-		return this[func](value, params);
+		if(func == 'required'){
+			return this.required(value, $(input).attr('name'));
+		}else{
+			return this[func](value, params);
+		}
 	}else{
 		return "undefined_function";
 	}	
@@ -410,6 +414,12 @@ Validation.prototype.getInputValue = function(input){
 		var value = $(input).val();
 	}
 	return value;
+}
+
+Validation.prototype.getInputsByName = function(input_name){
+	var name = input_name.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+	var inputs = $('[name='+name+']').toArray();
+	return inputs;
 }
 
 /**
@@ -521,10 +531,24 @@ Validation.prototype.submitForm = function(submit){
 
 /*********************** Validation functions go below this line *******************/
 
-Validation.prototype.required = function(value){
+Validation.prototype.required = function(value, input_name){	
 	if(value && value.length > 0){
 		return true;
 	}else{
+		var inputs = this.getInputsByName(input_name);
+		for(var i in inputs){			
+			var type = $(inputs[i]).attr('type');
+			if( type == 'checkbox' || type == 'radio' ){				
+				if($(inputs[i]).prop('checked')){					
+					return true;
+				}
+			}else{
+				var val = $(inputs[i]).val();
+				if(val && val.length > 0){
+					return true;
+				}
+			}
+		}
 		this.setValidationError('required', 'This field is required!');
 		return false;
 	}

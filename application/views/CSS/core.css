@@ -122,8 +122,9 @@ div.menu a:hover {
   /*border: 1px solid #000;*/  
   border-radius: 1em;
   margin-bottom: 0.4em;
+  padding: 3px;
   clear: both;
-  line-height: 1;
+  line-height: 1.33;
 }
 /*
 .form_row:first-child div:first-child {

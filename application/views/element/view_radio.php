@@ -14,31 +14,78 @@
 		echo "
 		<table>
 			<tbody>";
+				
 		if(!$question->config->options) $question->config->options = array();
 		if(!$question->config->columns){
 			$question->config->columns = 2;
 		}
 		foreach($question->config->options as $label=>$value){
+			$split = explode("#", $value);
+			if(count($split) > 1){
+				$writein = $split[1];
+				$value = $split[0];
+			}else{
+				$writein = false;
+			}
+
 			$mod =  $check_input_count % ($question->config->columns);
-			$input = array(
-				'name'=>$question->config->name,
-				'type'=>'radio',
-				'value'=>$value,
-				'label'=>$label,
-				'selected'=>$question->config->selected,
-			);		
 
-			$this->inputs->setConfig($input);
+			if($writein !== false){
 
-			$this->inputs->setAttribute('validation', $question->config->validation);
-			$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');			
-			$this->inputs->setAttribute('id', $question->id."_input".$check_input_count);
-			$this->inputs->setAttribute('validation', $question->config->validation);
+				$hash_idx = strpos($label, '#');
+				if($hash_idx !== false){
+					$wi_label = substr($label, 0, $hash_idx)."&nbsp;";
+				}else{
+					$wi_label = $label;
+				}
 
+				$input = array(
+					'name'=>$question->config->name,
+					'type'=>'radio',
+					'value'=>$value,
+					'label'=>'',
+					'selected'=>$question->config->selected,
+				);
+
+				$this->inputs->setConfig($input);
+				
+				$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');			
+				$this->inputs->setAttribute('id', $question->id."_input".$check_input_count);
+				$this->inputs->setAttribute('validation', $question->config->validation);
+				$wi_label = $this->inputs.$wi_label;
+				
+				$input = array(
+					'name'=>$question->config->name."_".$value,
+					'type'=>'text',			
+				);
+				$this->inputs->setConfig($input);				
+				if($writein) {
+					$this->inputs->setAttribute('size', $writein);
+				}
+				
+
+
+			}else{
+				$wi_label = '';
+				//no write in defined, render normal checkbox
+				$input = array(
+					'name'=>$question->config->name,
+					'type'=>'radio',
+					'value'=>$value,
+					'label'=>$label,
+					'selected'=>$question->config->selected,
+				);
+
+				$this->inputs->setConfig($input);
+				
+				$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');			
+				$this->inputs->setAttribute('id', $question->id."_input".$check_input_count);
+				$this->inputs->setAttribute('validation', $question->config->validation);
+			}
 			if(($check_input_count-1) % $question->config->columns == 0){
 				echo "<tr>";
 			}
-			echo "<td>".$this->inputs."</td>\n";
+			echo "<td>".$wi_label.$this->inputs."</td>\n";
 			if($mod == 0){
 				echo "</tr>\n";
 			}
@@ -49,7 +96,7 @@
 		}		
 		echo "</tbody>
 		</table>";
-		unset($radio_input_count);		
+		unset($check_input_count);		
 		?>
 	</div>
 </div>

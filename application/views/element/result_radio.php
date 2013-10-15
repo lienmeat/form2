@@ -7,7 +7,14 @@
 	<div class="form_element_contain  result_mode <?php echo $question->config->name; ?>_fi2">
 		<?php
 			$name = $question->config->name;
-			echo $formresult->post->$name;			
+			$value = $formresult->post->{$name};
+			if($formresult->post->{$name."_".$value}){
+				//echo the value of the write in (see view_radio.php for why this works)
+				echo $formresult->post->{$name."_".$value};				
+			}else{
+				//echo the value of a regular radio
+				echo $value;
+			}
 		?>
 	</div>
 </div>
