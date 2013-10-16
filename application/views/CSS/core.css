@@ -195,15 +195,22 @@ div.menu a:hover {
   display: none;
 }
 
-.form_divider{
-  background-color: #747c53;
+.form_divider{  
   border-radius: 0em;  
 }
 
 .form_divider_text{
   color: white;
-  font-size: 16pt;
+  /*font-size: 16pt;*/
   text-align: center;
+}
+
+.divider_bg_1 {
+  background-color: #747c53;
+}
+
+.divider_bg_2 {
+  background-color: #806C46;
 }
 
 .dependhidden, .dependhidden.view_mode{
@@ -215,6 +222,7 @@ div.menu a:hover {
 }
 
 .dependvisible.edit_mode{
+  display: block;
   background-color: gray;
   /*opacity: 0.8;*/
   /*background-color: rgba(0,0,0,0.9);*/
@@ -222,6 +230,7 @@ div.menu a:hover {
 
 .dependhidden.edit_mode{
   background-color: #EEE9E9;
+  display: block;
   /*opacity: 0.2;*/
   /*rgba(0,0,0,0.1);*/
 }
