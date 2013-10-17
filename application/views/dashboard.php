@@ -15,6 +15,7 @@ $this->load->view('header', array('title'=>'F2 Dashboard', 'banner_text'=>'Dashb
 #myforms_contain{
 	margin-top: 2em;
 }
+
 </style>
 
 <script type="text/javascript">
@@ -49,6 +50,7 @@ function formsearchdone(resp, container){
 	}
 	$(container).show();
 }
+
 function searchCreatorOption(elem){
 	$('#formsearchtxt').val($(elem).val());
 	$('#formseachform').submit();

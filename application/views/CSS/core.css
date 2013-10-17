@@ -340,6 +340,11 @@ textarea{
   border-left: 1px solid rgba(255, 255, 255, 0);
 }
 
+.formlistheading_details{
+  display: inline-block;
+  width: 33%; 
+}
+
 .formdetailsdrawer{
   background: white;
 }

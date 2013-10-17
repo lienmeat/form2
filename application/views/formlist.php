@@ -13,7 +13,7 @@ if($forms){
 			$lastform = $form->name;
 			$li = "
 			<li>
-				<div class=\"formlistheading\" onclick=\"toggleFLDrawer(this);\"><a>{$form->name} ({$form->title}) by {$form->creator}</a></div>
+				<div class=\"formlistheading\" onclick=\"toggleFLDrawer(this);\"><a><div class=\"formlistheading_details\">{$form->name}</div><div class=\"formlistheading_details\">{$form->title}</div><div class=\"formlistheading_details\">{$form->creator}</div></a></div>
 			";
 			$drawer = "<div id=\"drawer_{$form->name}\" class=\"formdetailsdrawer\"><table class=\"formlisttable\"><tbody>$thead";			
 		}
