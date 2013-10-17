@@ -115,19 +115,40 @@ class Questions extends MY_Controller{
 		echo json_encode(array('status'=>'success', 'question_id'=>$id));
 	}
 
-	/**
-	* Copy a question
-	*/
-	function copy($id){
-		//todo: copy and paste
-	}
+	// /**
+	// * Copy a question
+	// */
+	// function copy($id){
+	// 	//todo: copy and paste
+	// }
+
+	// /**
+	// * Paste a question
+	// */
+	// function paste($id){
+	// 	//todo: copy and paste
+	// }
 
 	/**
-	* Paste a question
+	* Duplicates a question, changing the id, and name
+	* @param string $id Question id
+	* @return string JSON
 	*/
-	function paste($id){
-		//todo: copy and paste
+	function duplicate($id){
+		$this->load->model('question');
+		$question = $this->question->getById($id);
+		if($question){
+			unset($question->id, $question->name, $question->config->name);
+			$q2 = $this->question->insert($question);
+			$q2->config->name = '(duplicate)';
+			$html = $this->load->view('question/edit_question', array('question'=>$q2), true);
+			echo json_encode(array('status'=>'success', 'orig_question_id'=>$id, 'question_id'=>$q2->id, 'html'=>$html));			
+			return;
+		}
+		echo json_encode(array('status'=>'fail'));
+		return;
 	}
+
 
 	/**
 	* Gets all questions belonging to a form

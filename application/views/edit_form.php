@@ -25,7 +25,7 @@ echo "</style>";
 	</div>
 	<form id="form_questions_form">
 	<div id="add_question_tool_contain">
-		<span class="icon">
+		<span class="icon" title="Add new question">
 			<img src="<?php echo base_url(); ?>application/views/IMG/arrow-insert.gif" onclick="FormEditor.addQuestion(false);"/>
 		</span>
 	</div>

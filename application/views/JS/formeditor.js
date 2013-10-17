@@ -171,6 +171,20 @@ FormEditor.saveQuestionCallback = function(resp){
 	FormEditor.form_questions_validator.__init__();
 }
 
+FormEditor.duplicateQuestion = function(question_id){	
+	//tell server to duplicate
+ 	doAjax('questions/duplicate/'+question_id, {}, FormEditor.duplicateQuestionCallback, function(){});
+}
+
+FormEditor.duplicateQuestionCallback = function(resp){
+	if(resp && resp.status == 'success'){
+		$("#"+resp.orig_question_id).after(resp.html);
+		FormEditor.updateQuestionOrder();
+		FormEditor.form_questions_dependencies.__init__();
+		FormEditor.form_questions_validator.__init__();
+	}
+}
+
 /**
 * Opens the modal dialog for editing a form (config)
 * @param string form_id
