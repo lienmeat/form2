@@ -256,7 +256,7 @@ class Questionconfig{
 	function renderValidationField($question){
 		$question_config =(object) array(			
 			'text'=>'Input Validation:',
-			'alt'=>"(validation you want to assign to the actual input/s, one per line. ex. required<br />min_length[3]<br />max_length[20])",
+			'alt'=>"(validation you want to assign to the actual input/s, one per line. ex. <br />required<br />min_length[3]<br />max_length[20])".f2Help(4),
 			'name'=>'config[validation]',
 			'type'=>'textarea',
 			'value'=>str_replace('|',"\n",$question->config->validation),
