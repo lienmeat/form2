@@ -12,6 +12,14 @@
 		$this->inputs->setConfig($question->config);
 		$this->inputs->setAttribute('class', $this->inputs->getAttribute('class')." ".$question->config->name.'_fi2');
 		$this->inputs->setAttribute('id', $question->id."_input0");
+		if($question->config->size){
+			$this->inputs->setAttribute('size', $question->config->size);
+		}else{
+			$this->inputs->setAttribute('size', '20');
+		}
+		if($question->config->maxlength){
+			$this->inputs->setAttribute('maxlength', $question->config->maxlength);
+		}
 		$this->inputs->setAttribute('validation', $question->config->validation);
 		echo $this->inputs;
 		?>
