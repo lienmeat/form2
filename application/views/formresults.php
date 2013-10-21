@@ -62,29 +62,29 @@ function toggleResultTimestamps(button_elem){
 }
 
 function toggleResultSelections(checkbox_elem){
-	if($(checkbox_elem).attr('checked')){		
-		$('.formresult_chk:visible').attr('checked', 'checked');
+	if($(checkbox_elem).prop('checked')){		
+		$('.formresult_chk:visible').prop('checked', true);
 	}else{
-		$('.formresult_chk:visible').attr('checked', false);
+		$('.formresult_chk:visible').prop('checked', false);
 	}	
 }
 
 $(document).ready(function(){
 	$('.formresult_chk').on('click', function(event){
-		if(!$(event.target).attr('checked')){
-			$('.formresultselectionstoggle').attr('checked', false);
+		if(!$(event.target).prop('checked')){
+			$('.formresultselectionstoggle').prop('checked', false);
 		}else{
 			var frs = $('.formresult_chk').get();
 			var check = true;
 			for(var i=0 in frs){
-				if(!$(frs[i]).attr('checked')){
+				if(!$(frs[i]).prop('checked')){
 					check = false;
 				}
 			}			
 			if(check){
-				$('.formresultselectionstoggle').attr('checked', 'checked');
+				$('.formresultselectionstoggle').prop('checked', true);
 			}else{
-				$('.formresultselectionstoggle').attr('checked', false);				
+				$('.formresultselectionstoggle').prop('checked', false);				
 			}
 		}
 	});
