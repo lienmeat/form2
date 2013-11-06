@@ -622,7 +622,7 @@ class Forms extends MY_Controller{
 		}
 
 		if($this->input->post('renameconfirm') == 'yes'){
-			$this->form->rename($form_name, $this->form->input('new_form_name') );
+			$this->form->rename($form_name, $this->input->post('new_form_name') );
 			$this->load->view('redirect', array('location'=>'forms/view/'.$this->input->post('new_form_name'), 'message'=>'Forms renamed successfully!'));
 			return;
 		}else{
