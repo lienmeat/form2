@@ -1,0 +1,882 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"MY",
+				"MYSQL_CONTAINER_NAME"
+			],
+			[
+				"En",
+				"ENVIRON_NAME"
+			],
+			[
+				"module",
+				"module_invoke_all"
+			],
+			[
+				"de",
+				"dependencies"
+			],
+			[
+				"drupal_G",
+				"drupal_get_path	drupal_get_path"
+			],
+			[
+				"fill",
+				"fill_column"
+			],
+			[
+				"LED",
+				"LED_COLS"
+			],
+			[
+				"fill_col",
+				"fill_column"
+			],
+			[
+				"P",
+				"PER_COL"
+			],
+			[
+				"leds",
+				"leds_per_hue"
+			],
+			[
+				"cur",
+				"cur_hue"
+			],
+			[
+				"hu",
+				"hues"
+			],
+			[
+				"set",
+				"setHue"
+			],
+			[
+				"num",
+				"num_hues"
+			],
+			[
+				"color",
+				"colorWheelBlend"
+			],
+			[
+				"digi",
+				"digitalWrite	Arduino digitalWrite"
+			],
+			[
+				"on",
+				"on_off"
+			],
+			[
+				"ani",
+				"animation"
+			],
+			[
+				"turn",
+				"turnon_animation"
+			],
+			[
+				"n",
+				"NUM_LEDS"
+			],
+			[
+				"ra",
+				"rainbow"
+			],
+			[
+				"rgb",
+				"fill_gradient_RGB"
+			],
+			[
+				"Num",
+				"NUM_LEDS"
+			],
+			[
+				"next",
+				"next_animation"
+			],
+			[
+				"swith",
+				"switchAnitmation"
+			],
+			[
+				"anim",
+				"animation_step"
+			],
+			[
+				"fade",
+				"fadeColorFill"
+			],
+			[
+				"end",
+				"end_led"
+			],
+			[
+				"del",
+				"delay_length"
+			],
+			[
+				"gra",
+				"gradient"
+			],
+			[
+				"start",
+				"start_colors"
+			],
+			[
+				"C",
+				"CRGB"
+			],
+			[
+				"N",
+				"NUM_LEDS"
+			],
+			[
+				"register",
+				"register_blueprint	Flask"
+			],
+			[
+				"app",
+				"app_blueprints	function"
+			],
+			[
+				"get",
+				"getActiveExtentions	function"
+			],
+			[
+				"super",
+				"super	super"
+			],
+			[
+				"IR",
+				"IR_SENSOR"
+			],
+			[
+				"in",
+				"ifnd	ifndef (…)"
+			],
+			[
+				"In",
+				"InfiniteQueue"
+			],
+			[
+				"I",
+				"InfiniteQueue"
+			],
+			[
+				"if",
+				"ifnd	ifndef (…)"
+			],
+			[
+				"am",
+				"ambientIR"
+			],
+			[
+				"Amb",
+				"ambientIR"
+			],
+			[
+				"read",
+				"readIR"
+			],
+			[
+				"dig",
+				"digitalWrite	Arduino digitalWrite"
+			],
+			[
+				"IR_",
+				"IR_LED"
+			],
+			[
+				"ana",
+				"analogRead	Arduino analogRead"
+			],
+			[
+				"print",
+				"println"
+			],
+			[
+				"light",
+				"light_max_prev"
+			],
+			[
+				"light_Max",
+				"light_max_prev"
+			],
+			[
+				"ser",
+				"Serial"
+			],
+			[
+				"r",
+				"r_motor"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/home/eric/docker_drupal7/www/dev/sites/default/settings.local.php",
+			"settings":
+			{
+				"buffer_size": 4473,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eric/docker_drupal7/www/doc/sites/all/modules/liveballot/docapi/docapi.admin.inc",
+			"settings":
+			{
+				"buffer_size": 760,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eric/docker_drupal7/www/doc/sites/default/settings.php",
+			"settings":
+			{
+				"buffer_size": 23543,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 294.0,
+		"last_filter": "instal",
+		"selected_items":
+		[
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"php",
+				"phpfmt: format now"
+			],
+			[
+				"PHP Code Sniffer: ",
+				"PHP Code Sniffer: Switch coding standard"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"ss py",
+				"Set Syntax: Python"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"ss co",
+				"Set Syntax: Conky"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"rmov",
+				"Package Control: Remove Package"
+			],
+			[
+				"",
+				"About"
+			],
+			[
+				"c+",
+				"Set Syntax: C++"
+			],
+			[
+				"ss c",
+				"Set Syntax: C++"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"git",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Preferences: Settings - Default"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 440.0
+	},
+	"console":
+	{
+		"height": 139.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			" import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"clear",
+			" import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			" import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) ",
+			"package"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/eric/docker_drupal7",
+		"/home/eric/docker_build_test"
+	],
+	"file_history":
+	[
+		"/home/eric/Desktop/Win10_shared/liveballot_Account-1-en.yaml",
+		"/home/eric/docker_build_test/Dockerfile",
+		"/home/eric/docker_drupal7/www/doc/sites/all/modules/liveballot/docapi/docapi.pages.inc",
+		"/home/eric/docker_drupal7/www/doc/.gitignore",
+		"/home/eric/docker_drupal7/www/20-xdebug.ini",
+		"/home/eric/docker_drupal7/www/doc/sites/all/modules/liveballot/docapi/docapi.module",
+		"/home/eric/docker_build_test/build_image.sh",
+		"/home/eric/docker_build_test/run_webserver.sh",
+		"/home/eric/docker_build_test/run_db.sh",
+		"/home/eric/docker_build_test/make.sh",
+		"/home/eric/.config/sublime-text-3/Packages/User/Xdebug.sublime-settings",
+		"/home/eric/docker_build_test/www/index.php",
+		"/home/eric/docker_build_test/shell.sh",
+		"/home/eric/.config/sublime-text-3/Packages/Xdebug Client/Xdebug.sublime-settings",
+		"/home/eric/docker_build_test/testthis.sh",
+		"/home/eric/.cache/.fr-E6Zh7V/game.lua",
+		"/home/eric/bin/mari0-linux/README",
+		"/home/eric/.bash_aliases",
+		"/home/eric/docker_drupal7/run_webserver.sh",
+		"/home/eric/docker_drupal7/Dockerfile",
+		"/home/eric/docker_drupal7/build_webserver.sh",
+		"/home/eric/docker_drupal7/run_db.sh",
+		"/home/eric/docker_build_test/.gitignore",
+		"/home/eric/.cache/.fr-CWYP1L/class.lua",
+		"/home/eric/bin/mari0-linux/readme.txt",
+		"/home/eric/.cache/.fr-aL55Lf/readme.txt",
+		"/home/eric/docker_drupal7/www/mo/sites/all/modules/liveballot/email/email.class.inc",
+		"/home/eric/docker_drupal7/www/mo/sites/all/modules/liveballot/email/email.admin.inc",
+		"/home/eric/docker_drupal7/www/mo/sites/all/modules/liveballot/email/email.module",
+		"/home/eric/docker_drupal7/www/mo/sites/all/modules/liveballot/election/election.module",
+		"/home/eric/docker_drupal7/www/mo/sites/all/modules/liveballot/vr/vr.class.inc",
+		"/home/eric/docker_drupal7/www/mo/modules/simpletest/tests/cache.test",
+		"/home/eric/docker_drupal7/www/mo/includes/common.inc",
+		"/home/eric/docker_drupal7/www/mo/sites/default/settings.local.php",
+		"/home/eric/docker_drupal7/www/www/dev/sites/all/modules/liveballot/liveballot/liveballot.admin.inc",
+		"/home/eric/docker_drupal7/www/www/dev/sites/default/settings.local.php",
+		"/home/eric/docker_drupal7/www/www/dev/sites/default/settings.php",
+		"/home/eric/.PlayOnLinux/wineprefix/crimsonland/drive_c/Program Files/Crimsonland/whatsupdated.txt",
+		"/home/eric/docker_lamp/Dockerfile",
+		"/home/eric/.PlayOnLinux/wineprefix/crimsonland/drive_c/Program Files/Crimsonland/crimson.cfg",
+		"/home/eric/.PlayOnLinux/wineprefix/crimsonland/drive_c/Program Files/Crimsonland/autoexec.txt",
+		"/home/eric/.PlayOnLinux/wineprefix/crimsonland/drive_c/Program Files/Crimsonland/console.log",
+		"/home/eric/.PlayOnLinux/wineprefix/crimsonland/drive_c/Program Files/Crimsonland/scores4/questhc3_7.hi",
+		"/home/eric/sketchbook/lamp/examples/Multiple/MirroringSample/MirroringSample.ino",
+		"/home/eric/sketchbook/lamp/examples/RGBCalibrate/RGBCalibrate.ino",
+		"/home/eric/sketchbook/lamp/examples/Fire2012/Fire2012.ino",
+		"/home/eric/sketchbook/lamp/FastLED/examples/Fire2012WithPalette/Fire2012WithPalette.ino",
+		"/home/eric/sketchbook/lamp/keywords.txt",
+		"/home/eric/sketchbook/lamp/FastLED.cpp",
+		"/home/eric/sketchbook/lamp/colorpalettes.cpp",
+		"/home/eric/sketchbook/karl.ino",
+		"/home/eric/sketchbook/lamp/examples/XYMatrix/XYMatrix.ino",
+		"/home/eric/sketchbook/lamp/color.h",
+		"/home/eric/sketchbook/mouse/ps2_mouse.ino",
+		"/home/eric/sketchbook/lamp/FastLED/README.md",
+		"/home/eric/sketchbook/lamp/FastLED-master/examples/Blink/Blink.ino",
+		"/media/eric/rpi/overlays/installer-config.txt",
+		"/media/eric/AF68-F56C/cmdline.txt",
+		"/media/eric/AF68-F56C/config.txt",
+		"/home/eric/Desktop/showcase/php/toshow/EZ_MySqli.php",
+		"/home/eric/Development/flask_tpwf/blueprints.py",
+		"/home/eric/Development/flask_tpwf/controllers.py",
+		"/home/eric/Development/flask_tpwf/dbutil.py",
+		"/home/eric/Development/flask_tpwf/extentions/__init__.py",
+		"/home/eric/Downloads/scantool_net113src/globals.h",
+		"/home/eric/Downloads/scantool_net113src/readme.txt",
+		"/home/eric/Development/flask_tpwf/models.py",
+		"/home/eric/Development/flask_tpwf/manage.py",
+		"/home/eric/Development/flask_tpwf/flask_tpwf.py",
+		"/home/eric/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/eric/Desktop/test/test.php",
+		"/tmp/Gist.sublime-settings",
+		"/home/eric/.config/sublime-text-3/Packages/User/Gist.sublime-settings",
+		"/home/eric/.config/sublime-text-3/Packages/Gist/Gist.sublime-settings",
+		"/home/eric/Development/flask_tpwf/alembic.ini",
+		"/home/eric/.config/sublime-text-3/Packages/Phpcs/phpcs.sublime-settings",
+		"/home/eric/Downloads/scantool_net113src/version.h",
+		"/home/eric/Development/flask_tpwf/extentions/testme/controllers.py",
+		"/home/eric/Development/flask_tpwf/extentions/testme/blueprints.py",
+		"/home/eric/Development/flask_tpwf/templates/hello.html",
+		"/home/eric/Development/flask_tpwf/extloader.py",
+		"/home/eric/Development/flask_tpwf/flask_tpwf_conf.cfg",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/flask_restless/manager.py",
+		"/home/eric/Development/flask_tpwf/activeextentions.py",
+		"/home/eric/Development/flask_tpwf/wsgi.py",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/wsgi.py",
+		"/home/eric/Development/flask_tpwf/modules/test/models.py",
+		"/home/eric/Development/flask_tpwf/modules/test/blueprints.py",
+		"/home/eric/Development/flask_tpwf/extentions/testme/__init__.py",
+		"/home/eric/Development/flask_tpwf/modules/test/controllers.py",
+		"/home/eric/Downloads/conkytransmission.py",
+		"/home/eric/Development/flask_tpwf/modules/testme/__init__.py",
+		"/home/eric/Development/flask_tpwf/modules/__init__.py",
+		"/home/eric/Development/flask_tpwf/modules/test/__init__.py",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/overholt/frontend/__init__.py",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/overholt/__init__.py",
+		"/home/eric/Development/flask_tpwf/modules/test/static/__init__.py",
+		"/home/eric/Development/flask_tpwf/modules/test/templates/__init__.py",
+		"/home/eric/Development/flask_tpwf/modules/test/tests/__init__.py",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/overholt/factory.py",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/overholt/middleware.py",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/werkzeug/wsgi.py",
+		"/home/eric/Development/flask_tpwf/conf.cfg",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/alembic/env.py",
+		"/home/eric/Development/flask_tpwf/example/overholt-master/alembic/script.py.mako",
+		"/home/eric/Development/flask_tpwf/static/js/main.js",
+		"/home/eric/Development/flask_tpwf/static/index.html",
+		"/home/eric/.conky/Conky Lienmeat/conky_lienmeat",
+		"/home/eric/.conky/Conky Lienmeat/lienmeat_rings.lua",
+		"/home/eric/.conky/Conky Lienmeat/source.txt",
+		"/home/eric/Development/flask_tpwf/migrations/versions/4b23d9cf3eb_.py",
+		"/home/eric/Development/flask_tpwf/database.py",
+		"/home/eric/.config/sublime-text-3/Packages/Jedi - Python autocompletion/Default.sublime-keymap",
+		"/home/eric/Development/flask_tpwf/lib/uuid.py",
+		"/home/eric/Development/flask_tpwf/lib/__init__.py",
+		"/home/eric/Development/flask_tpwf/templates/layout.html",
+		"/home/eric/Development/flask_tpwf/migrations/versions/190f41131f9d_.py",
+		"/etc/minidlna.conf",
+		"/home/eric/Development/flask_tpwf/migrations/versions/a23a77b65a8_.py",
+		"/home/eric/Development/flask_tpwf/.gitignore",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/werkzeug/debug/shared/FONT_LICENSE",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/flask/testsuite/test_apps/flask_newext_simple.py",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/Flask-0.10.1-py2.7.egg-info/requires.txt",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/sqlalchemy/orm/deprecated_interfaces.py",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/sqlalchemy/orm/dependency.py",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/sqlalchemy/orm/collections.py",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/sqlalchemy/orm/base.py",
+		"/home/eric/Development/flask_tpwf/venv/lib/python2.7/site-packages/sqlalchemy/orm/attributes.py"
+	],
+	"find":
+	{
+		"height": 29.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"",
+			"/home/eric/Development/ubuntu-boxen"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"View full document",
+			"Click here to add documentation",
+			"docapi_external",
+			"module_invoke_all",
+			"mo_get_voter_fob_style",
+			"ballot",
+			"with_ballot",
+			"xpath",
+			"cache_ballot",
+			"liveballot_uuid_field_spec",
+			"class Logger",
+			"lb_party",
+			"delay(",
+			"show(",
+			"brighten8",
+			"fract8",
+			"fade",
+			"next_animation =",
+			"fill_solid",
+			"testBreakLoop",
+			"addLeds",
+			"HTMLColorCode",
+			"Red=",
+			"Red",
+			"HTMLColorCode",
+			"CRGB::Red",
+			"CRGB::Red =",
+			"CRGB::Red",
+			"fuckit",
+			"get_blueprints",
+			"resource",
+			"module",
+			"DispatcherMiddleware",
+			"conf.cfg",
+			"graph_bg_colour=0x77B753",
+			"300A24",
+			"seamod",
+			"User",
+			"primary_key",
+			"<T>",
+			"<typename T>",
+			"print",
+			"readIR",
+			"IR_LE",
+			"RIGHT_SENSOR",
+			"LEFT_SENSOR",
+			"gedit",
+			"gedit.desktop",
+			"current_release",
+			"token",
+			"SUPPORTED_UBUNTU_RELEASES.any? do |r|\n        #   current_release.start_with? r      ",
+			"apply",
+			"ENV = ",
+			"BUNDLE_PATH",
+			".bundle",
+			"puppet",
+			"You must be running one of the following OS X versions:",
+			"/usr/sbin/chown",
+			"CLI",
+			"sed"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"rainbow",
+			"module",
+			"extention",
+			"graph_bg_colour=0xFFFFFF",
+			"77B753",
+			"lienmeat",
+			"<C>",
+			"<class C>",
+			"irStrength",
+			"R_SENSOR",
+			"L_SENSOR",
+			"sublime-text.desktop",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/eric/docker_drupal7/www/dev/sites/default/settings.local.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4473,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 312.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/home/eric/docker_drupal7/www/doc/sites/all/modules/liveballot/docapi/docapi.admin.inc",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 760,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/eric/docker_drupal7/www/doc/sites/default/settings.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 23543,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7838,
+								7838
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2418.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 21.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.CppYCM.2":
+	{
+		"height": 0.0
+	},
+	"output.alg":
+	{
+		"height": 112.0
+	},
+	"output.exec":
+	{
+		"height": 277.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.karl":
+	{
+		"height": 112.0
+	},
+	"output.lamp":
+	{
+		"height": 252.0
+	},
+	"output.seeker":
+	{
+		"height": 112.0
+	},
+	"output.stino_log":
+	{
+		"height": 112.0
+	},
+	"output.xdebug":
+	{
+		"height": 330.0
+	},
+	"pinned_build_system": "",
+	"project": "docker_quick_manage.sublime-project",
+	"replace":
+	{
+		"height": 38.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"pdfmarkerpage",
+				"dev/sites/all/modules/liveballot/pdfmarker/includes/PDFMarkerPagePreview.inc"
+			],
+			[
+				"firens",
+				"application/views/friends_page.php"
+			],
+			[
+				"core",
+				"application/static/JS/core.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"xdebug":
+		{
+			"hide_conflict": false,
+			"restore_index":
+			{
+				"15":
+				{
+					"group": 0,
+					"index": 0
+				},
+				"18":
+				{
+					"group": 0,
+					"index": 1
+				},
+				"20":
+				{
+					"group": 0,
+					"index": 2
+				},
+				"21":
+				{
+					"group": 0,
+					"index": 3
+				},
+				"22":
+				{
+					"group": 0,
+					"index": 4
+				}
+			},
+			"restore_layout":
+			{
+				"cells":
+				[
+					[
+						0,
+						0,
+						1,
+						1
+					]
+				],
+				"cols":
+				[
+					0.0,
+					1.0
+				],
+				"rows":
+				[
+					0.0,
+					1.0
+				]
+			}
+		}
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 280.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
